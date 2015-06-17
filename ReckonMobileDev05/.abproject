@@ -17,7 +17,7 @@
   ],
   "iOSStatusBarStyle": "Default",
   "AndroidHardwareAcceleration": "true",
-  "BundleVersion": "1.1.6",
+  "BundleVersion": "1.1.7",
   "iOSDisplayName": "",
   "iOSDeviceFamily": [
     "1",
@@ -43,5 +43,6 @@
   "Framework": "Cordova",
   "projectVersion": "1",
   "WP8WindowsPublisherName": "CN=Telerik",
-  "WP8PackageIdentityName": "1234Telerik.com.reckon.ReckonMobileDev05"
+  "WP8PackageIdentityName": "1234Telerik.com.reckon.ReckonMobileDev05",
+  "WPSdk": "8.0"
 }

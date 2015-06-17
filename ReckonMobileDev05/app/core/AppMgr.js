@@ -664,9 +664,7 @@ Ext.define('RM.core.AppMgr', {
             }            
         }
         RM.ViewMgr.hideKeyPad();
-        //msgBox.show();
-        //workaround for popup bug#25209 - Nexus and Google Chrome specific 
-        setTimeout(function () { msgBox.show(); }, 300);
+        msgBox.show();
         RM.ViewMgr.regBackHandler(
             function(){
                 msgBox.hide();
