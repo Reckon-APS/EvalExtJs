@@ -7,16 +7,6 @@ Ext.define('RM.component.RMMsgPopup', {
             align: 'center',            
         },       
         cls: 'rm-msgpopup',
-        showAnimation: {
-            type: 'popIn',
-            duration: 200,
-            easing: 'ease-out'
-        },
-        hideAnimation: {
-            type: 'popOut',
-            duration: 200,
-            easing: 'ease-out'
-        },
         zIndex: 90
     },
 
