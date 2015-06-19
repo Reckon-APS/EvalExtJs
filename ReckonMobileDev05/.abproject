@@ -17,7 +17,7 @@
   ],
   "iOSStatusBarStyle": "Default",
   "AndroidHardwareAcceleration": "true",
-  "BundleVersion": "1.1.8",
+  "BundleVersion": "1.1.9",
   "iOSDisplayName": "",
   "iOSDeviceFamily": [
     "1",
@@ -29,7 +29,7 @@
     "org.apache.cordova.inappbrowser",
     "org.apache.cordova.statusbar"
   ],
-  "FrameworkVersion": "3.7.0",
+  "FrameworkVersion": "3.5.0",
   "DisplayName": "ReckonMobileDev05",
   "Author": "",
   "Description": "ReckonMobileDev05",
