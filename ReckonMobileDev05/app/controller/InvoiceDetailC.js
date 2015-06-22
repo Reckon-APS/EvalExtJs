@@ -111,10 +111,16 @@ Ext.define('RM.controller.InvoiceDetailC', {
         RM.ViewMgr.showPanel(view);
     },
 
-    onShow: function () {        
+    onShow: function () {
+        RM.ViewMgr.regFormBackHandler(this.back, this);        
+
+        //Load the terms list from the store
+        var store = this.getTermsFld().getStore();
+        store.getProxy().setUrl(RM.AppMgr.getApiUrl('Terms'));
+        store.getProxy().setExtraParams({ Id: RM.CashbookMgr.getCashbookId() });
+        RM.AppMgr.loadStore(store, this.setCashbookDefaultTerm, this);
+
         var dateField = this.getDateFld();
-        
-        RM.ViewMgr.regFormBackHandler(this.back, this);
         this.getInvoiceTitle().setHtml(this.isCreate ? 'Add invoice' : 'View invoice');
         
         this.applyViewEditableRules();        
@@ -151,16 +157,8 @@ Ext.define('RM.controller.InvoiceDetailC', {
                 if(curDateValue.getTime() <= lockOffDate.getTime()) {
                     lockOffDate.setDate(lockOffDate.getDate() + 1);
                     dateField.updateValue(lockOffDate);                    
-                }
+                }                
                 
-                //Load the terms list from the store
-                var store = this.getTermsFld().getStore();
-                store.getProxy().setUrl(RM.AppMgr.getApiUrl('Terms'));
-                store.getProxy().setExtraParams({ Id: RM.CashbookMgr.getCashbookId() });
-                //Below two line are commented out for now as there is no default term coming in
-                //store.getProxy().setUrl(RM.AppMgr.getApiUrl('Terms/GetContactTerms'));
-                //store.getProxy().setExtraParams({ CashbookId: RM.CashbookMgr.getCashbookId(), CustomerId: RM.Consts.EmptyGuid, OnlyCustomerTerm: true, OnlySupplierTerm: false });
-                RM.AppMgr.loadStore(store, this.setCashbookDefaultTerm, this);
                 this.dataLoaded = true;
             }           
         }
@@ -233,8 +231,9 @@ Ext.define('RM.controller.InvoiceDetailC', {
     loadFormData: function () {        
         RM.AppMgr.getServerRecById('Invoices', this.detailsData.InvoiceId,
 			function (data) {
-                
-                if(data.Status === 2 && data.BalanceDue < data.Amount) {
+                //To reset readonly property when invoice status is changed back to draft, fix for bug#25428
+                RM.util.FormUtils.makeAllFieldsNonReadOnly(this.getInvoiceForm());
+                if (data.Status === RM.Consts.InvoiceStatus.APPROVED && data.BalanceDue < data.Amount) {
                     this.getInvStatus().setHtml(RM.InvoicesMgr.getPartiallyPaidInvoiceStatusText());                                    
                 }
                 else {

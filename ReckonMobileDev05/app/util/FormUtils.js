@@ -6,5 +6,11 @@ Ext.define('RM.util.FormUtils', {
             if(field.setReadOnly) field.setReadOnly(true);
             if(field.setPlaceHolder) field.setPlaceHolder('');
         });
+    },
+
+    makeAllFieldsNonReadOnly: function (form) {
+        form.getFieldsArray().forEach(function (field) {
+            if (field.setReadOnly) field.setReadOnly(false);            
+        });
     }
 });
