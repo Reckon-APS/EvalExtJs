@@ -76,6 +76,12 @@ Ext.define('RM.controller.InvoiceDetailC', {
     },
     
     showView: function (isCreate, data, cb, cbs) {
+        //Load the terms list from the store
+        var store = Ext.getStore('Terms');
+        store.getProxy().setUrl(RM.AppMgr.getApiUrl('Terms'));
+        store.getProxy().setExtraParams({ Id: RM.CashbookMgr.getCashbookId() });
+        RM.AppMgr.loadStore(store);
+
         this.lineItemsDirty = false;
         this.isCreate = isCreate;
         this.detailsData = data ? data : {};
@@ -83,7 +89,7 @@ Ext.define('RM.controller.InvoiceDetailC', {
         this.detailsCbs = cbs;
 
         this.noteText = '';
-        this.dataLoaded = false;
+        this.dataLoaded = false;        
                 
         if (isCreate) {
             var today = new Date();
@@ -112,13 +118,7 @@ Ext.define('RM.controller.InvoiceDetailC', {
     },
 
     onShow: function () {
-        RM.ViewMgr.regFormBackHandler(this.back, this);        
-
-        //Load the terms list from the store
-        var store = this.getTermsFld().getStore();
-        store.getProxy().setUrl(RM.AppMgr.getApiUrl('Terms'));
-        store.getProxy().setExtraParams({ Id: RM.CashbookMgr.getCashbookId() });
-        RM.AppMgr.loadStore(store, this.setCashbookDefaultTerm, this);
+        RM.ViewMgr.regFormBackHandler(this.back, this);
 
         var dateField = this.getDateFld();
         this.getInvoiceTitle().setHtml(this.isCreate ? 'Add invoice' : 'View invoice');
@@ -158,7 +158,8 @@ Ext.define('RM.controller.InvoiceDetailC', {
                     lockOffDate.setDate(lockOffDate.getDate() + 1);
                     dateField.updateValue(lockOffDate);                    
                 }                
-                
+
+                this.setCashbookDefaultTerm();
                 this.dataLoaded = true;
             }           
         }
