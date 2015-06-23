@@ -76,12 +76,6 @@ Ext.define('RM.controller.InvoiceDetailC', {
     },
     
     showView: function (isCreate, data, cb, cbs) {
-        //Load the terms list from the store
-        var store = Ext.getStore('Terms');
-        store.getProxy().setUrl(RM.AppMgr.getApiUrl('Terms'));
-        store.getProxy().setExtraParams({ Id: RM.CashbookMgr.getCashbookId() });
-        RM.AppMgr.loadStore(store);
-
         this.lineItemsDirty = false;
         this.isCreate = isCreate;
         this.detailsData = data ? data : {};
@@ -232,8 +226,13 @@ Ext.define('RM.controller.InvoiceDetailC', {
     loadFormData: function () {        
         RM.AppMgr.getServerRecById('Invoices', this.detailsData.InvoiceId,
 			function (data) {
-                //To reset readonly property when invoice status is changed back to draft, fix for bug#25428
-                RM.util.FormUtils.makeAllFieldsNonReadOnly(this.getInvoiceForm());
+			    //To reset readonly property when invoice status is changed back to draft, fix for bug#25428               
+			    if (data.Status === RM.Consts.InvoiceStatus.DRAFT) {			        
+			        this.getDateFld().setReadOnly(false);			        
+			        this.getTermsFld().setReadOnly(false);
+			        this.getRefNrFld().setReadOnly(false);
+			    }
+
                 if (data.Status === RM.Consts.InvoiceStatus.APPROVED && data.BalanceDue < data.Amount) {
                     this.getInvStatus().setHtml(RM.InvoicesMgr.getPartiallyPaidInvoiceStatusText());                                    
                 }
