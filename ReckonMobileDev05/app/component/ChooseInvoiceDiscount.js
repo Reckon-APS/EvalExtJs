@@ -85,7 +85,7 @@ Ext.define('RM.component.ChooseInvoiceDiscount', {
                 listeners: {
                         itemtap: function (dataview, index, target, record) {                              
                             	var disc = record.data.itemId;
-                                if (disc == 5 || disc == 10 || disc == 20 || disc == 0){
+                                if (disc == 5 || disc == 10 || disc == 20 ){
                                      disc = disc + '%';
                                 }                                   
                                 cb.call(cbs, disc);
