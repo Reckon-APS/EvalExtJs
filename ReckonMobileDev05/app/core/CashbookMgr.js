@@ -54,7 +54,14 @@ Ext.define('RM.core.CashbookMgr', {
                         RM.ViewMgr.showMainNavContainer(localStorage.getItem('RmDisplayName'), data.BookName);
                         var dashboardC = RM.AppMgr.getAppControllerInstance('RM.controller.DashboardC');
                         dashboardC.showView(this._currentCashbook.Dashboard);
-        	            RM.ViewMgr.showDashboard();                        
+                        RM.ViewMgr.showDashboard();
+
+                        //Moved Terms store loading code here for slower Android devices
+                        //Load the Terms list from the store
+                        var store = Ext.getStore('Terms');
+                        store.getProxy().setUrl(RM.AppMgr.getApiUrl('Terms'));
+                        store.getProxy().setExtraParams({ Id: data.CashBookId });
+                        RM.AppMgr.loadStore(store);
                     },
                     this,
                     function(recs, eventMsg){

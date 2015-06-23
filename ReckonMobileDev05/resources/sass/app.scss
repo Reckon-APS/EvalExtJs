@@ -313,6 +313,8 @@ $font-family: 'Open Sans', sans-serif !default;
 		}
 		.x-picker-inner{
 			background: #FFF;
+			padding-top: 0.6em;
+			padding-bottom: 0.5em;
             border: 0;
             border-radius: 0;
             margin-left: 0;
@@ -427,33 +429,7 @@ $font-family: 'Open Sans', sans-serif !default;
         background: #F6F0DA !important; 
     }
 }
-/*.customername-icon.x-field{
-	@include rm_flatfield("../images/icons/rm-customer.png");
-}
 
-.projectname-icon.x-field{
-	@include rm_flatfield("");
-}
-
-.duedate-icon.x-field{
-	@include rm_flatfield("../images/icons/rm-date.png");
-}
-
-.date-icon.x-field{
-	@include rm_flatfield("../images/icons/rm-date.png");
-}
-
-.duration-icon.x-field{
-    @include rm_flatfield("../images/icons/rm-date.png");
-}
-
-.discount-icon.x-field{
-	@include rm_flatfield("");
-}
-
-.notes-icon.x-field{
-    @include rm_flatfield("../images/icons/rm-description.png");
-}*/
 
 // Flat textfield style code end
 
@@ -480,27 +456,6 @@ $font-family: 'Open Sans', sans-serif !default;
 		display: block;
 		overflow: hidden;
         padding-left: 5px;
-	}
-}
-
-.rm-plusimgbtn{
-	
-	background-image: url("../images/icons/rm-plus.png") !important;
-	background-repeat: no-repeat;	
-	background-position: left; 
-	background-color: #FFFFFF;
-	padding: 0.3em;
-	border-radius: 0;
-	border:0;
-	
-	.x-button-label {    
-		text-overflow: ellipsis;
-		text-align: left;
-		font-weight: bold;
-		line-height: 1.2em;
-		display: block;
-		overflow: hidden;
-		margin-right: 1em;
 	}
 }
 
@@ -557,6 +512,13 @@ $font-family: 'Open Sans', sans-serif !default;
     overflow: hidden;
     padding:10px 10px 10px 15px;   	
 	}		
+}
+
+.rm-dropdown-img{
+	margin-left: 2px;
+	margin-bottom: 2px;
+	width: 7px;
+	height: 6px;
 }
 
 .rm-dropdownmain{
@@ -720,12 +682,6 @@ $font-family: 'Open Sans', sans-serif !default;
     }
 }
 
-.rm-flatkeypadtextbutton {
-    .x-button-label{
-        font-size: 100%;
-    }
-}
-
 .rm-flatkeypad-crossbtn{
     background-image: url("../images/icons/rm-keypad-cross.svg");
 	background-repeat: no-repeat;	
@@ -738,19 +694,6 @@ $font-family: 'Open Sans', sans-serif !default;
 	background-repeat: no-repeat;	
     background-position: center;
     background-size: 24px;
-}
-
-//Flat button with arrow icon set using iconCls property 
-.rm-flatbuttonwitharrow {
-	border-radius: 0;
-	border-top:0;
-	border-right:0;
-	border-left:0;
-	border-bottom:0.2em solid #E4E4E4;
-	margin:0;
-	background:#F3F3F3;
-	color: #646464;
-	
 }
 
 .rm-msgpopup {  
@@ -787,10 +730,6 @@ $font-family: 'Open Sans', sans-serif !default;
     .x-layout-box-item {
         text-align: center;
     }  
-}
-
-.rm-radiobtnwidth{
-	.x-field-mask { width: 3em !important;}
 }
 
 //Popup menu used for popup dialog with cross icon. 
@@ -1116,21 +1055,12 @@ $font-family: 'Open Sans', sans-serif !default;
 			font-weight:normal;
 		}
 	}
-	.rm-reddoticon, .rm-reddotright{
+	.rm-reddotright{
 		//background-image: theme_image($theme-name, "pictos/base64/redDot.png");
 		background-image: url("../images/redDot.svg"); 
 		padding-left:18px;
 	}
-	.rm-plusicon{
-		background-image: url("../images/icons/rm-plus.png");
-        background-position-x: center;
-        background-position-y: 41%;
-        background-repeat: no-repeat;
-        margin-left: -10px;
-        margin-right: 5px;
-        margin-top: -5px;
-        padding: 14px;
-	}
+	
 	.rm-reddot {
 		background: red;
 		border-radius: 3px;
@@ -1142,22 +1072,7 @@ $font-family: 'Open Sans', sans-serif !default;
 	}
 
 //Timesheets
-.rm-listdynamicicon{
-		padding-left:30px;
-		background-position:left center; background-repeat: no-repeat;
-			&.rm-empty {
-				//background-image: theme_image($theme-name, "pictos/base64/empty.png") !important;
-				background-image: url("../images/empty.png") !important; 
-			}
-			&.rm-download {
-				//background-image: theme_image($theme-name, "pictos/base64/download.png") !important;
-				background-image: url("../images/download.png") !important; 
-			}
-			&.rm-dummyIcon {
-				//background-image: theme_image($theme-name, "pictos/base64/dummyIcon.png") !important;
-				background-image: url("../images/dummyIcon.png") !important; 
-			}
-	}
+
 .rm-timesheetrowfields{
     color: #969696;
     font-size: 80%;
@@ -1165,12 +1080,7 @@ $font-family: 'Open Sans', sans-serif !default;
 }
 
 //Expenses
-.rm-statustext{
-    color:#969696;
-    font-size:68%;
-	font-weight:normal;
-    margin-right: 22px;
-}
+
 .rm-expensesrowfields{
     color: #969696;
     font-size: 80%;
@@ -1245,15 +1155,8 @@ $font-family: 'Open Sans', sans-serif !default;
     font-weight: bold;
 }
 
-.rm-billabletext{
-	color: #969696;
-    font-size: 68%;
-	padding-right: 12px;
-	font-weight: normal;
-}
-
 .rm-invoiceitemtext{
-	color: #0096D0; 
+	color: #00BD9D; 
 	font-size: 86%;     
 }
 
@@ -1330,10 +1233,6 @@ $font-family: 'Open Sans', sans-serif !default;
 	border-bottom: 1px solid #DBDBDB;    
 }
 
-.rm-notes-icon.x-field{
-	@include rm_flatfield("pictos/note.png");
-}
-
 .rm-note-icon{
 		
 		background-image: url("../images/icons/rm-note.svg");
@@ -1344,21 +1243,6 @@ $font-family: 'Open Sans', sans-serif !default;
 		height: 26px;
         margin-right: 2px
 }
-
-.x-list.rmbudgetlist{
-		.x-list-item{
-			.x-list-item-body{
-				padding: 0;
-				.rmbudgetlistcoloredbg{
-					background: #f0f0f0;
-					padding: 0.65em 0.8em;
-				}
-				.rmbudgetlistplainbg{
-					padding: 0.65em 0.8em;
-				}
-			}
-		}
-	}
 
 .rm-balance-breakdown-amount{
 	float: right;
@@ -1382,17 +1266,11 @@ $font-family: 'Open Sans', sans-serif !default;
     border-bottom: 2px solid #DBDBDB;
 }
 
-rm-emailinvoicebackground{
+.rm-emailinvoicebackground{
     background: #F8F8F8;
 }
 
 .rm-emailscreenbtn {	
-	
-	//background-image: url("../images/icons/rm-btn-arrow.svg") !important;
-	//background-repeat: no-repeat;	
-	//background-position-x: 75%;
-	//background-position-y: 50%; 
-    //background-size: 10px 20px;
 	background: #EBEBEB;
 	padding: 0.3em;	
 	border-radius: 0;
@@ -1479,12 +1357,13 @@ rm-emailinvoicebackground{
 }
 
 .rm-dashboardtopexpenses{
-    margin-top: 10px;
+    margin-top: 15px;
     margin-bottom: 15px;
 }
 
 .rm-dashboardnetposition{
-    margin: 7px 5px 7px 5px;
+	font-size: 82%;
+    margin: 7px 5px;
     color: #646464;
 }
 
@@ -1737,16 +1616,12 @@ rm-emailinvoicebackground{
 }
 
 .rm-invoicelineitem-add {
-    color: #0096D0;
+    color: #00BD9D;
     font-size: 0.86em;
     padding: 5px;    
 }
 
 //Added to get font padding right for list paging msg
-/*.x-list-paging-msg{
-    padding: 15px;    
-}*/
-
 .x-list-paging {
   padding: 15px; 
 }
@@ -1763,20 +1638,6 @@ rm-emailinvoicebackground{
 }
 .x-list-paging.x-loading {
   padding: 15px; 
-}
-
-//Accept Payment Text
-.rm-acceptpaymenttext{
-    color: #505050; 
-    padding: 25px 10px 5px 10px; 
-    font-size: 86%;
-}
-
-//Accept Payment Tap text
-.rm-acceptpaymenttaptext{
-    color: #8C8C8C; 
-    padding: 5px 10px 10px 10px;
-    font-size: 86%;
 }
 
 //To get the color in search field in gray toolbar while typing  
@@ -1830,6 +1691,7 @@ rm-emailinvoicebackground{
 		display: block;
 		overflow: hidden;		
         margin-left: 5px;
+        color:#00bd9d;
 	}
 }
 
@@ -1964,15 +1826,6 @@ rm-emailinvoicebackground{
     text-shadow: none;
 }
 
-/*.rm-msgbox-iconcls{
-    background-image: url("../images/rm-msgbox-icon.png") !important;
-    width: 40px;
-    height: 40px;
-    position: absolute;
-    left: 45%;
-    right: 45%;
-    top: 20px;
-}*/
 
 //MsgBox Style End
 
@@ -2216,7 +2069,7 @@ rm-emailinvoicebackground{
 
 //sort search toolbar icon size
 .rm-sortsearchbtn{    
-        background-size: 24px;    
+        background-size: 22px;    
 }
 
 //Field clear icon
@@ -2342,13 +2195,6 @@ rm-emailinvoicebackground{
     color: #646464; 
     padding: 25px 10px;
 }
-
-/*.rm-pay-discountbtn{
-    background-image: url("../images/icons/rm-discount.png") !important;
-	background-repeat: no-repeat;
-    background-position: center;
-    background-size: 20px 20px;
-}*/
 
 .rm-payamountinput-arrow{
     background-image: url("../images/icons/rm-btn-arrow.svg") !important;
@@ -2511,5 +2357,17 @@ rm-emailinvoicebackground{
 	background: #00BD9D;
 }
 
+.rm-multiselectfield{
+    
+    //unchecked
+    .x-input-el + .x-field-mask::after {        
+        opacity: 0;
+    }
 
+    //checked
+    .x-input-el:checked + .x-field-mask::after {
+        color: #00BD9D;
+        opacity: 1;
+    }
+}
 

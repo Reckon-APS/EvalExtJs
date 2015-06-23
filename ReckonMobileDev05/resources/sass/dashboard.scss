@@ -1,31 +1,9 @@
 @mixin dashboard{
-	.rm-dashboard{
-		.headingText{
-			color:#333;font-size:90%;
-			font-weight:bold;margin-bottom:10px;
-		}
-	}
-	.rm-greendot{		
-		background-image: url("../images/greenDot.svg");
-		padding-left:18px;
-	}
-	.rm-reddoticon, .rm-reddotright{		
+	
+	
+	.rm-reddotright{		
 		background-image: url("../images/redDot.svg");		
-	}
-	.rm-plusicon, .rm-minusicon, .rm-greendot, .rm-reddoticon{
-		background-position:left center; 
-        background-repeat: no-repeat;		
-        color:#767676; 
-        font-size:70%;
-	}
-	.rm-plusicon{
-		//background-image: theme_image($theme-name, "pictos/base64/plus.png");
-		background-image: url("../images/icons/plus.png");
-	}
-	.rm-minusicon{
-		//background-image: theme_image($theme-name, "pictos/base64/minus.png"); 
-		background-image: url("../images/icons/minus.png");
-	}
+	}	
 	.rm-equalicon{
 		color:#acacac;font-size:105%;
 		text-align:center;
@@ -40,8 +18,10 @@
 		padding: 14px 14px;
 	}
 	.rm-totalamount{
+		font-size: 82%;
 		color:#767676;        
-		text-align: center;
+		padding-left: 10px;
+		font-weight: bold;
 	}
 	.rm-digittext{
 		float: left;
@@ -52,52 +32,36 @@
         //margin-left: 18px;
         line-height: 60px;
         margin-top: -15px;
-        text-align: right;
-        width: 36px;
+        //text-align: right;
+        //width: 36px;
 	}
-	.rm-billtext, .rm-invoicetext{
+	.rm-invoicetext{
 		font-size:82%;
         color:#333;
         text-align:left
 	}
-	.rm-overduetext{
-		
+	.rm-billtext{
+		font-size:82%;
+        color:#646464;
+        text-align:left;
+		display: table;
+	}
+	.rm-overduetext{		
 		background-image: url("../images/icons/overDue_icon.png");
 		background-position:right center; background-repeat: no-repeat;
 		padding-right:25px;font-size:80%;font-weight:bold;color:#333;text-align:left
 	}
-	.rm-billamount, .rm-invoiceamount{
+	.rm-invoiceamount{
 		font-size:80%;
         color:#787878;
         text-align:left
 	}
-	.rm-bartitle{
-		font-size:85%;color:#767676;
-	}
-	.rm-barnextarrow{
-		//background-image: theme_image($theme-name, "pictos/base64/next_grey_arrow.png"); 
-		background-image: url("../images/icons/next_grey_arrow.png");
-		background-position:right 2px; background-repeat: no-repeat;
-		padding-right:12px;
-	}
-	.rm-bluebar, .rm-greenbar{
-		background-position:left top; background-repeat: no-repeat;
-		width:286px;height:30px;display:block;
-	}
-	.rm-bluebar{
-		//background-image: theme_image($theme-name, "pictos/base64/blue_bar.png");
-		background-image: url("../images/icons/blue_bar.png");
-	}
-	.rm-greenbar{
-		//background-image: theme_image($theme-name, "pictos/base64/green_bar.png");
-		background-image: url("../images/icons/green_bar.png");
-	}
-	.rm-graphimg{
-		//background-image: theme_image($theme-name, "pictos/base64/graph.png");
-		background-image: url("../images/icons/graph.png");
-		background-position:left top; background-repeat: no-repeat;
-		width:290px;height:154px;display:block;
-	}
+	.rm-billamount{
+		font-size:86%;
+		font-weight: bold;
+        color:#969696;
+        text-align:left        
+	}	
 	.rm-reddot{
 		background:red;border-radius:12px;
 		width:5px;height:5px;display:inline-block;
@@ -107,13 +71,7 @@
 		span{
 			font-size:120% !important;
 		}
-	}
-	.rm-dashboardpiechartcolor{
-		border-radius: 90px;
-        border: 5px solid white;
-        box-shadow: 5px 5px 5px #dbdbdb;
-        margin-left: 18px;
-	}
+	}	
 	.rm-hearderbg{
 		background: #ebebeb;
         padding: 6px 14px 4px 14px;
@@ -124,21 +82,24 @@
         font-size: 80%;
 	}
 	.rm-legendcolor {
-		height: 8px;
-		width: 8px;
-		border-radius: 10px;
+		height: 30px;
+		width: 7px;
+		//border-radius: 10px;
 		float: left;
 		margin: 5px 7px 5px 15px;
 	}
 	.rm-legend {
-		font-size: 65%;
-        font-weight: bold;
+		font-size: 72%;
+        //font-weight: bold;
         color: #787878;
-        float: left;
-        width: 80%
+        //float: left;
+        width: 80%;
+        height: 38px;
+        vertical-align: middle;
+    	display: table-cell;
 	}
     .rm-legendpercent{        
-        font-weight: normal;
+        font-weight: bold;
     }
 	.rm-budgetoverviewname {
 		font-size: 70%;
@@ -161,6 +122,20 @@
 	}
     .rm-netpositionamount{               
         color:#969696;        
+    }
+
+    .rm-netposition-income{               
+        color:#a0cf79;
+        font-weight:bold;
+		font-size: 82%;
+    	margin: 5px;		
+   }
+
+    .rm-netposition-expenses{               
+        color:#ec3b55;
+        font-weight:bold;      
+		font-size: 82%;
+    	margin: 5px;		
     }
 
     .rm-budgetoverviewarrow{
