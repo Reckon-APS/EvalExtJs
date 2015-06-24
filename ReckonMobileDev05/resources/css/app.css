@@ -5596,7 +5596,7 @@ body.x-desktop {
   background-image: -webkit-linear-gradient(top, #bebebe, #cbcbcb 10%, #d8d8d8 65%, #d9d9d9);
   background-image: -moz-linear-gradient(top, #bebebe, #cbcbcb 10%, #d8d8d8 65%, #d9d9d9);
   background-image: -o-linear-gradient(top, #bebebe, #cbcbcb 10%, #d8d8d8 65%, #d9d9d9);
-  background-image: linear-gradient(top, #bebebe, #cbcbcb 10%, #d8d8d8 65%, #d9d9d9); }
+  background-image: -ms-linear-gradient(top, #bebebe, #cbcbcb 10%, #d8d8d8 65%, #d9d9d9); }
 .x-toolbar-rm-sortsearch-topbar .x-label, .x-toolbar-rm-sortsearch-topbar .x-form-label {
   font-weight: bold;
   color: #131313;
@@ -6911,7 +6911,9 @@ body.x-desktop {
   line-height: 1.2em;
   display: block;
   overflow: hidden;
-  margin-left: 5px; }
+  margin-left: 5px; 
+  color:#00bd9d;
+}
 
 .rm-togglefield-on .x-input-el {
   padding-right: 25px;
@@ -7540,3 +7542,10 @@ body.x-desktop {
 
 .rm-notesfield-disabled {
   background-image: none; }
+
+.rm-multiselectfield .x-input-el + .x-field-mask::after {
+  opacity: 0; }
+.rm-multiselectfield .x-input-el:checked + .x-field-mask::after {
+  color: #00BD9D;
+  opacity: 1; }
+

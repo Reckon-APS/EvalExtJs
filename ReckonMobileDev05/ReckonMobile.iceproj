@@ -195,6 +195,9 @@
     <Content Include="app\component\ExtSelectField.js">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="app\component\ExtTextAreaField.js">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="app\component\ExtTextField.js">
       <SubType>Content</SubType>
     </Content>
@@ -242,6 +245,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="app\component\RMMsgPopup.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="app\component\RMMultiSelectField.js">
       <SubType>Content</SubType>
     </Content>
     <Content Include="app\component\RMNumberField.js">
@@ -583,6 +589,9 @@
     <Content Include="app\model\TaxStatus.js">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="app\model\Term.js">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="app\model\TimeEntry.js">
       <SubType>Content</SubType>
     </Content>
@@ -665,6 +674,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="app\store\TaxStatuses.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="app\store\Terms.js">
       <SubType>Content</SubType>
     </Content>
     <Content Include="app\store\TimeEntries.js">

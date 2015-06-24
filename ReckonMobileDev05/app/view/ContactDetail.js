@@ -1,6 +1,6 @@
 Ext.define('RM.view.ContactDetail', {
 	extend: 'RM.component.SecurePanel',
-    requires: ['RM.component.SecureFormPanel','RM.component.SecureButton','RM.component.RMPhoneField','RM.component.RMToggleField'],
+	requires: ['RM.component.SecureFormPanel', 'RM.component.SecureButton', 'RM.component.RMPhoneField', 'RM.component.RMToggleField', 'RM.component.RMMultiSelectField'],
 	xtype: 'contactdetail',
     
 	config: {		
@@ -49,23 +49,18 @@ Ext.define('RM.view.ContactDetail', {
                         labelWidth: '8em',
                         rmmandatory: true
 					},{
-                        xtype: 'extselectfield',
-                        name: 'CustomerOrSupplier',
+					    xtype: 'rmmultiselectfield',
+					    name: 'CustomerOrSupplier',
 						itemId: 'customerOrSupplier',
 						label: 'Type of contact',
                         labelWidth: '9em',                        
                         options: [                            
-                            {text: 'Customer', value: 'Customers'},
-                            {text: 'Supplier',  value: 'Suppliers'},
-                            {text: 'Customer and Supplier',  value: 'CustomerSuppliers'}
-                        ],
-                        rmmandatory: true,
-                        usePicker: true,						
-                        autoSelect: false,                                        
-						ui:'plain',
+                            {text: 'Customer', value: 'Customer'},
+                            {text: 'Supplier', value: 'Supplier'}                        
+                        ],                        
+                        rmmandatory: true,                                          
                         placeHolder: 'choose'
-					},
-                    {
+                    },{
                         xtype: 'extselectfield',
                         cls: 'rm-flatfield', 
                         usePicker: true,

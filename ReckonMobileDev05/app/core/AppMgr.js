@@ -360,6 +360,37 @@ Ext.define('RM.core.AppMgr', {
     },
 
     
+    deleteServerRec: function (serverApiName, cb, cbs, cbFail, msg, cbNetFail) {
+
+        this.clearLoadingTimer();
+
+        RM.ViewMgr.showLoadingMask(msg ? msg : 'Deleting...');
+        Ext.Ajax.request({
+            url: this.getApiUrl(serverApiName),
+            method: 'Delete',
+            timeout: RM.Consts.Api.TIME_OUT,
+            success: function (response) {
+                RM.ViewMgr.hideLoadingMask();
+                var resp = Ext.decode(response.responseText);
+                if (resp.success && cb) {
+                    cb.call(cbs, resp.recs, resp.eventMsg, resp.eventSubId, resp.eventTypeId);
+                }
+                else if (!resp.success && cbFail) {
+                    cbFail.call(cbs, resp.recs, resp.eventMsg);
+                }
+
+            },
+            failure: function (resp) {
+                RM.ViewMgr.hideLoadingMask();
+                if (cbNetFail && resp.status != 401) {
+                    cbNetFail.call(cbs, resp);
+                }
+                RM.AppMgr.handleServerCallFailure(resp);
+            }
+        });
+
+    },
+
     setLoadingTimer: function(){
         this.clearLoadingTimer();
         RM.ViewMgr.showLoadingMask(); 

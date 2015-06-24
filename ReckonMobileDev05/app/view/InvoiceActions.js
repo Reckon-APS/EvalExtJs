@@ -45,7 +45,16 @@ Ext.define('RM.view.InvoiceActions', {
             iconCls: 'rm-invoiceactioniconcls',
             iconAlign: 'left'	
             			
-        }/*,{
+        },{
+            text: 'Mark as paid',
+            itemId: 'markAsPaid',
+            cls: 'rm-arrowimgbtn rm-invoiceaction-bg rm-invoiceactionbtnlabel',
+            icon: 'resources/images/icons/rm-tick.svg',
+            iconCls: 'rm-invoiceactioniconcls',
+            iconAlign: 'left'
+
+        }
+        /*,{
 			text: 'Receive payment with Pay',
 			itemId: 'payApp',
 			cls: 'rm-arrowimgbtn rm-invoiceaction-bg rm-invoiceactionbtnlabel',
@@ -54,6 +63,20 @@ Ext.define('RM.view.InvoiceActions', {
             iconAlign: 'left'	
             			
         }*/,{
+            text: 'Return to draft',
+            itemId: 'draft',
+            cls: 'rm-arrowimgbtn rm-invoiceaction-bg rm-invoiceactionbtnlabel',
+            icon: 'resources/images/icons/rm-note.svg',
+            iconCls: 'rm-invoiceactioniconcls',
+            iconAlign: 'left'            			
+        }, {
+            text: 'Delete invoice',
+            itemId: 'deleteInvoice',
+            cls: 'rm-arrowimgbtn rm-invoiceaction-bg rm-invoiceactionbtnlabel',
+            icon: 'resources/images/icons/rm-cross.svg',
+            iconCls: 'rm-invoiceactioniconcls',
+            iconAlign: 'left'
+        }, {
 			text: 'Email customer',
 			itemId: 'email',
 			cls: 'rm-arrowimgbtn rm-invoiceaction-bg rm-invoiceactionbtnlabel',

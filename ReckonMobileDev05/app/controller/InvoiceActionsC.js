@@ -7,9 +7,12 @@ Ext.define('RM.controller.InvoiceActionsC', {
             invActions: 'invoiceactions',
             invStatus: 'invoiceactions #invoiceStatus',
             invApproveBtn: 'invoiceactions #approve',
+            invDraftBtn: 'invoiceactions #draft',
+            invDeleteBtn: 'invoiceactions #deleteInvoice',
             invPayBtn: 'invoiceactions #pay',
             invPayAppBtn: 'invoiceactions #payApp',
             invEmailBtn: 'invoiceactions #email',
+            invMarkAsPaidBtn: 'invoiceactions #markAsPaid',
             warningMessage: 'invoiceactions #lockOffWarning'
         },
         control: {
@@ -21,7 +24,13 @@ Ext.define('RM.controller.InvoiceActionsC', {
             },
             'invoiceactions #approve': {
                 tap: 'onApprove'
-            },            
+            },
+            'invoiceactions #draft': {
+                tap: 'onDraft'
+            },
+            'invoiceactions #deleteInvoice': {
+                tap: 'onDelete'
+            },
             'invoiceactions #pay': {
                 tap: 'onPay'
             },
@@ -36,6 +45,9 @@ Ext.define('RM.controller.InvoiceActionsC', {
             },
             'invoiceactions #history': {
                 tap: 'onHistory'
+            },
+            'invoiceactions #markAsPaid': {
+                tap: 'onMarkAsPaid'
             }
         }
 
@@ -58,11 +70,16 @@ Ext.define('RM.controller.InvoiceActionsC', {
             this.getInvStatus().setHtml(RM.InvoicesMgr.getInvoiceStatusText(this.invoiceData.Status));
         }
         
-        var hideApprove = !(RM.InvoicesMgr.isInvoiceStatusApprovable(this.invoiceData.Status) && RM.PermissionsMgr.canApprove('Invoices'));        
+        var hideApprove = !(RM.InvoicesMgr.isInvoiceStatusApprovable(this.invoiceData.Status) && RM.PermissionsMgr.canApprove('Invoices'));
+        //Draft button can only be visible when Approvals is on and if the Invoice has received no payments
+        var hideDraft = !(RM.PermissionsMgr.canAddEdit('Invoices') && RM.CashbookMgr.getSalesPreferences().ApprovalProcessEnabled && (this.invoiceData.Status === RM.Consts.InvoiceStatus.APPROVED && this.invoiceData.BalanceDue === this.invoiceData.Amount));
+        //Delete option can only be visible when invoice is draft or approved and unpaid and canDelete permission turned on 
+        var hideDelete = !(RM.PermissionsMgr.canDelete('Invoices') && (this.invoiceData.Status === RM.Consts.InvoiceStatus.DRAFT || this.invoiceData.Status === RM.Consts.InvoiceStatus.APPROVED) && this.invoiceData.BalanceDue === this.invoiceData.Amount);
         var hideEmail = !(RM.InvoicesMgr.isInvoiceStatusEmailable(this.invoiceData.Status) && RM.PermissionsMgr.canDo('Invoices', 'PrintEmail'));
         var hidePay = !RM.InvoicesMgr.isInvoiceStatusPayable(this.invoiceData.Status) || 
                       !RM.PermissionsMgr.canAddEdit('Receipts') ||
                       this.invoiceData.BalanceDue === 0;
+        var hideMarkAsPaid = !(this.invoiceData.Amount == 0 && !RM.CashbookMgr.getSalesPreferences().ApprovalProcessEnabled && this.invoiceData.Status != RM.Consts.InvoiceStatus.PAID && RM.PermissionsMgr.canApprove('Invoices')); 
                 
         // Handle lock-off rules
         if(RM.CashbookMgr.getLockOffDate().getTime() >= this.invoiceData.Date.getTime()) {
@@ -77,27 +94,89 @@ Ext.define('RM.controller.InvoiceActionsC', {
             }            
         }
         
+        this.getInvDraftBtn().setHidden(hideDraft);
+        this.getInvDeleteBtn().setHidden(hideDelete);
         this.getInvApproveBtn().setHidden(hideApprove);        
         this.getInvEmailBtn().setHidden(hideEmail);
-        this.getInvPayBtn().setHidden(hidePay);   
+        this.getInvPayBtn().setHidden(hidePay);
+        this.getInvMarkAsPaidBtn().setHidden(hideMarkAsPaid);
     },
     
-    onApprove: function () {        
-        RM.AppMgr.saveServerRec('InvoiceApprove', true, {InvoiceId: this.invoiceData.InvoiceId},
+    onApprove: function () {
+        RM.AppMgr.getServerRecById('CustomerAvailableCreditLimit', this.invoiceData.CustomerId,
+                  function (data) {
+                      if (data.HasCreditLimit && this.invoiceData.BalanceDue > 0 && data.AvailableCredit < this.invoiceData.BalanceDue) {
+                          RM.AppMgr.showCustomiseButtonMsgBox("This invoice will exceed the customer's credit limit. Approve anyway?", 'YES, APPROVE INVOICE', 'NO',
+                           function (result) {
+                               if (result === 'yes') {
+                                   this.approve();
+                               }
+                               else {
+                                   //Stay on the current screen for the user user to modify.
+                                   return;
+                               }
+                           }, this);
+                      }
+                      else {
+                          this.approve();
+                      };
+                  },
+                  this,
+                  function (eventMsg) {
+                      RM.AppMgr.showOkMsgBox(eventMsg);
+                  }
+              );
+    },
+    approve: function () {
+        RM.AppMgr.saveServerRec('InvoiceChangeStatus', false, { InvoiceId: this.invoiceData.InvoiceId, Status: RM.Consts.InvoiceStatus.APPROVED },
+                function () {
+                    RM.AppMgr.itemUpdated('invoice');
+                    RM.AppMgr.showSuccessMsgBox('Invoice ' + this.invoiceData.InvCode + ' was Approved.');
+                    this.invoiceData.Status = RM.Consts.InvoiceStatus.APPROVED;
+                    this.getInvStatus().addCls("rm-approved-hearderbg");
+                    this.onShow();
+                },
+                this,
+                function (recs, eventMsg) {
+                    RM.AppMgr.showOkMsgBox(eventMsg);
+                }
+            );
+    },
+    onDraft: function(){
+        RM.AppMgr.saveServerRec('InvoiceChangeStatus', false, { InvoiceId: this.invoiceData.InvoiceId, Status: RM.Consts.InvoiceStatus.DRAFT },
 			function () {
-                RM.AppMgr.itemUpdated('invoice');
-                RM.AppMgr.showSuccessMsgBox('Invoice ' + this.invoiceData.InvCode +' was Approved.');     
-                this.invoiceData.Status = RM.Consts.InvoiceStatus.APPROVED;
-                this.getInvStatus().addCls("rm-approved-hearderbg");
-                this.onShow();
+			    RM.AppMgr.itemUpdated('invoice');
+			    RM.AppMgr.showSuccessMsgBox('Invoice ' + this.invoiceData.InvCode + ' status changed to draft.');
+			    this.invoiceData.Status = RM.Consts.InvoiceStatus.DRAFT;
+			    this.getInvStatus().removeCls("rm-approved-hearderbg");
+			    this.onShow();
 			},
 			this,
-            function(recs, eventMsg){
+            function (recs, eventMsg) {
                 RM.AppMgr.showOkMsgBox(eventMsg);
             }
-		);  
-    },    
+		);
+    },
     
+    onDelete: function () {
+        RM.AppMgr.showYesNoMsgBox("Do you want to delete the invoice?",
+            function (result) {
+                if (result === 'yes') {
+                    RM.AppMgr.deleteServerRec('Invoices/' + this.invoiceData.InvoiceId,
+                        function () {
+                            RM.AppMgr.itemUpdated('invoice');
+                            RM.AppMgr.showSuccessMsgBox('Invoice ' + this.invoiceData.InvCode + ' deleted.');
+                            RM.ViewMgr.backTo('slidenavigationview');
+                        },
+                        this,
+                        function (recs, eventMsg) {
+                            RM.AppMgr.showOkMsgBox(eventMsg);
+                        }
+                    );
+                }
+            }, this);        
+    },
+
     onPay: function () {
         RM.InvoicesMgr.showAcceptPayment(this.invoiceData);
     },
@@ -121,6 +200,21 @@ Ext.define('RM.controller.InvoiceActionsC', {
 
     onHistory: function () {
         RM.Selectors.showHistory('Invoice', RM.Consts.HistoryTypes.INVOICE, this.invoiceData.InvoiceId);
+    },
+
+    onMarkAsPaid: function () {
+        RM.AppMgr.saveServerRec('InvoiceChangeStatus', false, { InvoiceId: this.invoiceData.InvoiceId, Status: RM.Consts.InvoiceStatus.PAID },
+             function () {
+                 RM.AppMgr.itemUpdated('invoice');
+                 RM.AppMgr.showSuccessMsgBox('Invoice ' + this.invoiceData.InvCode + ' has been marked to paid.');
+                 this.invoiceData.Status = RM.Consts.InvoiceStatus.PAID;
+                 this.getInvMarkAsPaidBtn().setHidden(true);
+             },
+             this,
+             function (recs, eventMsg) {
+                 RM.AppMgr.showOkMsgBox(eventMsg);
+             }
+         );
     },
 
     back: function () {

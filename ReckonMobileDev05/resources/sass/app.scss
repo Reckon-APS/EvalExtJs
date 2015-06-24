@@ -1686,6 +1686,7 @@ $font-family: 'Open Sans', sans-serif !default;
 		display: block;
 		overflow: hidden;		
         margin-left: 5px;
+        color:#00bd9d;
 	}
 }
 
@@ -2460,8 +2461,21 @@ $font-family: 'Open Sans', sans-serif !default;
 
 .rm-notesfield-empty{
     background-image: url("../images/icons/rm-notes-absent.svg");
-}
+    }
+.rm-multiselectfield{
+    
+    //unchecked
+    .x-input-el + .x-field-mask::after {        
+        opacity: 0;
+    }
 
+    //checked
+    .x-input-el:checked + .x-field-mask::after {
+        color: #00BD9D;
+        opacity: 1;
+    }
+
+}
 .rm-notesfield-disabled{
     background-image: none;
 }

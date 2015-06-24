@@ -83,7 +83,7 @@ Ext.define('RM.controller.InvoiceDetailC', {
         this.detailsCbs = cbs;
 
         this.noteText = '';
-        this.dataLoaded = false;
+        this.dataLoaded = false;        
                 
         if (isCreate) {
             var today = new Date();
@@ -111,10 +111,10 @@ Ext.define('RM.controller.InvoiceDetailC', {
         RM.ViewMgr.showPanel(view);
     },
 
-    onShow: function () {        
-        var dateField = this.getDateFld();
-        
+    onShow: function () {
         RM.ViewMgr.regFormBackHandler(this.back, this);
+
+        var dateField = this.getDateFld();
         this.getInvoiceTitle().setHtml(this.isCreate ? 'Add invoice' : 'View invoice');
         
         this.applyViewEditableRules();        
@@ -151,16 +151,9 @@ Ext.define('RM.controller.InvoiceDetailC', {
                 if(curDateValue.getTime() <= lockOffDate.getTime()) {
                     lockOffDate.setDate(lockOffDate.getDate() + 1);
                     dateField.updateValue(lockOffDate);                    
-                }
-                
-                //Load the terms list from the store
-                var store = this.getTermsFld().getStore();
-                store.getProxy().setUrl(RM.AppMgr.getApiUrl('Terms'));
-                store.getProxy().setExtraParams({ Id: RM.CashbookMgr.getCashbookId() });
-                //Below two line are commented out for now as there is no default term coming in
-                //store.getProxy().setUrl(RM.AppMgr.getApiUrl('Terms/GetContactTerms'));
-                //store.getProxy().setExtraParams({ CashbookId: RM.CashbookMgr.getCashbookId(), CustomerId: RM.Consts.EmptyGuid, OnlyCustomerTerm: true, OnlySupplierTerm: false });
-                RM.AppMgr.loadStore(store, this.setCashbookDefaultTerm, this);
+                }                
+
+                this.setCashbookDefaultTerm();
                 this.dataLoaded = true;
             }           
         }
@@ -233,8 +226,14 @@ Ext.define('RM.controller.InvoiceDetailC', {
     loadFormData: function () {        
         RM.AppMgr.getServerRecById('Invoices', this.detailsData.InvoiceId,
 			function (data) {
-                
-                if(data.Status === 2 && data.BalanceDue < data.Amount) {
+			    //To reset readonly property when invoice status is changed back to draft, fix for bug#25428               
+			    if (data.Status === RM.Consts.InvoiceStatus.DRAFT) {			        
+			        this.getDateFld().setReadOnly(false);			        
+			        this.getTermsFld().setReadOnly(false);
+			        this.getRefNrFld().setReadOnly(false);
+			    }
+
+                if (data.Status === RM.Consts.InvoiceStatus.APPROVED && data.BalanceDue < data.Amount) {
                     this.getInvStatus().setHtml(RM.InvoicesMgr.getPartiallyPaidInvoiceStatusText());                                    
                 }
                 else {
@@ -713,13 +712,12 @@ Ext.define('RM.controller.InvoiceDetailC', {
 
                 RM.AppMgr.getServerRecById('CustomerAvailableCreditLimit', vals.CustomerId,
                         function (data) {
-                            if (data.HasCreditLimit && data.AvailableCredit < vals.BalanceDue) 
+                            if (data.HasCreditLimit && vals.BalanceDue > 0 && data.AvailableCredit < vals.BalanceDue)
                             {
                                 RM.AppMgr.showCustomiseButtonMsgBox("This invoice will exceed the customer's credit limit. Save anyway?", 'YES, SAVE INVOICE', 'NO, CONTINUE EDITING',
                                  function (result) {
                                      if (result === 'yes') {
                                          this.saveInvoice(afterSaveCallback, vals);
-
                                      }
                                      else {
                                          //Stay on the current screen for the user user to modify.
@@ -766,7 +764,10 @@ Ext.define('RM.controller.InvoiceDetailC', {
                         RM.AppMgr.itemUpdated('invoice');
 
                         if (afterSaveCallback) {
-                            if (this.isCreate) { this.detailsData.InvoiceId = recs[0].InvoiceId; }
+                            if (this.isCreate) {
+                                this.detailsData.InvoiceId = recs[0].InvoiceId;
+                                this.detailsData.TemplateId = recs[0].TemplateId;
+                            }
                             this.detailsData.CustomerId = vals.CustomerId;
                             this.detailsData.AccountsReceivableCategoryId = recs[0].AccountsReceivableCategoryId;
                             // Clear the loaded flag to force a reload of invoice information when the view is shown again                            
@@ -783,6 +784,6 @@ Ext.define('RM.controller.InvoiceDetailC', {
                         RM.AppMgr.showOkMsgBox(eventMsg);
                     }
         );
-   }
+    }
   
 });

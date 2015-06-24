@@ -307,7 +307,7 @@ Ext.define('RM.controller.ContactDetailC', {
 
     validateForm: function (vals) {
         var isValid = true;
-        if (vals.IsCustomer == null || vals.IsSupplier == null) {
+        if (vals.IsCustomer == null && vals.IsSupplier == null) {
             //this.getCustomerOrSupplier().setLabelCls('rm-manfld-notset-lbl');
             this.getCustomerOrSupplier().showValidation(false);
             isValid = false;
@@ -482,21 +482,14 @@ Ext.define('RM.controller.ContactDetailC', {
     },
 
     onCustomerOrSupplierSelect: function () {
-
-        var selection = this.getCustomerOrSupplier().getValue();
-
-        if (selection == 'CustomerSuppliers') {
+        var selection = this.getCustomerOrSupplier().getSelectedOptions();
+        if (selection && selection.Customer) {
             this.detailsData.IsCustomer = true;
+        }
+        if (selection && selection.Supplier) {
             this.detailsData.IsSupplier = true;
         }
-        else if (selection == 'Customers') {
-            this.detailsData.IsCustomer = true;
-            this.detailsData.IsSupplier = false;
-        }
-        else if (selection == 'Suppliers') {
-            this.detailsData.IsCustomer = false;
-            this.detailsData.IsSupplier = true;
-        }
+        
         //hide and reset paymentterms and creditlimit fields when supplier is selected 
         this.getTermsFld().setHidden(!this.detailsData.IsCustomer);
         this.getCreditLimitFld().setHidden(!this.detailsData.IsCustomer);
@@ -565,15 +558,14 @@ Ext.define('RM.controller.ContactDetailC', {
 
     loadFieldsData: function (data) {
 
-        if (data.IsCustomer == true && data.IsSupplier == true) {
-            this.getCustomerOrSupplier().setValue('CustomerSuppliers');
+        var selection = {};
+        if (data.IsCustomer) {
+            selection.Customer = true;
         }
-        else if (data.IsCustomer == true && data.IsSupplier == false) {
-            this.getCustomerOrSupplier().setValue('Customers');
+        if (data.IsSupplier) {
+            selection.Supplier = true;
         }
-        else if (data.IsCustomer == false && data.IsSupplier == true) {
-            this.getCustomerOrSupplier().setValue('Suppliers');
-        }
+        this.getCustomerOrSupplier().setSelectedOptions(selection);        
 
         if (data.IsPerson == true) {
             this.getBusinessOrIndividual().setValue('Individual');

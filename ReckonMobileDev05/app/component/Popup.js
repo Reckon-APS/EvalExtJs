@@ -30,6 +30,10 @@ Ext.define('RM.component.Popup', {
     initialize: function() {
 
         this.callParent();
+        this.on('hide', function () {
+            this.destroy();
+        }, this);
+
         this.insert(0, {
             xtype: 'button',
             //ui: 'close',
@@ -37,7 +41,7 @@ Ext.define('RM.component.Popup', {
             docked: 'bottom',
             text: 'CANCEL',
             handler: function() {
-                this.hide()
+                this.hide();             
             },
             scope: this
         });
