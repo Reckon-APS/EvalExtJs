@@ -21,17 +21,8 @@ Ext.define('RM.controller.AboutC', {
 		RM.ViewMgr.showPanel(view);		
 	},
     
-    onShow: function() {
-        var that = this;
-        try {
-            cordova.AppVersion.getAppVersion(function (version) {
-                that.getVersion().setHtml('Version: ' + version);
-            });
-        }
-        catch(e) {
-            this.getVersion().setHtml('unknown version');
-        }
-        
+	onShow: function () {
+        this.getVersion().setHtml('Version: ' + RM.AppMgr.getAppVersion());        
         this.getApiVersion().setHtml('Api Version: ' + RM.HomeSettingsMgr.getSetting('ApiVersion') || 'unknown');
     }
 

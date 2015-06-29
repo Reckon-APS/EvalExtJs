@@ -63,10 +63,12 @@ Ext.define('RM.core.AppMgr', {
         }        
     },
     
-    setHeaders: function(clientVersion) {        
+    setHeaders: function (clientVersion) {
+        var that = this;
         Ext.Ajax.setDefaultHeaders({
             'X-APIV': RM.Consts.Api.VERSION,
-            'X-CLIENTV': clientVersion
+            'X-CLIENTV': clientVersion,
+            'X-APPV': that.getAppVersion()
         }); 
     },
     
@@ -974,6 +976,20 @@ Ext.define('RM.core.AppMgr', {
         );*/           
         
         
+    },
+
+    getAppVersion: function () {
+        var appVersion = '';
+        try {
+            cordova.AppVersion.getAppVersion(function (version) {
+                appVersion = version;
+            });
+        }
+        catch (e) {
+            appVersion = 'unknown';
+        }
+
+        return appVersion;
     }
 
 });
