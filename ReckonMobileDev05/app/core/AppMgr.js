@@ -67,8 +67,7 @@ Ext.define('RM.core.AppMgr', {
         var that = this;
         Ext.Ajax.setDefaultHeaders({
             'X-APIV': RM.Consts.Api.VERSION,
-            'X-CLIENTV': clientVersion,
-            'X-APPV': that.getAppVersion()
+            'X-CLIENTV': clientVersion
         }); 
     },
     
