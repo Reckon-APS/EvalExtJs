@@ -110,7 +110,8 @@ Ext.define('RM.view.TimeSheetDetail', {
                         hidden: true,
                         clearIcon: false,
                         placeHolder: 'enter (optional)',
-                        readOnly: true
+                        readOnly: true,
+                        enableTap: true             //enableTap config property is useful when we want to fire tap event on disabled field
                     }, {
                         xtype: 'button',
                         itemId: 'loadbtn',

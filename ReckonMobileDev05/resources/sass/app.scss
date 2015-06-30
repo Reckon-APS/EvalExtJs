@@ -2120,12 +2120,12 @@ $font-family: 'Open Sans', sans-serif !default;
 .rm-flatfield-disabled{
     @include rm_flatfield("");
     	.x-form-label span{			
-			color: #C3C2C2;	
+			color: #B2B2B2;	
 		}     
         
 		.x-input-el{
-			color: #C3C2C2 !important;
-            -webkit-text-fill-color: #C3C2C2 !important;        
+			color: #B2B2B2 !important;
+            -webkit-text-fill-color: #B2B2B2 !important;        
 		}	
         
         input::-webkit-input-placeholder {
@@ -2137,7 +2137,7 @@ $font-family: 'Open Sans', sans-serif !default;
 .rm-flatfield-disabled-label-look{
     @include rm_flatfield("");      
 		.x-input-el{
-			color: #C3C2C2 !important;     
+			color: #B2B2B2 !important;     
             text-align: left; 
             margin-left: 5px; 
             font-weight: normal;               

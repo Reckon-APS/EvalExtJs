@@ -12,8 +12,9 @@ Ext.define('RM.component.ExtTextField', {
         }
         
         this.element.on('tap', 
-            function (e) { 
-                if(!Ext.fly(e.target).hasCls('x-clear-icon') && !this.getDisabled()){
+            function (e) {
+                //enableTap config property is useful when we want to fire tap event on disabled field
+                if((!Ext.fly(e.target).hasCls('x-clear-icon') && !this.getDisabled()) || this.config.enableTap){
                     this.fireEvent('tap', this, e);    
                 }
             }, 

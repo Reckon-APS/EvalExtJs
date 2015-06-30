@@ -258,13 +258,13 @@ Ext.define('RM.controller.TimeSheetDetailC', {
 
     },
     
-    editDescription: function(){
-        var isEditable = true; //change this when doing time sheet business rules
-        
+    editDescription: function(){      
+        var editable = this.isEditable() && !this.getDescription().getDisabled();
+
         RM.Selectors.showNoteText(
             'Description',
-            isEditable,
-            'OK',
+            editable,
+            'SAVE',
             this.noteText,
             function(noteText){
                 RM.ViewMgr.back();
