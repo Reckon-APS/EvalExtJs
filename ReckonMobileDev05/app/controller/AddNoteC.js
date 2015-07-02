@@ -29,7 +29,7 @@ Ext.define('RM.controller.AddNoteC', {
         this.noteTitle = title;
         this.isEditable = isEditable;
         this.saveText = saveText;
-        this.noteText = text;
+        this.noteText = text || '';     //set this to empty string when text value is null so while going back app wouldn't pop up save msg if there's no change in note 
         this.noteCb = cb;
         this.noteCbs = cbs;
         var view = this.getAddNote();
@@ -62,7 +62,7 @@ Ext.define('RM.controller.AddNoteC', {
     },
 
     isFormDirty: function(){        
-        return this.getNoteText().getValue() != this.noteText;        
+        return this.getNoteText().getValue() !== this.noteText;        
     },    
     
     onAdd: function () {

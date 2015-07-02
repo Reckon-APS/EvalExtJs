@@ -63,9 +63,10 @@ Ext.define('RM.controller.TimeSheetWeeklyC', {
                 });
                 row.setValues({ Date: weekDaysArray[i] });
             }
-            view.add({ xtype: 'component', cls: 'rm-field-border-top' });
+            view.add({ xtype: 'component', cls: 'rm-field-border-top' });            
             me.initialFormValues = me.getAllFormValues();
         }, 250);
+        this.applyBillablePermission();
         RM.ViewMgr.showPanel(view);
     },
     
@@ -75,6 +76,10 @@ Ext.define('RM.controller.TimeSheetWeeklyC', {
 
     onHide: function () {
         RM.ViewMgr.deRegFormBackHandler(this.back);
+    },
+
+    applyBillablePermission: function () {
+        this.getBillableCheckbox().setDisabled(!RM.PermissionsMgr.canBillEntry('Timesheets'));
     },
 
     loadTimeData: function () {
@@ -120,13 +125,14 @@ Ext.define('RM.controller.TimeSheetWeeklyC', {
             this.loadTimeData();
         } else {
             this.setWeekDaysData(this.editedFieldValues);
-        }
+        }        
     },
 
     onResetBtnTap: function () {
         this.editedFieldValues = this.readWeekDaysData();
         this.turnWeekdaysEditMode(false);
         this.showDateFieldAsDisabledLabel(true);
+        this.applyBillablePermission();
     },
 
     turnWeekdaysEditMode: function(editVal){

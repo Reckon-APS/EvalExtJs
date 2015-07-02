@@ -1,5 +1,5 @@
 Ext.define('RM.view.TimeSheets', {
-    extend: 'Ext.Panel',
+    extend: 'RM.component.SecurePanel',
     xtype: 'timesheets',
     requires: ['RM.component.RMList', 'RM.component.RMCalendar'],
     config: {
@@ -19,6 +19,8 @@ Ext.define('RM.view.TimeSheets', {
 					}, {
 					    text: 'Add',
 					    itemId: 'add',
+					    xtype: 'securebutton',
+					    permissionFor: 'Timesheets',
 					    ui: 'rm_topbarbuttonright'
 					}
 			    ]

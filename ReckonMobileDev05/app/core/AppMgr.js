@@ -975,20 +975,6 @@ Ext.define('RM.core.AppMgr', {
         );*/           
         
         
-    },
-
-    getAppVersion: function () {
-        var appVersion = '';
-        try {
-            cordova.AppVersion.getAppVersion(function (version) {
-                appVersion = version;
-            });
-        }
-        catch (e) {
-            appVersion = 'unknown';
-        }
-
-        return appVersion;
     }
 
 });
