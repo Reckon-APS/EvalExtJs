@@ -70,6 +70,10 @@ Ext.define('RM.core.PermissionsMgr', {
     canSelect: function(permissionName){
         return this.canDo(permissionName, 'Select');
     },
+
+    canBillEntry: function(permissionName){
+        return this.canDo(permissionName, 'BillEntry');
+    },
     
     triggerUpdateEvent: function() {
         this.app.fireEvent('rm-permissionsupdated');

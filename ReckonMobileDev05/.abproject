@@ -17,7 +17,7 @@
   ],
   "iOSStatusBarStyle": "Default",
   "AndroidHardwareAcceleration": "true",
-  "BundleVersion": "2.3",
+  "BundleVersion": "2.5",
   "iOSDisplayName": "",
   "iOSDeviceFamily": [
     "1",

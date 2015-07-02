@@ -97,6 +97,7 @@ Ext.define('RM.controller.TimeSheetDetailC', {
             else{
                 timesheetForm.reset();
                 timesheetForm.setValues(this.detailsData);
+                this.applyBillablePermission();
                 this.initialFormValues = timesheetForm.getValues();
             }
             this.dataLoaded = true;
@@ -105,16 +106,19 @@ Ext.define('RM.controller.TimeSheetDetailC', {
     },
 
     isEditable: function () {
-        return (!RM.TimeSheetsMgr.isTimesheetInvoicedOrBilled(this.detailsData.Status));
-        //    &&
-        //RM.PermissionsMgr.canAddEdit('TimeSheets');
+        return (!RM.TimeSheetsMgr.isTimesheetInvoicedOrBilled(this.detailsData.Status) && RM.PermissionsMgr.canAddEdit('Timesheets'));
     },
 
     applyViewEditableRules: function () {
         var editable = this.isEditable();
         this.getSaveBtn().setHidden(!editable);
-        this.getDeleteBtn().setHidden(!editable && !this.isCreate);
+        this.getDeleteBtn().setHidden((!editable && !this.isCreate) || !RM.PermissionsMgr.canDelete('Timesheets'));
         this.getTimeSheetForm().setDisabled(!editable);
+        this.applyBillablePermission();
+    },
+
+    applyBillablePermission: function(){
+        this.getBillableCheckbox().setDisabled(!RM.PermissionsMgr.canBillEntry('Timesheets'));
     },
 
     openInEditMode: function() {
@@ -169,7 +173,7 @@ Ext.define('RM.controller.TimeSheetDetailC', {
         this.getDescription().setDisabled(!editVal);
         this.getResetBtn().setHidden(!editVal);
         this.getLoadBtn().setHidden(editVal);
-        this.getSaveBtn().setHidden(!editVal);
+        this.getSaveBtn().setHidden(!editVal);        
     },
 
     onLoadBtnTap: function () {
@@ -189,6 +193,7 @@ Ext.define('RM.controller.TimeSheetDetailC', {
 
     onResetBtnTap: function () {
         this.turnTimeEditMode(false);
+        this.applyBillablePermission();
     },
 
     onDelete: function () {

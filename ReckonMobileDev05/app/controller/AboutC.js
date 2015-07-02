@@ -22,8 +22,17 @@ Ext.define('RM.controller.AboutC', {
 	},
     
 	onShow: function () {
-        this.getVersion().setHtml('Version: ' + RM.AppMgr.getAppVersion());        
-        this.getApiVersion().setHtml('Api Version: ' + RM.HomeSettingsMgr.getSetting('ApiVersion') || 'unknown');
-    }
+	    var that = this;
+	    try {
+	        cordova.AppVersion.getAppVersion(function (version) {
+	            that.getVersion().setHtml('Version: ' + version);
+	        });
+	    }
+	    catch (e) {
+	        this.getVersion().setHtml('unknown version');
+	    }
+
+	    this.getApiVersion().setHtml('Api Version: ' + RM.HomeSettingsMgr.getSetting('ApiVersion') || 'unknown');
+	}
 
 });
