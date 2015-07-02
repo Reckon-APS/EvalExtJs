@@ -65,7 +65,12 @@ Ext.define('RM.component.InvoiceLineItems', {
     },
 
     onAddItem: function () {
-        RM.InvoicesMgr.showChooseItemPopup(this.customerId, { taxStatus: this.taxStatus, invoiceDate: this.invoiceDate }, this.addNewLineItems, this);
+        if (this.customerId == null) {
+            RM.AppMgr.showOkMsgBox("You must select a Customer before adding an invoice line.");
+        }
+        else {
+            RM.InvoicesMgr.showChooseItemPopup(this.customerId, { taxStatus: this.taxStatus, invoiceDate: this.invoiceDate }, this.addNewLineItems, this);
+        }
     },
 
     addNewLineItems: function(items){
