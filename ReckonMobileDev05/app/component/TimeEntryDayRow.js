@@ -55,12 +55,16 @@ Ext.define('RM.component.TimeEntryDayRow', {
         value ? field.addCls(['rm-notesfield-disabled']) : field.removeCls(['rm-notesfield-disabled']);
     },
 
+    isEditable: function () {
+        return RM.PermissionsMgr.canAddEdit('Timesheets');
+    },
+
     editDescription: function () {
-        var isEditable = true; //change this when doing time sheet business rules
+        var editable = this.isEditable();
         RM.Selectors.showNoteText(
             'Notes',
-            isEditable,
-            'OK',
+            editable,
+            'SAVE',
             this.noteText,
             function (noteText) {
                 RM.ViewMgr.back();

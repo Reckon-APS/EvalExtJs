@@ -144,8 +144,7 @@ Ext.define('RM.view.InvoiceDetail', {
                     border: '1 0 1 0',
                     style: 'border-color: #DBDBDB; border-style: solid;'							
 				},{
-					xtype: 'invoicelineitems',
-					padding: 5
+					xtype: 'invoicelineitems'					
 				}
 			]
         }

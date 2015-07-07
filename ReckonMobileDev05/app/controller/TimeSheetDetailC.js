@@ -267,7 +267,7 @@ Ext.define('RM.controller.TimeSheetDetailC', {
         var editable = this.isEditable() && !this.getDescription().getDisabled();
 
         RM.Selectors.showNoteText(
-            'Description',
+            'Notes',
             editable,
             'SAVE',
             this.noteText,

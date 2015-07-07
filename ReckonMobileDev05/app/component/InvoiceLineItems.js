@@ -22,25 +22,12 @@ Ext.define('RM.component.InvoiceLineItems', {
         this.lineItems = {};
 
         this.add({
-            xtype: 'container',
-            layout: 'hbox',
-            cls: 'rm-whitebg',
-            items: [{
-                xtype: 'component',
-                html: this.getItemsLabelHtml(true),
-                cls: 'rm-invoicelineitem-text'
-            }, {
-                xtype: 'spacer'
-            }, {
                 xtype: 'button',
-                text: 'Add',
-                action: 'addItem',
-                ui: 'plain',
+                text: 'ADD INVOICE LINE',
+                action: 'addItem',                
                 cls: 'rm-invoicelineitem-add'               
-            }
-			]
         });
-
+        
     },
     
     setTaxStatus: function(taxStatus){
@@ -60,9 +47,9 @@ Ext.define('RM.component.InvoiceLineItems', {
         this.query('button[action=addItem]')[0].setHidden(!editable);
     },
     
-    getItemsLabelHtml: function(valid){
-        return valid ? 'Items/Accounts <span class="rm-colorred">*</span>' : '<span class="rm-colorred">Items/Accounts *</span>';        
-    },
+    //getItemsLabelHtml: function(valid){
+    //    return valid ? 'Items/Accounts <span class="rm-colorred">*</span>' : '<span class="rm-colorred">Items/Accounts *</span>';        
+    //},
 
     onAddItem: function () {
         if (this.customerId == null) {
@@ -101,15 +88,15 @@ Ext.define('RM.component.InvoiceLineItems', {
 			xtype: 'container',            
 			cls: 'rm-whitebg',
 			layout: {
-				type: 'fit',                
-                
+				type: 'fit'    
 			},
 			margin: '1 0 1 4',
 			items: [
 				{
 					xtype: 'container',                        
 					layout: 'hbox',					
-                    scrollable: 'none',
+					scrollable: 'none',
+					cls: 'rm-p5',
 					items:[
 						{
 							xtype: 'container',
@@ -221,7 +208,7 @@ Ext.define('RM.component.InvoiceLineItems', {
     
     validateForm: function(){
         var hasLineItems = this.getViewData().length > 0;
-        this.getComponent(0).getComponent(0).setHtml(this.getItemsLabelHtml(hasLineItems));
+        //this.getComponent(0).getComponent(0).setHtml(this.getItemsLabelHtml(hasLineItems));
         return hasLineItems;
     }
 
