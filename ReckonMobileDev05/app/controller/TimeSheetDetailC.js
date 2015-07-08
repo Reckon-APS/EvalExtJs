@@ -118,7 +118,7 @@ Ext.define('RM.controller.TimeSheetDetailC', {
     },
 
     applyBillablePermission: function(){
-        this.getBillableCheckbox().setDisabled(!RM.PermissionsMgr.canBillEntry('Timesheets'));
+        this.getBillableCheckbox().setDisabled(RM.TimeSheetsMgr.isTimesheetInvoicedOrBilled(this.detailsData.Status) || !RM.PermissionsMgr.canBillEntry('Timesheets'));
     },
 
     openInEditMode: function() {

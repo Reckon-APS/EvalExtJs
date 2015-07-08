@@ -102,6 +102,12 @@ Ext.define('RM.controller.InvoiceDetailC', {
                 BalanceDue: 0,
                 SaveSupport: true
             });
+
+            //Load the terms list from the store
+            var store = Ext.getStore('Terms');
+            store.getProxy().setUrl(RM.AppMgr.getApiUrl('Terms'));
+            store.getProxy().setExtraParams({ Id: RM.CashbookMgr.getCashbookId() });
+            RM.AppMgr.loadStore(store, this.setCashbookDefaultTerm, this);
         }
                 
         var view = this.getInvoiceDetail();
@@ -153,7 +159,6 @@ Ext.define('RM.controller.InvoiceDetailC', {
                     dateField.updateValue(lockOffDate);                    
                 }                
 
-                this.setCashbookDefaultTerm();
                 this.dataLoaded = true;
             }           
         }
@@ -166,9 +171,9 @@ Ext.define('RM.controller.InvoiceDetailC', {
         this.getTermsFld().setValue(null);
         store.each(function (item) {
             if (item.data.IsSelected) {
-                me.getTermsFld().setValue(item.data.TermID);                
+                me.getTermsFld().setValue(item.data.TermID);
             }
-        })
+        });
     },
     
     onHide: function(){
