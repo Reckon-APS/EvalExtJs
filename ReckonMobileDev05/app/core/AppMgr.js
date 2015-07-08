@@ -741,7 +741,7 @@ Ext.define('RM.core.AppMgr', {
         this.showRMMsgPopup(msgText, 'warning', [{ text: yesText, itemId: 'yes', cls: 'x-button-green' }, { text: noText, itemId: 'no' }], cb, cbs);
     },
 
-    showCustomiseButtonMsgBox: function (msgText,icon, yesText, noText, cancelText, cb, cbs) {
+    showCustomise3ButtonMsgBox: function (msgText,icon, yesText, noText, cancelText, cb, cbs) {
         this.showRMMsgPopup(msgText, icon, [{ text: yesText, itemId: 'yes', cls: 'x-button-green' }, { text: noText, itemId: 'no' }, { text: cancelText, itemId: 'cancel', cls: 'x-button-silver' }], cb, cbs);
     },
 
