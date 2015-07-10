@@ -27,6 +27,9 @@ Ext.define('RM.controller.TimeSheetWeeklyC', {
             'timesheetweekly #timeSheetForm exttextfield': {
                 tap: 'onFieldTap'
             },
+            'timesheetweekly #timeSheetForm textfield[name=CustomerName]': {
+                change: 'onCustomerChange'
+            },
             loadBtn: {
                 tap: 'onLoadBtnTap'
             },
@@ -79,7 +82,7 @@ Ext.define('RM.controller.TimeSheetWeeklyC', {
     },
 
     applyBillablePermission: function () {
-        this.getBillableCheckbox().setDisabled(!RM.PermissionsMgr.canBillEntry('Timesheets'));
+        this.getBillableCheckbox().setDisabled(!RM.PermissionsMgr.canBillEntry('Timesheets') || !this.getCustomerId().getValue());
     },
 
     loadTimeData: function () {
@@ -181,7 +184,11 @@ Ext.define('RM.controller.TimeSheetWeeklyC', {
                 RM.Consts.ChargeableItemTypes.SERVICE
 			);
         }        
-    },    
+    },
+
+    onCustomerChange: function () {
+        this.applyBillablePermission();
+    },
 
     goBack: function () {
         RM.ViewMgr.back();        

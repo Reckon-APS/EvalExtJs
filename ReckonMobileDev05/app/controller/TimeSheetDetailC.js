@@ -34,6 +34,9 @@ Ext.define('RM.controller.TimeSheetDetailC', {
             'timesheetdetail #timeSheetForm exttextfield': {
                 tap: 'onFieldTap'
             },
+            'timesheetdetail #timeSheetForm textfield[name=CustomerName]':{
+                change: 'onCustomerChange'
+            },
             loadBtn: {
                 tap: 'onLoadBtnTap'
             },
@@ -118,7 +121,7 @@ Ext.define('RM.controller.TimeSheetDetailC', {
     },
 
     applyBillablePermission: function(){
-        this.getBillableCheckbox().setDisabled(RM.TimeSheetsMgr.isTimesheetInvoicedOrBilled(this.detailsData.Status) || !RM.PermissionsMgr.canBillEntry('Timesheets'));
+        this.getBillableCheckbox().setDisabled(RM.TimeSheetsMgr.isTimesheetInvoicedOrBilled(this.detailsData.Status) || !RM.PermissionsMgr.canBillEntry('Timesheets') || !this.getCustomerId().getValue());
     },
 
     openInEditMode: function() {
@@ -224,7 +227,7 @@ Ext.define('RM.controller.TimeSheetDetailC', {
             RM.Selectors.showCustomers(
                 this.getProjectId().getValue(),
 				function (data) {
-				    this.getTimeSheetForm().setValues({ CustomerId: data.ContactId, CustomerName: data.Description });
+				    this.getTimeSheetForm().setValues({ CustomerId: data.ContactId, CustomerName: data.Description });				    
 				},
 				this
 			);
@@ -261,6 +264,10 @@ Ext.define('RM.controller.TimeSheetDetailC', {
             RM.Selectors.showHistory('Timesheet', RM.Consts.HistoryTypes.TIME, this.detailsData.TimeEntryId);
         }        
 
+    },
+
+    onCustomerChange: function(){
+        this.applyBillablePermission();
     },
     
     editDescription: function(){      
