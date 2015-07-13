@@ -43,7 +43,7 @@ Ext.define('RM.controller.TimeSheetsC', {
         var sortOptions = this.getSortSearchBar().config.sortfields;
 
         if (sortOptions.length > 0) {
-            this.loadListHeaderAndItemTpl(sortOptions[0].value);
+            this.loadListHeaderAndItemTpl(this.sortVal || sortOptions[0].value);
         }
 
         if (!this.searchFilter && !this.endDateFilter) {
