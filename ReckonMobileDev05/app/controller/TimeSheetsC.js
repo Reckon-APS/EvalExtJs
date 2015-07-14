@@ -35,6 +35,7 @@ Ext.define('RM.controller.TimeSheetsC', {
 
     init: function () {
         this.getApplication().addListener('itemupdated', 'onItemUpdated', this);
+        this.getApplication().addListener('cashbookselected', 'onCashbookSelected', this);
     },
 
     onShow: function () {
@@ -206,5 +207,18 @@ Ext.define('RM.controller.TimeSheetsC', {
             this.loadTimer = null;
         }
         this.loadTimer = Ext.defer(this.loadList, 1000, this);
+    },
+
+    onCashbookSelected: function () {
+        var timesheetCal = this.getTimeSheetsCal();
+        var tabPanel = this.getTabPanel();
+
+        if (timesheetCal) {
+            timesheetCal.setValue(new Date());
+        }
+
+        if (tabPanel) {
+            tabPanel.setActiveItem(0);
+        }
     }
 });

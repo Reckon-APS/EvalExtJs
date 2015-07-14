@@ -8,6 +8,7 @@ Ext.define('RM.controller.TimeSheetDetailC', {
             saveBtn: 'timesheetdetail #save',
             timeSheetForm: 'timesheetdetail #timeSheetForm',
             customerId: 'timesheetdetail hiddenfield[name=CustomerId]',
+            customerName: 'timesheetdetail textfield[name=CustomerName]',
             projectId: 'timesheetdetail hiddenfield[name=ProjectId]',
             billable: 'timesheetdetail checkboxfield',
             description: 'timesheetdetail #description',
@@ -89,9 +90,11 @@ Ext.define('RM.controller.TimeSheetDetailC', {
                         data.Notes = data.Notes ? data.Notes.replace(/(\r\n|\n|\r)/g, ' ') : '';
                         timesheetForm.setValues(data);
                         this.getBillableCheckbox().setValue(data.Billable);
+                        this.getStatus().setHidden(false);
                         this.getStatus().setHtml(RM.TimeSheetsMgr.getTimeSheetStatusText(data.Status));
                         this.openInEditMode();
-					    this.applyViewEditableRules();
+                        this.applyViewEditableRules();
+                        this.applyBillablePermission();
 					    this.initialFormValues = timesheetForm.getValues();
 					},
 					this
@@ -121,7 +124,7 @@ Ext.define('RM.controller.TimeSheetDetailC', {
     },
 
     applyBillablePermission: function(){
-        this.getBillableCheckbox().setDisabled(RM.TimeSheetsMgr.isTimesheetInvoicedOrBilled(this.detailsData.Status) || !RM.PermissionsMgr.canBillEntry('Timesheets') || !this.getCustomerId().getValue());
+        this.getBillableCheckbox().setDisabled(RM.TimeSheetsMgr.isTimesheetInvoicedOrBilled(this.detailsData.Status) || !RM.PermissionsMgr.canBillEntry('Timesheets') || !this.getCustomerName().getValue());
     },
 
     openInEditMode: function() {

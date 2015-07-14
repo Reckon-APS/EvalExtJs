@@ -51,6 +51,7 @@ Ext.define('RM.core.CashbookMgr', {
                 this.setCashbook(data.CashBookId,                    
                     function(){
                         this.setCashbookId(data.CashBookId);
+                        RM.AppMgr.cashbookSelected();
                         RM.ViewMgr.showMainNavContainer(localStorage.getItem('RmDisplayName'), data.BookName);
                         var dashboardC = RM.AppMgr.getAppControllerInstance('RM.controller.DashboardC');
                         dashboardC.showView(this._currentCashbook.Dashboard);

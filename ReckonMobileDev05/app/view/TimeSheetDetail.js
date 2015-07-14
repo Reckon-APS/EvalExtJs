@@ -38,6 +38,7 @@ Ext.define('RM.view.TimeSheetDetail', {
 				items: [{
 				        xtype: 'component',
 				        itemId: 'status',
+				        hidden: true,
 				        cls: 'rm-hearderbg'
 				    }, {
 						xtype: 'hiddenfield',

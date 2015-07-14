@@ -7,6 +7,7 @@ Ext.define('RM.controller.TimeSheetWeeklyC', {
             saveBtn: 'timesheetweekly #save',
             timeSheetForm: 'timesheetweekly #timeSheetForm',
             customerId: 'timesheetweekly hiddenfield[name=CustomerId]',
+            customerName: 'timesheetweekly textfield[name=CustomerName]',
             projectId: 'timesheetweekly hiddenfield[name=ProjectId]',
             billableCheckbox: 'timesheetweekly rmtogglefield[name=Billable]',
             itemName: 'timesheetweekly #itemName',            
@@ -82,7 +83,7 @@ Ext.define('RM.controller.TimeSheetWeeklyC', {
     },
 
     applyBillablePermission: function () {
-        this.getBillableCheckbox().setDisabled(!RM.PermissionsMgr.canBillEntry('Timesheets') || !this.getCustomerId().getValue());
+        this.getBillableCheckbox().setDisabled(!RM.PermissionsMgr.canBillEntry('Timesheets') || !this.getCustomerName().getValue());
     },
 
     loadTimeData: function () {

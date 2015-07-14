@@ -558,6 +558,10 @@ Ext.define('RM.core.AppMgr', {
         this.application.fireEvent('itemupdated', itemType);
     },
 
+    cashbookSelected: function(){
+        this.application.fireEvent('cashbookselected');
+    },
+
     getModuleData: function(){
         return [
 			{ModuleCode: 'reckonone', Activated: true, ShortName: 'ONE', FullName: 'Reckon One', Description: 'Our customised cloud accounting software.<br/>Designed by you to fit your needs', Image: 'reckonone'}
