@@ -31,7 +31,7 @@ Ext.define('RM.component.PinKeypad', {
 		this.add([{
 			xtype: 'container',
 			layout: 'hbox',
-			defaults: {xtype: 'button', flex: 1, height: 60, cls: 'rm-flatkeypadbutton'},
+			defaults: { xtype: 'button', flex: 1, height: 60, cls: 'rm-flatkeypadbutton rm-border-top-2px' },
 			items:[{
 					text: '1'
 				},{
