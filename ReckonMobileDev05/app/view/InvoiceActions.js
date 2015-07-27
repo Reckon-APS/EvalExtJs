@@ -91,7 +91,13 @@ Ext.define('RM.view.InvoiceActions', {
             icon: 'resources/images/icons/rm-history.svg',
             iconCls: 'rm-invoiceactioniconcls',
             iconAlign: 'left'						
-        }
-        ]
+        },{
+            text: 'Return to invoice list',
+            itemId: 'returnToList',
+            cls: 'rm-arrowimgbtn rm-invoiceaction-bg rm-invoiceactionbtnlabel',
+            icon: 'resources/images/icons/rm-history.svg',
+            iconCls: 'rm-invoiceactioniconcls',
+            iconAlign: 'left'
+        }]
     }
 });
