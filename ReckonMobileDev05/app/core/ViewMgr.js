@@ -368,7 +368,7 @@ Ext.define('RM.core.ViewMgr', {
     },
     
     viewOrActiveSlideNavChild: function(view) {
-        if(view.xtype === 'slidenavigationview') {
+        if (view.xtype === 'slidenavigationview' || (view.superclass && view.superclass.xtype === 'slidenavigationview')) {
             return this.mainNavContainer.getActiveItem().raw;
         }
         else {
