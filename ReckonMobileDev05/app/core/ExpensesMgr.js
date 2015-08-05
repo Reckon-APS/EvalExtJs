@@ -11,6 +11,15 @@ Ext.define('RM.core.ExpensesMgr', {
 	showExpenseDetail: function(data, cb, cbs){
 		var expenseDetailC = RM.AppMgr.getAppControllerInstance('RM.controller.ExpenseDetailC');
 		expenseDetailC.showView(data, cb, cbs);
+	},
+
+	getExpenseStatusText: function (status) {
+        if (status === RM.Consts.ExpenseStatus.PAID) {
+	        return 'Paid';
+	    }
+	    else {
+	        return 'Unpaid';
+	    }
 	}
 	
 });

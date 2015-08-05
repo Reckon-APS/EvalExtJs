@@ -1,17 +1,15 @@
 Ext.define('RM.view.ExpenseDetail', {
 	extend: 'RM.component.SecurePanel',
 	xtype: 'expensedetail',
-    requires: ['RM.component.DataEntryKeypad','RM.component.RMAmountField'],
+	requires: ['RM.component.RMCheckbox', 'RM.component.DurationField', 'RM.component.ExtDatePickerField'],
 	config: {
-		
-		layout: 'fit',
-        
+	    cls: 'rm-whitebg',
+		layout: 'fit',        
 		items: [
 			{
 				xtype: 'toolbar',
 				docked: 'top',				
-				items: [
-					{					
+				items: [{					
 						itemId: 'back',
 						ui: 'rm_topbarbuttonleft',
 						icon: 'resources/images/icons/rm-back.svg',
@@ -33,11 +31,9 @@ Ext.define('RM.view.ExpenseDetail', {
 				]
 			},{
 				xtype: 'container',
-				layout: 'vbox',
-                
+				layout: 'vbox',                
 				items: [
-					{		
-					
+					/*{				
 						xtype: 'button',
 						text: 'Photograph the receipt',
 						cls: 'rm-arrowimgbtn rm-photobtnfont',						
@@ -45,7 +41,7 @@ Ext.define('RM.view.ExpenseDetail', {
                         iconCls: 'rm-photobtniconsize',
 						iconAlign: 'left',
 						itemId: 'photo'
-					},{
+					},*/{
 						xtype: 'secureformpanel',
 						itemId: 'expenseForm',
 						flex: 1,
@@ -59,37 +55,71 @@ Ext.define('RM.view.ExpenseDetail', {
 								xtype: 'hiddenfield',
 								name: 'CustomerId'			
 							},{
-								xtype: 'exttextfield',
-								name: 'CustomerName',
-								label: 'Customer',
-								clearIcon: false,
-								cls: 'rm-flatfield',
-								placeHolder: 'select (optional)',
-								readOnly: true
-							},{
 								xtype: 'hiddenfield',
 								name: 'ProjectId'			
-							},{
+							}, {
+							    xtype: 'extdatepickerfield',
+							    name: 'Date',
+							    label: 'Date',
+							    rmmandatory: true,
+							    dateFormat: 'jS M Y',
+							    cls: 'Date-icon rm-flatfield',
+							    ui: 'plain',
+							    placeHolder: 'select'
+
+							}, {
 								xtype: 'exttextfield',
 								name: 'ProjectName',
 								label: 'Project',
 								cls: 'rm-flatfield',								
 								placeHolder: 'select (optional)',
 								readOnly: true
-							},{
-								xtype: 'extdatepickerfield',
-								name : 'Date',
-								label : 'Date',
-                                rmmandatory: true,
-								dateFormat : 'jS M Y',
-								cls: 'Date-icon rm-flatfield',
-								ui: 'plain',
-								placeHolder: 'select'
-                                
-							},{
+							}, {
+							    xtype: 'exttextfield',
+							    name: 'CustomerName',
+							    label: 'Customer',
+							    clearIcon: false,
+							    cls: 'rm-flatfield',
+							    placeHolder: 'select (optional)',
+							    readOnly: true
+							}, {
+							    xtype: 'exttextfield',
+							    name: 'ExpenseNumber',
+							    readOnly: true,
+							    labelWidth: 135,
+							    label: 'Expense number',
+							    cls: 'rm-flatfield-disabled', //cls: 'rm-flatfield',
+							    clearIcon: false,
+							    placeHolder: 'Auto-generated',
+							    labelWidth: '8em'
+							}, {
+							    xtype: 'exttextfield',
+							    name: 'Ref',
+							    labelWidth: 160,
+							    label: 'Reference',
+							    placeHolder: 'enter',
+							    cls: 'rm-flatfield',
+							    clearIcon: false,
+							    labelWidth: '8.5em'
+							}, {
+							    xtype: 'extselectfield',
+							    label: 'Gross/Net',
+							    usePicker: true,
+							    name: 'AmountTaxStatus',
+							    labelWidth: '6em',
+							    store: 'TaxStatuses',
+							    displayField: 'Name',
+							    valueField: 'TaxStatusId',
+							    autoSelect: false,
+							    value: null,
+							    placeHolder: 'select',
+							    cls: 'rm-flatfield',
+							    ui: 'plain',
+							    rmmandatory: true
+							}, {
                                 xtype: 'rmamountfield',                                   
 								name: 'Amount',
-								label: 'Amount',                                
+								label: 'Total Amount',                                
                                 rmmandatory: true,                                                                
 								cls: 'rm-flatfield',                                    
 								placeHolder: 'enter',
@@ -138,22 +168,13 @@ Ext.define('RM.view.ExpenseDetail', {
 							},{
 								xtype: 'rmtogglefield',
 								name: 'Billable',
+								cls: 'rm-flatfield',
 								onText: 'Yes',
 								offText: 'No',
 								toggleState: false,
-								label: 'Billable to customer',                        
-								labelWidth: '10em',                        
-								border: '1 0 1 0',
-								style: 'border-color: #DBDBDB; border-style: solid;'
-							}/*,{
-								xtype: 'rmcheckbox',
-								name: 'Billable',
-								text: 'This expense is billable to customer',
-								labelCls: 'rm-checkbox-smalltext',								
-								cls: 'rm-checkbox-rightalign',						
-								border: '1 0 0 0',
-								style: 'border-color: #DBDBDB; border-style: solid;'
-							}*/
+								label: 'Billable',                        
+								labelWidth: '10em'								
+							}
 						]
 					}
 			

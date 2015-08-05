@@ -13,7 +13,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
             description: 'expensedetail #description',
             billableCheckbox: 'expensedetail rmtogglefield[name=Billable]',
             historyFld: 'expensedetail #history',
-            photoBtn: 'expensedetail #photo',
+            //photoBtn: 'expensedetail #photo',
             dateFld: 'expensedetail extdatepickerfield[name=Date]',
             amountFld:  'expensedetail exttextfield[name=Amount]',
             itemFld:  'expensedetail exttextfield[name=ItemName]',
@@ -30,9 +30,9 @@ Ext.define('RM.controller.ExpenseDetailC', {
             'expensedetail #save': {
                 tap: 'save'
             },
-            'expensedetail #photo': {
-                tap: 'onPhoto'
-            },
+            //'expensedetail #photo': {
+            //    tap: 'onPhoto'
+            //},
             'expensedetail #expenseForm exttextfield': {
                 tap: 'onFieldTap'
             }
@@ -93,7 +93,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
             else{                
                 expenseForm.reset();
                 expenseForm.setValues(this.detailsData);
-                this.setPhotoBtnIcon();
+                //this.setPhotoBtnIcon();
                 this.initialFormValues = expenseForm.getValues();               
             }
             this.dataLoaded = true;
@@ -110,18 +110,18 @@ Ext.define('RM.controller.ExpenseDetailC', {
         return !RM.AppMgr.isFormValsEqual(this.getExpenseForm().getValues(), this.initialFormValues);        
     },
     
-    setPhotoBtnIcon: function(){
-        var photoBtn = this.getPhotoBtn(),iconDir = 'resources/images/icons/';
-        if(this.detailsData.HasReceiptPhoto){
-            photoBtn.setIcon(iconDir + 'rm-attach.svg');
-            photoBtn.setText('Photo attached');             
-        }
-        else{
-            photoBtn.setIcon(iconDir + 'rm-photo.svg');
-            photoBtn.setText('Photograph the receipt');             
-        }
+    //setPhotoBtnIcon: function(){
+    //    var photoBtn = this.getPhotoBtn(),iconDir = 'resources/images/icons/';
+    //    if(this.detailsData.HasReceiptPhoto){
+    //        photoBtn.setIcon(iconDir + 'rm-attach.svg');
+    //        photoBtn.setText('Photo attached');             
+    //    }
+    //    else{
+    //        photoBtn.setIcon(iconDir + 'rm-photo.svg');
+    //        photoBtn.setText('Photograph the receipt');             
+    //    }
        
-    },    
+    //},    
     
     onFieldTap: function (tf) {
 

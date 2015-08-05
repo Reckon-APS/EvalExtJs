@@ -6320,6 +6320,9 @@ body.x-desktop {
 .rm-pr5 {
   padding-right: 5px; }
 
+.rm-pr20 {
+  padding-right: 20px; }
+
 .rm-margin-auto10 {
   margin: auto 10px; }
 
@@ -6383,6 +6386,12 @@ body.x-desktop {
 
 .rm-tablelayout {
   table-layout: fixed; }
+
+.rm-width-half {
+  width: 50%; }
+
+.rm-inline-block {
+  display: inline-block; }
 
 .rm-textlimit {
   white-space: nowrap;
