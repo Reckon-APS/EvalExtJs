@@ -71,7 +71,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
             this.getHistoryFld().setHidden(this.isCreate);
             var expenseForm = this.getExpenseForm();
             if (!this.isCreate) {
-                RM.AppMgr.getServerRecById(this.serverApiName, this.detailsData.ExpenseId,
+                RM.AppMgr.getServerRecById(this.serverApiName, this.detailsData.ExpenseClaimID,
 					function (data) {
                         //data.HasReceiptPhoto = true;
 					    this.detailsData = data;                        

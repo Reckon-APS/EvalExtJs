@@ -17,7 +17,7 @@ Ext.define('RM.core.Consts',{
     TaxStatus: {UNKNOWN: 0, NON_TAXED: 1, INCLUSIVE: 2, EXCLUSIVE: 3},
     InvoiceStatus: {UNKNOWN: 0, DRAFT: 1, APPROVED: 2, PAID: 3},
     TimeSheetStatus: { UNKNOWN: 0, NON_BILLABLE: 1, UNBILLED: 2, INVOICED: 3, BILLED: 4 },
-    //ExpenseStatus: { UNKNOWN: 0, DRAFT: 1, APPROVED: 2, PAID: 3 },
+    ExpenseStatus: { UNKNOWN: 0, DRAFT: 1, APPROVED: 2, PAID: 3 },
     DocTemplates: {INVOICE: 1, ESTIMATE: 2, CREDIT_NOTE: 3},
     NoAccessMsg: 'No access rights',
     EmptyGuid: '00000000-0000-0000-0000-000000000000'
