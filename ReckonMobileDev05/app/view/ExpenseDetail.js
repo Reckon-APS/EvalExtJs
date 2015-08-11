@@ -1,7 +1,7 @@
 Ext.define('RM.view.ExpenseDetail', {
 	extend: 'RM.component.SecurePanel',
 	xtype: 'expensedetail',
-	requires: ['RM.component.RMCheckbox', 'RM.component.DurationField', 'RM.component.ExtDatePickerField'],
+	requires: ['RM.component.ExpenseLineItems', 'RM.component.RMCheckbox', 'RM.component.DurationField', 'RM.component.ExtDatePickerField'],
 	config: {
 	    cls: 'rm-whitebg',
 		layout: 'fit',        
@@ -47,26 +47,29 @@ Ext.define('RM.view.ExpenseDetail', {
 						flex: 1,
 						padding: 0,
                         
-						items: [
-							{
+						items: [{
+						        xtype: 'component',
+						        itemId: 'expenseStatus',
+                                hidden: true,
+						        cls: 'rm-hearderbg'
+						    },{
 								xtype: 'hiddenfield',
-								name: 'ExpenseId'			
+								name: 'ExpenseClaimID'			
 							},{
 								xtype: 'hiddenfield',
-								name: 'CustomerId'			
+								name: 'CustomerID'			
 							},{
 								xtype: 'hiddenfield',
-								name: 'ProjectId'			
+								name: 'ProjectID'			
 							}, {
 							    xtype: 'extdatepickerfield',
-							    name: 'Date',
+							    name: 'ExpenseClaimDate',
 							    label: 'Date',
 							    rmmandatory: true,
 							    dateFormat: 'jS M Y',
 							    cls: 'Date-icon rm-flatfield',
 							    ui: 'plain',
 							    placeHolder: 'select'
-
 							}, {
 								xtype: 'exttextfield',
 								name: 'ProjectName',
@@ -84,7 +87,7 @@ Ext.define('RM.view.ExpenseDetail', {
 							    readOnly: true
 							}, {
 							    xtype: 'exttextfield',
-							    name: 'ExpenseNumber',
+							    name: 'ExpenseClaimNumber',
 							    readOnly: true,
 							    labelWidth: 135,
 							    label: 'Expense number',
@@ -94,7 +97,7 @@ Ext.define('RM.view.ExpenseDetail', {
 							    labelWidth: '8em'
 							}, {
 							    xtype: 'exttextfield',
-							    name: 'Ref',
+							    name: 'Reference',
 							    labelWidth: 160,
 							    label: 'Reference',
 							    placeHolder: 'enter',
@@ -118,62 +121,26 @@ Ext.define('RM.view.ExpenseDetail', {
 							    rmmandatory: true
 							}, {
                                 xtype: 'rmamountfield',                                   
-								name: 'Amount',
-								label: 'Total Amount',                                
-                                rmmandatory: true,                                                                
+								name: 'ExpenseClaimAmount',
+								label: 'Total Amount',
+								labelWidth: '8em',
 								cls: 'rm-flatfield',                                    
 								placeHolder: 'enter',
 								clearIcon: false,   
                                 decimalPlaces: 2,
                                 prefix: '$'                                
-							},{
-								xtype: 'hiddenfield',
-								name: 'ItemId'			
-							},{
-								xtype: 'exttextfield',
-								name: 'ItemName',
-								label: 'Item',
-                                rmmandatory: true,
-								cls: 'rm-flatfield',
-								placeHolder: 'select',
-								readOnly: true
-							},{
-								xtype: 'hiddenfield',
-								name: 'SupplierId'			
-							},{
-								xtype: 'exttextfield',
-								name: 'SupplierName',
-                                rmmandatory: true,
-								label: 'Supplier',
-								cls: 'rm-flatfield',
-								placeHolder: 'select',
-								readOnly: true
-							},{
-								xtype: 'exttextfield',
-								name: 'Notes',
-								label: 'Description',
-                                itemId: 'description',
-                                labelWidth: 110,
-								placeHolder: 'enter (optional)',
-								cls: 'rm-flatfield',
-                                readOnly: true							
-							},{
-								xtype: 'exttextfield',
-								label: 'History',
-								itemId: 'history',
-								cls: 'rm-flatfield',
-								clearIcon: false,
-								placeHolder: 'view',
-								readOnly: true,                                
-							},{
-								xtype: 'rmtogglefield',
-								name: 'Billable',
-								cls: 'rm-flatfield',
-								onText: 'Yes',
-								offText: 'No',
-								toggleState: false,
-								label: 'Billable',                        
-								labelWidth: '10em'								
+							}, {
+							    xtype: 'rmamountfield',
+							    name: 'Balance',
+							    label: 'Balance Due',
+							    labelWidth: '8em',
+							    cls: ['rm-flatfield', 'rm-flatfield-last'],
+							    placeHolder: 'enter',
+							    clearIcon: false,
+							    decimalPlaces: 2,
+							    prefix: '$'
+							}, {
+							    xtype: 'expenselineitems'
 							}
 						]
 					}

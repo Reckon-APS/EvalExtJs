@@ -78,11 +78,11 @@ Ext.define('RM.controller.ExpensesC', {
 
 	    this.getExpensesList().setItemTpl(new Ext.XTemplate(
                                         '<div class = "rm-colorgrey rm-nextgrayarrow">',
-                                        '<div class = "rm-width-half rm-inline-block">{ClaimNumber}</div>',
-                                        '<div class = "rm-width-half rm-inline-block rm-alignr" >{[RM.AppMgr.formatCurrency(values.ClaimAmount)]}</div>',
+                                        '<div class = "rm-width-half rm-inline-block rm-fontsize90 rm-fontweightbold">{ClaimNumber}</div>',
+                                        '<div class = "rm-width-half rm-inline-block rm-fontsize90 rm-fontweightbold rm-alignr">{[RM.AppMgr.formatCurrency(values.ClaimAmount)]}</div>',
                                         '</div>',
-                                        '<div class = "rm-fontsize70">',
-                                        '<div class = "rm-width-half rm-inline-block">{[this.showStatus(values.Status)]}</div>',
+                                        '<div class = "rm-invoices-duestatus">',
+                                        '<div class = "rm-width-half rm-inline-block ">{[this.showStatus(values.Status)]}</div>',
                                         '<div class = "rm-width-half rm-inline-block rm-alignr rm-pr20">{[this.formatDate(values.ClaimDate)]}</div>',
                                         '</div>',
                                         {

@@ -183,6 +183,7 @@
     <Content Include="app\component\DurationPicker.js">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="app\component\ExpenseLineItems.js" />
     <Content Include="app\component\ExtDatePickerField.js">
       <SubType>Content</SubType>
     </Content>
@@ -548,6 +549,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="app\model\Expense.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="app\model\ExpenseCalendar.js">
       <SubType>Content</SubType>
     </Content>
     <Content Include="app\model\GSTCode.js">

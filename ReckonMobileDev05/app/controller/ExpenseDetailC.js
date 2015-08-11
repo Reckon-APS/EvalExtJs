@@ -5,19 +5,20 @@ Ext.define('RM.controller.ExpenseDetailC', {
         refs: {
             expenseDetail: 'expensedetail',
             expenseTitle: 'expensedetail #title',
+            expenseStatus: 'expensedetail #expenseStatus',
             saveBtn: 'expensedetail #save',
             expenseForm: 'expensedetail #expenseForm',
-            customerId: 'expensedetail hiddenfield[name=CustomerId]',
-            supplierId: 'expensedetail hiddenfield[name=SupplierId]',
-            projectId: 'expensedetail hiddenfield[name=ProjectId]',
+            customerId: 'expensedetail hiddenfield[name=CustomerID]',
+            //supplierId: 'expensedetail hiddenfield[name=SupplierID]',
+            projectId: 'expensedetail hiddenfield[name=ProjectID]',
             description: 'expensedetail #description',
-            billableCheckbox: 'expensedetail rmtogglefield[name=Billable]',
             historyFld: 'expensedetail #history',
             //photoBtn: 'expensedetail #photo',
-            dateFld: 'expensedetail extdatepickerfield[name=Date]',
+            dateFld: 'expensedetail extdatepickerfield[name=ExpenseClaimDate]',
             amountFld:  'expensedetail exttextfield[name=Amount]',
             itemFld:  'expensedetail exttextfield[name=ItemName]',
-            supplierFld:  'expensedetail exttextfield[name=SupplierName]'
+            supplierFld: 'expensedetail exttextfield[name=SupplierName]',
+            lineItems: 'expensedetail expenselineitems',
         },
         control: {
             'expensedetail': {
@@ -35,6 +36,17 @@ Ext.define('RM.controller.ExpenseDetailC', {
             //},
             'expensedetail #expenseForm exttextfield': {
                 tap: 'onFieldTap'
+            },
+            'expensedetail expenselineitems': {
+                addlineitem: 'onAddLineItem',
+                editlineitem: 'onEditLineItem',
+                deletelineitem: 'onDeleteLineItem'
+            },
+            'expensedetail extselectfield[name=AmountTaxStatus]': {
+                change: 'onAmountTaxStatusSelected'
+            },
+            'expensedetail #addItem': {
+                tap: 'onAddItem'
             }
         }
     },
@@ -43,7 +55,46 @@ Ext.define('RM.controller.ExpenseDetailC', {
         this.serverApiName = 'Expenses';
     },
 
+    isEditable: function () {
+        //return RM.InvoicesMgr.isStatusEditable(this.detailsData.Status) &&
+        //RM.PermissionsMgr.canAddEdit('Expenses');
+        return RM.PermissionsMgr.canAddEdit('Expenses');
+    },
+
+    applyViewEditableRules: function () {
+        var editable = this.isEditable();
+        this.getSaveBtn().setHidden(!editable);
+        if (!editable) { RM.util.FormUtils.makeAllFieldsReadOnly(this.getExpenseForm()); }
+        this.getLineItems().setIsEditable(editable);
+    },
+
+    applyTaxRules: function () {
+        //var amounts = this.getAmountsFld();
+        //var taxPrefs = RM.CashbookMgr.getTaxPreferences();
+        //amounts.setReadOnly(!this.isEditable() || !taxPrefs.AllowUserIncludeTax);
+        //if (!this.isEditable() || !taxPrefs.AllowUserIncludeTax) {
+        //    amounts.setCls('rm-flatfield-disabled');
+        //}
+        //if (this.isCreate) {
+        //    // New invoice behaviour
+        //    if (taxPrefs.IsTaxTracking) {
+        //        amounts.setHidden(false);
+        //        amounts.setValue(taxPrefs.SalesFigures);
+        //    }
+        //    else {
+        //        amounts.setHidden(true);
+        //        amounts.setValue(RM.Consts.TaxStatus.NON_TAXED);
+        //    }
+        //}
+        //else {
+        //    // Existing invoice behaviour
+        //    var showAmounts = taxPrefs.IsTaxTracking || amounts.getValue() !== RM.Consts.TaxStatus.NON_TAXED;
+        //    amounts.setHidden(!showAmounts);
+        //}
+    },
+
     showView: function (data, cb, cbs) {
+        this.lineItemsDirty = false;
         this.isCreate = (data == null);
         this.detailsData = data;
         this.detailsCb = cb;
@@ -66,26 +117,41 @@ Ext.define('RM.controller.ExpenseDetailC', {
     onShow: function () {
         RM.ViewMgr.regFormBackHandler(this.back, this);
         this.getExpenseTitle().setHtml(this.isCreate ? 'Add Expense' : 'View Expense');
-        
+
         if (!this.dataLoaded) {
-            this.getHistoryFld().setHidden(this.isCreate);
             var expenseForm = this.getExpenseForm();
             if (!this.isCreate) {
                 RM.AppMgr.getServerRecById(this.serverApiName, this.detailsData.ExpenseClaimID,
 					function (data) {
-                        //data.HasReceiptPhoto = true;
+					    //data.HasReceiptPhoto = true;
+					    this.getExpenseStatus().setHidden(false);
+					    this.getExpenseStatus().setHtml(RM.ExpensesMgr.getExpenseStatusText(data.Status));
 					    this.detailsData = data;                        
-					    data.Date = new Date(data.Date);
+					    data.ExpenseClaimDate = new Date(data.ExpenseClaimDate);
 					    //delete data.Notes;
                         //data.SaleTaxCodeId = data.TaxTypeId;
 					    //expenseForm.setValues(data);
-                        this.noteText = data.Notes; //Enables preserving of new lines when going from textfield to textarea
-                        data.Notes = data.Notes ? data.Notes.replace(/(\r\n|\n|\r)/g, ' ') : '';
+                        //this.noteText = data.Notes; //Enables preserving of new lines when going from textfield to textarea
+                        //data.Notes = data.Notes ? data.Notes.replace(/(\r\n|\n|\r)/g, ' ') : '';
                         expenseForm.setValues(data);
-					    this.getBillableCheckbox().setValue(data.Billable);
-                        this.setPhotoBtnIcon();
+					    ////this.setPhotoBtnIcon();
+                        this.applyTaxRules();
+                        this.previousAmountTaxStatus = data.AmountTaxStatus;
+
+                        this.applyViewEditableRules(); //needs to be called before adding line items below so that line items can have delete x hidden if necessary
+
+                        var lineItemsPanel = this.getLineItems();
+                        lineItemsPanel.addLineItems(data.Items);
+                        lineItemsPanel.setCustomerId(data.CustomerId);
+                        lineItemsPanel.setTaxStatus(data.AmountTaxStatus);
+                        lineItemsPanel.setExpenseDate(data.Date);
+                        this.lineItemsDirty = false;
+
+                        //this.displayBalanceDue();
+
                         this.initialFormValues = expenseForm.getValues();
-                        this.hasExistingReceiptPhoto = data.HasReceiptPhoto;
+                        
+                        //this.hasExistingReceiptPhoto = data.HasReceiptPhoto;
 					},
 					this
 				);
@@ -99,8 +165,8 @@ Ext.define('RM.controller.ExpenseDetailC', {
             this.dataLoaded = true;
         }
 
-        //this.getExpenseForm().setValues(this.detailsData);
-    },
+        this.getExpenseForm().setValues(this.detailsData);
+    },    
     
     onHide: function(){
         RM.ViewMgr.deRegFormBackHandler(this.back);
@@ -108,7 +174,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
 
     isFormDirty: function(){        
         return !RM.AppMgr.isFormValsEqual(this.getExpenseForm().getValues(), this.initialFormValues);        
-    },
+    },   
     
     //setPhotoBtnIcon: function(){
     //    var photoBtn = this.getPhotoBtn(),iconDir = 'resources/images/icons/';
@@ -129,7 +195,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
             RM.Selectors.showCustomers(
                 this.getProjectId().getValue(),
 				function (data) {
-				    //tf.setValue(data.Name);
+				    tf.setValue(data.Name);
 				    this.getExpenseForm().setValues({ CustomerId: data.ContactId, CustomerName: data.Description });
 				},
 				this
@@ -138,9 +204,9 @@ Ext.define('RM.controller.ExpenseDetailC', {
         else if (tf.getName() == 'ProjectName') {
             RM.Selectors.showProjects(
                 this.getCustomerId().getValue(),
-                this.getSupplierId().getValue(),
+                null,
 				function (data) {
-				    //tf.setValue(data.Name);	
+				    tf.setValue(data.Name);	
 				    this.getExpenseForm().setValues({ ProjectId: data.ProjectId, ProjectName: data.ProjectPath});
 				},
 				this
@@ -160,15 +226,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
 				this
 			);
         }
-        else if (tf.getName() == 'SupplierName') {
-            RM.Selectors.showSuppliers(
-				function (data) {
-				    //tf.setValue(data.Name);
-				    this.getExpenseForm().setValues({ SupplierId: data.SupplierId, SupplierName: data.Name });
-				},
-				this
-			);
-        }
+        
         else if (tf.getName() == 'Notes') {
             this.editDescription();
         }
@@ -302,7 +360,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
             Date: Ext.util.Format.date(vals.Date, 'c'),
             Amount: vals.Amount,
             ItemId: vals.ItemId,
-            SupplierId: vals.SupplierId,
+            //SupplierId: vals.SupplierId,
             Notes: vals.Notes,
             Billable: vals.Billable == 1 ? 'true' : 'false',
             StatusCode: vals.StatusCode
@@ -363,7 +421,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
         postData += this.genFormDataFld('Date', Ext.util.Format.date(vals.Date, 'c'), boundary);
         postData += this.genFormDataFld('Amount', vals.Amount, boundary);
         postData += this.genFormDataFld('ItemId', vals.ItemId, boundary);
-        postData += this.genFormDataFld('SupplierId', vals.SupplierId, boundary);
+        //postData += this.genFormDataFld('SupplierId', vals.SupplierId, boundary);
         postData += this.genFormDataFld('Notes', vals.Notes, boundary);
         postData += this.genFormDataFld('Billable', vals.Billable, boundary);
         postData += this.genFormDataFld('StatusCode', vals.StatusCode, boundary);
@@ -409,7 +467,181 @@ Ext.define('RM.controller.ExpenseDetailC', {
     
     genFormFileField: function(fileName, fileData, boundary){
         return '--' + boundary + '\r\nContent-Disposition: form-data; name="file"; filename="' + fileName + '"\r\nContent-Transfer-Encoding: base64\r\nContent-Type: image/png\r\n\Content-Length: ' + fileData.length + '\r\n\r\n' + fileData + '\r\n';
-    }
+    },
+
+    onAddLineItem: function () {
+        this.lineItemsDirty = true;
+        this.calculateBreakdown();
+    },
+
+    onDeleteLineItem: function () {
+        this.lineItemsDirty = true;
+        this.calculateBreakdown();
+    },
+
+    onEditLineItem: function () {
+        this.lineItemsDirty = true;
+        this.calculateBreakdown();
+    },
+
+    onAmountTaxStatusSelected: function (amountTaxStatusFld, newValue, oldValue) {
+        if (!this.dataLoaded) return;
+        this.detailsData.AmountTaxStatus = newValue;
+        this.previousAmountTaxStatus = oldValue;
+
+        var that = this;
+        function proceedWithChange() {
+            that.calculateBreakdown();
+            that.getLineItems().setTaxStatus(newValue);
+            that.previousAmountTaxStatus = newValue;
+        }
+
+        // Make sure the user is aware of the impact of certain changes
+        if (newValue === RM.Consts.TaxStatus.NON_TAXED && this.taxModificationsExist()) {
+            RM.AppMgr.showYesNoMsgBox('This change will remove the modified tax information on all your line items, are you sure you want to do this?',
+            function (result) {
+                if (result === 'yes') {
+                    proceedWithChange();
+                }
+                else {
+                    // Put the old value back, suppressing the change event at the same time
+                    amountTaxStatusFld.suspendEvents();
+                    amountTaxStatusFld.setValue(oldValue);
+                    this.detailsData.AmountTaxStatus = oldValue;
+                    amountTaxStatusFld.resumeEvents(true);
+                }
+            }, this);
+        }
+        else {
+            proceedWithChange();
+        }
+    },
     
+    calculateBreakdown: function () {
+
+        var formVals = this.getExpenseForm().getValues();
+        var lineItems = this.getLineItems().getViewData();
+        var vals = {
+            CustomerId: formVals.CustomerId,
+            //ExpenseDate: RM.util.Dates.encodeAsUTC(formVals.Date),
+            AmountTaxStatus: formVals.AmountTaxStatus,
+            PreviousAmountTaxStatus: this.previousAmountTaxStatus,
+            LineItems: []
+        };
+
+        if (vals.PreviousAmountTaxStatus !== vals.AmountTaxStatus) {
+            if (vals.AmountTaxStatus === RM.Consts.TaxStatus.NON_TAXED) {
+                // House keeping. The calcs api doesn't handle removing things like the tax group and tax amounts when 
+                // switching to NON-TAXED so we remove them first.
+                lineItems = lineItems.map(function (item) {
+                    item.TaxGroupId = null;
+                    item.Tax = null;
+                    item.TaxIsModified = false;
+                    return item;
+                });
+            }
+            else if (vals.PreviousAmountTaxStatus === RM.Consts.TaxStatus.NON_TAXED) {
+                // User is changing from NON-TAXED to a Tax-incl state. Apply the default tax group to each of the line items.
+                lineItems = lineItems.map(function (item) {
+                    item.TaxGroupId = item.DefaultTaxGroupId;
+                    return item;
+                });
+            }
+        }
+
+        // Send only the fields required by the calculation contract for line items
+        vals.LineItems = lineItems.map(function (item) {
+            return {
+                ExpenseLineItemId: item.ExpenseLineItemId,
+                ItemType: item.ItemType,
+                ItemId: item.ItemId,
+                ProjectId: item.ProjectId,
+                Quantity: item.Quantity,
+                UnitPriceExTax: item.UnitPriceExTax,
+                DiscountAmount: item.DiscountAmount,
+                DiscountAmountExTax: item.DiscountAmountExTax,
+                DiscountAmountTax: item.DiscountAmountTax,
+                DiscountPercentage: item.DiscountPercentage,
+                TaxGroupId: item.TaxGroupId,
+                Tax: item.Tax,
+                TaxIsModified: item.TaxIsModified,
+                AccountId: item.AccountId,
+                TaxExclusiveTotalAmount: item.AmountExTax,
+                IsParent: item.IsParent,
+                IsSubTotal: item.IsSubTotal
+            };
+        });
+
+        //RM.AppMgr.saveServerRec('ExpenseCalc', true, vals,
+		//	function response(respRecs) {
+		//	    var respRec = respRecs[0];
+
+		//	    var data = this.detailsData;
+		//	    data.Amount = respRec.TotalIncludingTax;
+		//	    data.AmountExTax = respRec.TotalExcludingTax;
+		//	    data.Tax = respRec.Tax;
+		//	    data.Subtotal = respRec.Subtotal;
+		//	    data.DiscountTotal = respRec.Discount || 0;
+		//	    data.Paid = respRec.AmountPaid;
+		//	    data.BalanceDue = respRec.BalanceDue;
+
+		//	    var lineItemsPanel = this.getLineItems();
+		//	    lineItemsPanel.removeAllItems();
+
+		//	    for (var i = 0; i < lineItems.length; i++) {
+		//	        var currentLine = lineItems[i];
+
+		//	        // find the result for the line
+		//	        var resultLine = null;
+		//	        Ext.Array.some(respRec.Items, function (item) {
+		//	            if (item.ExpesneLineItemId === currentLine.ExpenseLineItemId) {
+		//	                resultLine = item;
+		//	                return true;
+		//	            }
+		//	        });
+
+		//	        // If the item isn't in the response, it must be removed (project/customer filtering is potentially applied server-side)
+		//	        if (!resultLine) {
+		//	            lineItems[i] = null;
+		//	        }
+		//	        else {
+		//	            // Map the calculated values across
+		//	            Ext.apply(currentLine, resultLine);
+		//	        }
+		//	    }
+
+		//	    // Clean out any deleted items
+		//	    lineItems = Ext.Array.clean(lineItems);
+
+		//	    lineItemsPanel.setTaxStatus(vals.AmountTaxStatus);
+		//	    lineItemsPanel.addLineItems(lineItems);
+
+		//	    this.displayBalanceDue();
+
+		//	},
+		//	this,
+        //    function (eventMsg) {
+        //        RM.AppMgr.showOkMsgBox(eventMsg);
+        //        this.goBack();
+        //    },
+        //    'Loading...'
+		//);
+    },
+
+    // Check all the lineItems for modifications to tax code or tax amount
+    taxModificationsExist: function () {
+        var lineItems = this.getLineItems().getViewData();
+        var changesExist = false;
+
+        Ext.Array.some(lineItems, function (item) {
+            if (item.TaxIsModified || item.TaxGroupId !== item.DefaultTaxGroupId) {
+                changesExist = true;
+                return true;
+            }
+        });
+
+        return changesExist;
+    }
+
 
 });
