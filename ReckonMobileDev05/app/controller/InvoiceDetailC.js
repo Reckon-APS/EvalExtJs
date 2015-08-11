@@ -102,7 +102,8 @@ Ext.define('RM.controller.InvoiceDetailC', {
                 Subtotal: 0, 
                 Paid: 0,
                 BalanceDue: 0,
-                SaveSupport: true
+                SaveSupport: true,
+                PaymentDetails: RM.CashbookMgr.getSalesPreferences().PaymentDetails
             });
 
             //Load the terms list from the store
