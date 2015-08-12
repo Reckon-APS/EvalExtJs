@@ -20,6 +20,20 @@ Ext.define('RM.core.ExpensesMgr', {
 	    else {
 	        return 'Unpaid';
 	    }
+	},
+
+	showExpenseLineItem: function (editable, customerId, showTaxCode, detailsData, cb, cbs) {
+	    var invLineItem = RM.AppMgr.getAppControllerInstance('RM.controller.ExpenseLineItemC');
+	    invLineItem.showView(editable, customerId, showTaxCode, detailsData, cb, cbs);
+	},
+
+	isStatusEditable: function (status) {
+	    if (status === RM.Consts.ExpenseStatus.PAID) {
+	        return false;
+	    }
+	    else {
+	        return true;
+	    }
 	}
 	
 });

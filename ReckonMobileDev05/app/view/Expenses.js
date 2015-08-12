@@ -20,7 +20,7 @@ Ext.define('RM.view.Expenses', {
 					    text: 'Add',
 					    itemId: 'add',
 					    xtype: 'securebutton',
-					    permissionFor: 'Expenses',
+					    permissionFor: 'ExpenseClaims',
 					    ui: 'rm_topbarbuttonright'
 					}
 			    ]

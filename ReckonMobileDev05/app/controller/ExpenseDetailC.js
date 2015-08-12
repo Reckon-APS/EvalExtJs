@@ -56,9 +56,8 @@ Ext.define('RM.controller.ExpenseDetailC', {
     },
 
     isEditable: function () {
-        //return RM.InvoicesMgr.isStatusEditable(this.detailsData.Status) &&
-        //RM.PermissionsMgr.canAddEdit('Expenses');
-        return RM.PermissionsMgr.canAddEdit('Expenses');
+        return RM.ExpensesMgr.isStatusEditable(this.detailsData.Status) &&
+        RM.PermissionsMgr.canAddEdit('ExpenseClaims');
     },
 
     applyViewEditableRules: function () {
@@ -158,7 +157,8 @@ Ext.define('RM.controller.ExpenseDetailC', {
             }
             else{                
                 expenseForm.reset();
-                expenseForm.setValues(this.detailsData);
+                this.detailsData.ExpenseClaimDate = new Date();
+                expenseForm.setValues(this.detailsData);                
                 //this.setPhotoBtnIcon();
                 this.initialFormValues = expenseForm.getValues();               
             }
@@ -243,7 +243,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
         RM.Selectors.showNoteText(
             'Description',
             isEditable,
-            'OK',
+            'Save',
             this.noteText,
             function(noteText){
                 RM.ViewMgr.back();

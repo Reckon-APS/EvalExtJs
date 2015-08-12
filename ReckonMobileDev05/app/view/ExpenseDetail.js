@@ -42,7 +42,8 @@ Ext.define('RM.view.ExpenseDetail', {
 						iconAlign: 'left',
 						itemId: 'photo'
 					},*/{
-						xtype: 'secureformpanel',
+					    xtype: 'secureformpanel',
+					    permissionFor: 'ExpenseClaims',
 						itemId: 'expenseForm',
 						flex: 1,
 						padding: 0,
