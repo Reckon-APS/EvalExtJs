@@ -95,7 +95,7 @@ Ext.define('RM.view.InvoiceActions', {
             text: 'Return to invoice list',
             itemId: 'returnToList',
             cls: 'rm-arrowimgbtn rm-invoiceaction-bg rm-invoiceactionbtnlabel',
-            icon: 'resources/images/icons/rm-history.svg',
+            icon: 'resources/images/icons/rm-returntolist.svg',
             iconCls: 'rm-invoiceactioniconcls',
             iconAlign: 'left'
         }]

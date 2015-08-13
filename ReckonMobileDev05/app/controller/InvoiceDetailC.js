@@ -106,6 +106,8 @@ Ext.define('RM.controller.InvoiceDetailC', {
                 PaymentDetails: RM.CashbookMgr.getSalesPreferences().PaymentDetails
             });
 
+            this.paymentDetailsText = this.detailsData.PaymentDetails;
+
             //Load the terms list from the store
             var store = Ext.getStore('Terms');
             store.getProxy().setUrl(RM.AppMgr.getApiUrl('Terms'));
