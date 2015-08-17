@@ -1,6 +1,6 @@
 Ext.define('RM.view.ExpenseLineItem', {
     extend: 'Ext.Panel',
-    xtype: 'invoicelineitem',
+    xtype: 'expenselineitem',
     requires: ['RM.component.SecureFormPanel', 'RM.component.ExtNumberField', 'RM.component.RMSelectScreenField', 'Ext.field.Select', 'RM.component.RMAmountField'],
     config: {
         layout: 'fit',
@@ -37,7 +37,7 @@ Ext.define('RM.view.ExpenseLineItem', {
                 name: 'ProjectId'
             }, {
                 xtype: 'hiddenfield',
-                name: 'ItemId'
+                name: 'ChargeableItemID'
             }, {
                 xtype: 'hiddenfield',
                 name: 'ItemPath'
@@ -104,14 +104,6 @@ Ext.define('RM.view.ExpenseLineItem', {
                     trailingZerosUpTo: 0,
                     currencyMode: false,
                     prefix: ''
-                }, {
-                    xtype: 'exttextfield',
-                    name: 'Discount',
-                    label: 'Discount',
-                    labelWidth: '7em',
-                    readOnly: true, //prevent OS keypad coming as well                        
-                    value: 0,
-                    cls: ['rm-flatfield']
                 }, {
                     xtype: 'rmamountfield',
                     name: 'Amount',

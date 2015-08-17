@@ -151,7 +151,7 @@ Ext.define('RM.component.ExpenseLineItems', {
         		},
         		this
         	);*/
-            RM.InvoicesMgr.showInvoiceLineItem(this.isEditable, this.customerId, { taxStatus: this.taxStatus, invoiceDate: this.invoiceDate }, item,
+            RM.ExpensesMgr.showExpenseLineItem(this.isEditable, this.customerId, { taxStatus: this.taxStatus, invoiceDate: this.invoiceDate }, item,
         		function (data) {
         		    this.updateLineItem(compId, data[0]);
         		    this.fireEvent('editlineitem');

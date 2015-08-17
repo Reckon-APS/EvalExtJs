@@ -11,13 +11,13 @@ Ext.define('RM.controller.ExpenseDetailC', {
             customerId: 'expensedetail hiddenfield[name=CustomerID]',
             //supplierId: 'expensedetail hiddenfield[name=SupplierID]',
             projectId: 'expensedetail hiddenfield[name=ProjectID]',
-            description: 'expensedetail #description',
-            historyFld: 'expensedetail #history',
+            //description: 'expensedetail #description',
+            //historyFld: 'expensedetail #history',
             //photoBtn: 'expensedetail #photo',
             dateFld: 'expensedetail extdatepickerfield[name=ExpenseClaimDate]',
             amountFld:  'expensedetail exttextfield[name=Amount]',
             itemFld:  'expensedetail exttextfield[name=ItemName]',
-            supplierFld: 'expensedetail exttextfield[name=SupplierName]',
+            //supplierFld: 'expensedetail exttextfield[name=SupplierName]',
             lineItems: 'expensedetail expenselineitems',
         },
         control: {
@@ -190,6 +190,9 @@ Ext.define('RM.controller.ExpenseDetailC', {
     //},    
     
     onFieldTap: function (tf) {
+        if (!this.isEditable()) {
+            return;
+        }
 
         if (tf.getName() == 'CustomerName') {
             RM.Selectors.showCustomers(
@@ -227,12 +230,12 @@ Ext.define('RM.controller.ExpenseDetailC', {
 			);
         }
         
-        else if (tf.getName() == 'Notes') {
-            this.editDescription();
-        }
-        else if (tf.getItemId() == 'history') {
-            RM.Selectors.showHistory('Expense', RM.Consts.HistoryTypes.EXPENSE, this.detailsData.ExpenseId);
-        }         
+        //else if (tf.getName() == 'Notes') {
+        //    this.editDescription();
+        //}
+        //else if (tf.getItemId() == 'history') {
+        //    RM.Selectors.showHistory('Expense', RM.Consts.HistoryTypes.EXPENSE, this.detailsData.ExpenseId);
+        //}         
 
     },
 
