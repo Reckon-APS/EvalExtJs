@@ -22,9 +22,9 @@ Ext.define('RM.core.ExpensesMgr', {
 	    }
 	},
 
-	showExpenseLineItem: function (editable, customerId, showTaxCode, detailsData, cb, cbs) {
+	showExpenseLineItem: function (editable, customerId, isCreate, detailsData, cb, cbs) {
 	    var invLineItem = RM.AppMgr.getAppControllerInstance('RM.controller.ExpenseLineItemC');
-	    invLineItem.showView(editable, customerId, showTaxCode, detailsData, cb, cbs);
+	    invLineItem.showView(editable, customerId, isCreate, detailsData, cb, cbs);
 	},
 
 	isStatusEditable: function (status) {

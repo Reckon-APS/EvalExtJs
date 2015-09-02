@@ -123,7 +123,7 @@ Ext.define('RM.view.ExpenseDetail', {
 							}, {
                                 xtype: 'rmamountfield',                                   
 								name: 'ExpenseClaimAmount',
-								label: 'Total Amount',
+								label: 'Total amount',
 								labelWidth: '8em',
 								cls: 'rm-flatfield',                                    
 								placeHolder: 'enter',
@@ -133,7 +133,7 @@ Ext.define('RM.view.ExpenseDetail', {
 							}, {
 							    xtype: 'rmamountfield',
 							    name: 'Balance',
-							    label: 'Balance Due',
+							    label: 'Balance due',
 							    labelWidth: '8em',
 							    cls: ['rm-flatfield', 'rm-flatfield-last'],
 							    placeHolder: 'enter',

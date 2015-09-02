@@ -52,7 +52,8 @@ Ext.define('RM.component.ExpenseLineItems', {
     //},
 
     onAddItem: function () {
-        RM.InvoicesMgr.showChooseItemPopup(this.customerId, { taxStatus: this.taxStatus, invoiceDate: this.invoiceDate }, this.addNewLineItems, this);
+        var expenseData = this.up('#expenseForm').getValues();
+        RM.ExpensesMgr.showExpenseLineItem(true, this.customerId, true, expenseData, this.addNewLineItems, this);
     },
 
     addNewLineItems: function (items) {
@@ -127,8 +128,7 @@ Ext.define('RM.component.ExpenseLineItems', {
 						    xtype: 'component',
 						    cls: 'rm-invoiceitemamount',
 						    docked: 'right',
-						    html: item.DiscountedTaxExclusiveAmount
-						    //html: RM.AppMgr.formatCurrency(item.Amount)
+						    html: RM.AppMgr.formatCurrency(item.Amount)
 
 						},
 				    ]
@@ -151,7 +151,7 @@ Ext.define('RM.component.ExpenseLineItems', {
         		},
         		this
         	);*/
-            RM.ExpensesMgr.showExpenseLineItem(this.isEditable, this.customerId, { taxStatus: this.taxStatus, invoiceDate: this.invoiceDate }, item,
+            RM.ExpensesMgr.showExpenseLineItem(this.isEditable, this.customerId, false, item,
         		function (data) {
         		    this.updateLineItem(compId, data[0]);
         		    this.fireEvent('editlineitem');

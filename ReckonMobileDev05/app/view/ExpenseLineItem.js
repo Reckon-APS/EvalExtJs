@@ -28,13 +28,16 @@ Ext.define('RM.view.ExpenseLineItem', {
             ]
         }, {
             xtype: 'secureformpanel',
-            permissionFor: 'Expenses',
+            permissionFor: 'ExpenseClaims',
             itemId: 'itemForm',
             padding: 0,
             defaults: { clearIcon: false },
             items: [{
                 xtype: 'hiddenfield',
                 name: 'ProjectId'
+            }, {
+                xtype: 'hiddenfield',
+                name: 'CustomerId'
             }, {
                 xtype: 'hiddenfield',
                 name: 'ChargeableItemID'
@@ -44,7 +47,57 @@ Ext.define('RM.view.ExpenseLineItem', {
             }, {
                 xtype: 'hiddenfield',
                 name: 'AccountId'
-            },  {
+            }, {
+                xtype: 'extdatepickerfield',
+                name: 'ExpenseClaimDate',
+                label: 'Date',
+                rmmandatory: true,
+                dateFormat: 'jS M Y',
+                cls: 'Date-icon rm-flatfield',
+                ui: 'plain',
+                placeHolder: 'select'
+            }, {
+                xtype: 'rmselectscreenfield',
+                name: 'ProjectName',
+                label: 'Project',
+                cls: 'rm-flatfield',
+                clearIcon: true,
+                placeHolder: 'select (optional)',
+                permissionFor: { action: 'Select', name: 'Projects' },
+            }, {
+                xtype: 'exttextfield',
+                name: 'CustomerName',
+                label: 'Customer',
+                clearIcon: false,
+                cls: 'rm-flatfield',
+                placeHolder: 'select (optional)',
+                readOnly: true
+            }, {
+                xtype: 'exttextfield',
+                name: 'SupplierName',
+                label: 'Supplier',
+                clearIcon: false,
+                cls: 'rm-flatfield',
+                placeHolder: 'select (optional)',
+                readOnly: true
+            }, {
+                xtype: 'rmtogglefield',
+                name: 'Billable',
+                onText: 'Yes',
+                offText: 'No',
+                toggleState: false,
+                cls: 'rm-flatfield',
+                label: 'Billable',
+                labelWidth: '10em',
+            }, {
+                xtype: 'exttextfield',
+                name: 'Notes',
+                label: 'Notes',                
+                placeHolder: 'enter (optional)',
+                cls: 'rm-flatfield',
+                clearIcon: false,
+                readOnly: true                						
+            }, {
                 xtype: 'exttextfield',
                 name: 'ItemName',
                 itemId: 'itemField',
@@ -67,16 +120,7 @@ Ext.define('RM.view.ExpenseLineItem', {
                 itemId: 'detailsFields',
                 defaults: { clearIcon: false },
                 hidden: true,
-                items: [{
-                    xtype: 'rmselectscreenfield',
-                    name: 'ProjectName',
-                    label: 'Project',
-                    //readOnly: true, //prevent OS keypad coming as well
-                    cls: 'rm-flatfield',
-                    clearIcon: true,
-                    placeHolder: 'select (optional)',
-                    permissionFor: { action: 'Select', name: 'Projects' },
-                }, {
+                items: [ {
                     xtype: 'exttextfield',
                     name: 'Description',
                     label: 'Description',

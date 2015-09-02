@@ -204,6 +204,4 @@ Ext.define('RM.controller.ExpensesC', {
             tabPanel.setActiveItem(0);
         }
     }
-
-
 });

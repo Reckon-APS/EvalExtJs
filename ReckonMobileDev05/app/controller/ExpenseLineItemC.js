@@ -10,15 +10,17 @@ Ext.define('RM.controller.ExpenseLineItemC', {
             description: 'expenselineitem field[name=Description]',
             unitPrice: 'expenselineitem field[name=UnitPrice]',
             quantity: 'expenselineitem field[name=Quantity]',
-            //discount: 'expenselineitem field[name=Discount]',
             taxCode: 'expenselineitem field[name=TaxGroupId]',
             tax: 'expenselineitem field[name=Tax]',
             amount: 'expenselineitem field[name=Amount]',
             itemNameFld: 'expenselineitem field[name=ItemName]',
             accountFld: 'expenselineitem field[name=AccountName]',
             projectId: 'expenselineitem field[name=ProjectId]',
-            itemId: 'expenselineitem field[name=ItemId]',
+            customerId: 'expenselineitem field[name=CustomerId]',
+            itemId: 'expenselineitem field[name=ChargeableItemID]',
             projectName: 'expenselineitem field[name=ProjectName]',
+            customerName: 'expenselineitem field[name=CustomerName]',
+            dateFld: 'expenselineitem field[name=ExpenseClaimDate]'
         },
         control: {
             'expenselineitem': {
@@ -41,7 +43,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
                 valueChange: 'taxAmountChanged'/*,
                 clearicontap: function() { this.taxAmountChanged(null,null); }*/
             },
-            'taxCode': {
+            taxCode: {
                 change: 'taxCodeChanged'
             },
             quantity: {
@@ -52,6 +54,9 @@ Ext.define('RM.controller.ExpenseLineItemC', {
             },
             amount: {
                 valueChange: 'amountChanged'
+            },
+            dateFld: {
+                change: 'dateChanged'
             }
         }
     },
@@ -72,29 +77,25 @@ Ext.define('RM.controller.ExpenseLineItemC', {
         return this.detailsData.ChargeableItemID && this.detailsData.ChargeableItemID !== RM.Consts.EmptyGuid;
     },
 
-    showView: function (editable, customerId, options, detailsData, cb, cbs) {
+    showView: function (editable, customerId, isCreate, detailsData, cb, cbs) {
         this.ignoreEvents = false;
         this.isEditable = editable;
-        this.customerId = customerId;
-        this.taxStatusCode = options.taxStatus;
-        this.expenseDate = options.expenseDate;
+        this.customerId = customerId;        
         this.detailsCb = cb;
         this.detailsCbs = cbs;
+        
+        this.isCreate = false;
+        this.detailsData = Ext.clone(detailsData);
 
-        if (detailsData) {
-            this.isCreate = false;
-            this.detailsData = Ext.clone(detailsData);
-        }
-        else {
+        if (isCreate) {
             this.isCreate = true;
-            this.detailsData = {
-                IsNew: true,
-                ExpenseLineItemId: RM.util.PseudoGuid.next(),
-                UnitPriceAccuracy: 2,
-                Quantity: null,
-                TaxGroupId: null,
-                TaxIsModified: false
-            };
+            this.detailsData.ExpenseClaimDate = detailsData.ExpenseClaimDate || new Date();
+            this.detailsData.IsNew = true;
+            this.detailsData.ExpenseLineItemId = RM.util.PseudoGuid.next();
+            this.detailsData.UnitPriceAccuracy = 2;
+            this.detailsData.Quantity = null;
+            this.detailsData.TaxGroupId = null;
+            this.detailsData.TaxIsModified = false;            
         }
 
         var view = this.getItemDetail();
@@ -158,6 +159,8 @@ Ext.define('RM.controller.ExpenseLineItemC', {
             this.initialFormValues = itemForm.getValues();
             this.initShow = true;
         }
+
+        this.setEditableBasedOnExpenseHeader();
     },
 
     onHide: function () {
@@ -172,24 +175,15 @@ Ext.define('RM.controller.ExpenseLineItemC', {
         RM.util.FormUtils.makeAllFieldsReadOnly(this.getItemForm());
     },
 
+    setEditableBasedOnExpenseHeader: function () {
+        this.getProjectName().setDisabled(this.detailsData.ProjectName);
+        this.getCustomerName().setDisabled(this.detailsData.CustomerName);
+    },
+
     setTaxModified: function (isModified) {
         this.detailsData.TaxIsModified = isModified;
         this.getItemDetail().setTaxModified(isModified);
     },
-
-    //setDiscountDisplayValue: function (discountPercent, discountAmount) {
-    //    var discount;
-    //    if (discountPercent) {
-    //        discount = discountPercent + '%';
-    //    }
-    //    else if (discountAmount) {
-    //        discount = RM.AppMgr.formatCurrency(discountAmount, 2);
-    //    }
-    //    else {
-    //        discount = 'None';
-    //    }
-    //    //this.getDiscount().setValue(discount);
-    //},
 
     onFieldTap: function (tf) {
         if (this.isEditable) {
@@ -205,6 +199,18 @@ Ext.define('RM.controller.ExpenseLineItemC', {
     				},
     				this
     			);
+            }
+            else if (tf.getName() == 'CustomerName') {
+                RM.Selectors.showCustomers(
+                    this.getProjectId().getValue(),
+                    function (data) {
+                        var currentValue = this.getCustomerId().getValue();
+                        if (currentValue !== data.CustomerId) {
+                            this.customerChanged(data, currentValue);
+                        }
+                    },
+                    this
+                );
             }
             else if (tf.getName() == 'ItemName') {
                 RM.Selectors.showItems(
@@ -279,7 +285,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
         var isValid = true;
 
         // Field-specific validations
-        if (!vals.ItemId && !this.getItemNameFld().getHidden()) {
+        if (!vals.ChargeableItemID && !this.getItemNameFld().getHidden()) {
             this.getItemNameFld().showValidation(false);
             isValid = false;
         }
@@ -338,6 +344,13 @@ Ext.define('RM.controller.ExpenseLineItemC', {
             RM.ViewMgr.back();
         }
 
+    },
+
+    customerChanged: function(newCustomerData, oldCustomerId){
+        this.getItemForm().setValues({
+            CustomerId: newCustomerData.CustomerId,
+            CustomerName: newCustomerData.Description
+        });
     },
 
     projectChanged: function (newProjectData, oldProjectId) {
@@ -399,7 +412,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
         var description = newItem.SalesDescription ? newItem.SalesDescription : newItem.Description;
 
         this.getItemForm().setValues({
-            ItemId: newItem.ItemId,
+            ChargeableItemID: newItem.ItemId,
             AccountId: newItem.AccountingCategoryId,
             ItemName: newItem.ItemPath,
             AccountName: newItem.Name,
@@ -439,29 +452,6 @@ Ext.define('RM.controller.ExpenseLineItemC', {
         }
         this.getServerCalculatedValues('UnitPrice');
     },
-
-    //discountChanged: function (field, newValue, oldValue) {
-    //    if (this.ignoreControlEvents()) return;
-
-    //    // Reset all discount values, then apply the new one
-    //    this.detailsData.DiscountAmount = null;
-    //    this.detailsData.DiscountAmountExTax = null;
-    //    this.detailsData.DiscountPercentage = null;
-
-    //    if (newValue.indexOf('%') > -1) {
-    //        this.detailsData.DiscountPercentage = parseFloat(newValue.replace('%', ''));
-    //    }
-    //    else if (newValue.indexOf('$') > -1) {
-    //        if (this.isTaxInclusive()) {
-    //            this.detailsData.DiscountAmount = RM.AppMgr.unformatCurrency(newValue);
-    //        }
-    //        else {
-    //            this.detailsData.DiscountAmountExTax = RM.AppMgr.unformatCurrency(newValue);
-    //        }
-    //    }
-
-    //    this.getServerCalculatedValues('Discount');
-    //},
 
     taxAmountChanged: function (newValue, oldValue) {
         if (this.ignoreControlEvents()) return;
@@ -512,7 +502,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
         var lineItem = {
             // Flag the item as Status New, since this forces the server to calculate what the default tax for the item is (but not necessarily apply it)
             ChangeStatus: 2,
-            ItemId: formVals.ItemId,
+            ChargeableItemID: formVals.ItemId,
             AccountId: formVals.AccountId,
             Quantity: formVals.Quantity,
             TaxGroupId: this.isTaxTracking() ? formVals.TaxGroupId : null,
@@ -521,16 +511,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
             UnitPriceExTax: this.detailsData.UnitPriceExTax,
             // For Account lines the amount itself is editable and has to be passed through.
             TaxExclusiveTotalAmount: this.detailsData.AmountExTax
-        };
-
-        // Only pass the ex-tax discount amount if not using a percentage
-        if (this.detailsData.DiscountPercentage) {
-            lineItem.DiscountPercentage = this.detailsData.DiscountPercentage;
-        }
-        else {
-            lineItem.DiscountAmountExTax = this.detailsData.DiscountAmountExTax;
-            lineItem.DiscountAmountTax = this.detailsData.DiscountAmountTax;
-        }
+        };       
 
         switch (triggerField) {
             case 'UnitPrice':
@@ -540,14 +521,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
             case 'Quantity':
                 lineItem.QuantityIsModified = true;
                 break;
-            case 'Discount':
-                if (!lineItem.DiscountPercentage) {
-                    lineItem.DiscountAmount = this.isTaxInclusive() ? this.detailsData.DiscountAmount : this.detailsData.DiscountAmountExTax;
-                    lineItem.DiscountAmountExTax = this.isTaxInclusive() ? null : this.detailsData.DiscountAmount;
-                    lineItem.DiscountAmountTax = null;
-                }
-                lineItem.DiscountIsModified = true;
-                break;
+           
             case 'Amount':
                 var taxExclTotal = this.getAmount().getValue();
                 // Calc service only accepts tax excl total amount, if we're showing amounts Gross we have to calculate the Net figure
@@ -565,7 +539,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
 
         // call the expense calculation method
         this.ignoreEvents = true;
-        RM.AppMgr.saveServerRec('ExpenseCalc', true, expense,
+        RM.AppMgr.saveServerRec('InvoiceCalc', true, expense,
 			function response(responseRecords) {
 			    var calculated = responseRecords[0].Items[0];
 
@@ -575,15 +549,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
 			    this.detailsData.AmountExTax = calculated.AmountExTax;
 			    this.detailsData.AmountTax = calculated.AmountTax;
 			    this.detailsData.Tax = calculated.Tax;
-			    this.detailsData.DiscountedTaxAmount = calculated.DiscountedTaxAmount;
-			    this.detailsData.DiscountedTaxExclAmount = calculated.DiscountedTaxExclAmount;
-
-			    //Set discount amount, only absolute amounts are affected by tax fiddling so a discount percentage is not affected by the calc results                                
-			    this.detailsData.DiscountAmount = calculated.DiscountAmount;
-			    this.detailsData.DiscountAmountExTax = calculated.DiscountAmountExTax;
-			    this.detailsData.DiscountAmountTax = calculated.DiscountAmountTax;
-			    //this.setDiscountDisplayValue(this.detailsData.DiscountPercentage, this.detailsData.DiscountAmount);
-
+			    
 			    this.setTaxModified(calculated.TaxIsModified);
 
 			    // Now, the values displayed in the UI are rounded to the requisite number of decimals - THESE UI VALUES ARE NOT PERSISTED
@@ -650,6 +616,18 @@ Ext.define('RM.controller.ExpenseLineItemC', {
         if (pendingTax) RM.Log.debug('tax change pending');
 
         return pendingPrice || pendingTax;
+    },
+
+    dateChanged: function () {
+        if (!this.detailsData.ExpenseClaimDate) {
+            return;
+        }
+        var headerDate = new Date(this.detailsData.ExpenseClaimDate);
+        var expenseLineDate = new Date(this.getDateFld().getValue());
+        if (expenseLineDate.getTime() > headerDate.getTime()) {
+            Ext.toast('Expense line date cannot be later than expense header date.', 3000);
+            this.getDateFld().setValue(headerDate);
+        }
     }
 
 });

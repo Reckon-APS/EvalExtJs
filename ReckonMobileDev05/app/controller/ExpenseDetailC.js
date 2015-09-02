@@ -199,7 +199,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
                 this.getProjectId().getValue(),
 				function (data) {
 				    tf.setValue(data.Name);
-				    this.getExpenseForm().setValues({ CustomerId: data.ContactId, CustomerName: data.Description });
+				    this.getExpenseForm().setValues({ CustomerID: data.ContactId, CustomerName: data.Description });
 				},
 				this
 			);
@@ -210,7 +210,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
                 null,
 				function (data) {
 				    tf.setValue(data.Name);	
-				    this.getExpenseForm().setValues({ ProjectId: data.ProjectId, ProjectName: data.ProjectPath});
+				    this.getExpenseForm().setValues({ ProjectID: data.ProjectId, ProjectName: data.ProjectPath});
 				},
 				this
 			);
