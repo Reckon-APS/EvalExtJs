@@ -17,7 +17,8 @@ Ext.define('RM.controller.ExpenseLineItemC', {
             accountFld: 'expenselineitem field[name=AccountName]',
             projectId: 'expenselineitem field[name=ProjectId]',
             customerId: 'expenselineitem field[name=CustomerId]',
-            itemId: 'expenselineitem field[name=ChargeableItemID]',
+            supplierId: 'expenselineitem field[name=SupplierId]',
+            itemId: 'expenselineitem field[name=ItemId]',
             projectName: 'expenselineitem field[name=ProjectName]',
             customerName: 'expenselineitem field[name=CustomerName]',
             dateFld: 'expenselineitem field[name=ExpenseClaimDate]'
@@ -74,22 +75,23 @@ Ext.define('RM.controller.ExpenseLineItemC', {
     },
 
     isItemLine: function () {
-        return this.detailsData.ChargeableItemID && this.detailsData.ChargeableItemID !== RM.Consts.EmptyGuid;
+        return this.detailsData.ItemId && this.detailsData.ItemId !== RM.Consts.EmptyGuid;
     },
 
-    showView: function (editable, customerId, isCreate, detailsData, cb, cbs) {
+    showView: function (editable, customerId, options, detailsData, cb, cbs) {
         this.ignoreEvents = false;
         this.isEditable = editable;
-        this.customerId = customerId;        
+        this.customerId = customerId;
+        this.taxStatusCode = options.taxStatus;
         this.detailsCb = cb;
         this.detailsCbs = cbs;
         
         this.isCreate = false;
         this.detailsData = Ext.clone(detailsData);
+        this.detailsData.ExpenseClaimDate = detailsData.ExpenseClaimDate ? new Date(detailsData.ExpenseClaimDate) : new Date();
 
-        if (isCreate) {
+        if (options.isCreate) {
             this.isCreate = true;
-            this.detailsData.ExpenseClaimDate = detailsData.ExpenseClaimDate || new Date();
             this.detailsData.IsNew = true;
             this.detailsData.ExpenseLineItemId = RM.util.PseudoGuid.next();
             this.detailsData.UnitPriceAccuracy = 2;
@@ -212,6 +214,17 @@ Ext.define('RM.controller.ExpenseLineItemC', {
                     this
                 );
             }
+            else if(tf.getName() == 'SupplierName'){
+                RM.Selectors.showSuppliers(
+                    function (data) {
+                        var currentValue = this.getSupplierId().getValue();
+                        if (currentValue !== data.SupplierId) {
+                            this.supplierChanged(data, currentValue);
+                        }
+                    },
+                    this
+                );
+            }
             else if (tf.getName() == 'ItemName') {
                 RM.Selectors.showItems(
                     true,
@@ -285,7 +298,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
         var isValid = true;
 
         // Field-specific validations
-        if (!vals.ChargeableItemID && !this.getItemNameFld().getHidden()) {
+        if (!vals.ItemId && !this.getItemNameFld().getHidden()) {
             this.getItemNameFld().showValidation(false);
             isValid = false;
         }
@@ -353,6 +366,13 @@ Ext.define('RM.controller.ExpenseLineItemC', {
         });
     },
 
+    supplierChanged: function (newSupplierData, oldSupplierId) {
+        this.getItemForm().setValues({
+            SupplierId: newSupplierData.SupplierId,
+            SupplierName: newSupplierData.Name
+        });
+    },
+
     projectChanged: function (newProjectData, oldProjectId) {
         this.getItemForm().setValues({
             ProjectId: newProjectData.ProjectId,
@@ -412,7 +432,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
         var description = newItem.SalesDescription ? newItem.SalesDescription : newItem.Description;
 
         this.getItemForm().setValues({
-            ChargeableItemID: newItem.ItemId,
+            ItemId: newItem.ItemId,
             AccountId: newItem.AccountingCategoryId,
             ItemName: newItem.ItemPath,
             AccountName: newItem.Name,
@@ -488,21 +508,23 @@ Ext.define('RM.controller.ExpenseLineItemC', {
     },
 
     getServerCalculatedValues: function (triggerField, completeCallback) {
+
+        var formVals = this.getItemForm().getValues();
+
         // build a dummy expense
         var expense = {
             AmountTaxStatus: this.taxStatusCode,
             PreviousAmountTaxStatus: this.taxStatusCode,
-            CustomerId: this.customerId,
-            ExpenseDate: this.expenseDate,
+            CustomerId: formVals.CustomerId,
+            ExpenseDate: formVals.ExpenseClaimDate,
             LineItems: []
         };
 
-        // set a single line item using current details
-        var formVals = this.getItemForm().getValues();
+        // set a single line item using current details        
         var lineItem = {
             // Flag the item as Status New, since this forces the server to calculate what the default tax for the item is (but not necessarily apply it)
             ChangeStatus: 2,
-            ChargeableItemID: formVals.ItemId,
+            ItemId: formVals.ItemId,
             AccountId: formVals.AccountId,
             Quantity: formVals.Quantity,
             TaxGroupId: this.isTaxTracking() ? formVals.TaxGroupId : null,

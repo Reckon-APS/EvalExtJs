@@ -40,7 +40,10 @@ Ext.define('RM.view.ExpenseLineItem', {
                 name: 'CustomerId'
             }, {
                 xtype: 'hiddenfield',
-                name: 'ChargeableItemID'
+                name: 'SupplierId'
+            }, {
+                xtype: 'hiddenfield',
+                name: 'ItemId'
             }, {
                 xtype: 'hiddenfield',
                 name: 'ItemPath'
@@ -61,7 +64,7 @@ Ext.define('RM.view.ExpenseLineItem', {
                 name: 'ProjectName',
                 label: 'Project',
                 cls: 'rm-flatfield',
-                clearIcon: true,
+                clearIcon: false,
                 placeHolder: 'select (optional)',
                 permissionFor: { action: 'Select', name: 'Projects' },
             }, {
@@ -82,7 +85,7 @@ Ext.define('RM.view.ExpenseLineItem', {
                 readOnly: true
             }, {
                 xtype: 'rmtogglefield',
-                name: 'Billable',
+                name: 'IsBillable',
                 onText: 'Yes',
                 offText: 'No',
                 toggleState: false,
@@ -165,7 +168,7 @@ Ext.define('RM.view.ExpenseLineItem', {
                     usePicker: true,
                     name: 'TaxGroupId',
                     itemId: 'TaxGroupId',
-                    store: 'GSTCodes',
+                    store: 'PurchaseTaxCodes',
                     displayField: 'GSTCode',
                     valueField: 'GSTCodeId',
                     autoSelect: false,

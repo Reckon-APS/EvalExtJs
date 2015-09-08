@@ -351,6 +351,9 @@
     <Content Include="app\controller\ExpenseDetailC.js">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="app\controller\ExpenseLineItemC.js">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="app\controller\ExpensesC.js">
       <SubType>Content</SubType>
     </Content>
@@ -587,6 +590,7 @@
     <Content Include="app\model\Project1.js">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="app\model\PurchaseTaxCode.js" />
     <Content Include="app\model\Supplier.js">
       <SubType>Content</SubType>
     </Content>
@@ -671,6 +675,7 @@
     <Content Include="app\store\Projects.js">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="app\store\PurchaseTaxCodes.js" />
     <Content Include="app\store\RmBaseStore.js">
       <SubType>Content</SubType>
     </Content>
@@ -801,6 +806,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="app\view\ExpenseDetail.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="app\view\ExpenseLineItem.js">
       <SubType>Content</SubType>
     </Content>
     <Content Include="app\view\Expenses.js">

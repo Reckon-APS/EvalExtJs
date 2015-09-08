@@ -38,6 +38,10 @@ Ext.define('RM.component.ExpenseLineItems', {
         this.customerId = customerId;
     },
 
+    setProjectId: function (projectId){
+        this.projectId = projectId;
+    },
+
     setExpenseDate: function (expenseDate) {
         this.expenseDate = expenseDate;
     },
@@ -151,7 +155,7 @@ Ext.define('RM.component.ExpenseLineItems', {
         		},
         		this
         	);*/
-            RM.ExpensesMgr.showExpenseLineItem(this.isEditable, this.customerId, false, item,
+        RM.ExpensesMgr.showExpenseLineItem(this.isEditable, this.customerId, { taxStatus: this.taxStatus, isCreate: false }, item,
         		function (data) {
         		    this.updateLineItem(compId, data[0]);
         		    this.fireEvent('editlineitem');

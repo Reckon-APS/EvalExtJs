@@ -14,8 +14,7 @@ Ext.define('RM.view.ExpenseDetail', {
 						ui: 'rm_topbarbuttonleft',
 						icon: 'resources/images/icons/rm-back.svg',
                         iconCls: 'rm-backbtniconcls',
-                        width: '2.6em'
-						
+                        width: '2.6em'						
 					},{
 						xtype: 'component',
 						html: 'Expense Detail',
@@ -55,13 +54,13 @@ Ext.define('RM.view.ExpenseDetail', {
 						        cls: 'rm-hearderbg'
 						    },{
 								xtype: 'hiddenfield',
-								name: 'ExpenseClaimID'			
+								name: 'ExpenseClaimId'			
 							},{
 								xtype: 'hiddenfield',
-								name: 'CustomerID'			
+								name: 'CustomerId'			
 							},{
 								xtype: 'hiddenfield',
-								name: 'ProjectID'			
+								name: 'ProjectId'			
 							}, {
 							    xtype: 'extdatepickerfield',
 							    name: 'ExpenseClaimDate',
@@ -132,7 +131,7 @@ Ext.define('RM.view.ExpenseDetail', {
                                 prefix: '$'                                
 							}, {
 							    xtype: 'rmamountfield',
-							    name: 'Balance',
+							    name: 'BalanceDue',
 							    label: 'Balance due',
 							    labelWidth: '8em',
 							    cls: ['rm-flatfield', 'rm-flatfield-last'],
