@@ -8,13 +8,13 @@ Ext.define('RM.controller.ExpenseDetailC', {
             expenseStatus: 'expensedetail #expenseStatus',
             saveBtn: 'expensedetail #save',
             expenseForm: 'expensedetail #expenseForm',
-            customerId: 'expensedetail hiddenfield[name=CustomerID]',
-            projectId: 'expensedetail hiddenfield[name=ProjectID]',
+            customerId: 'expensedetail hiddenfield[name=CustomerId]',
+            projectId: 'expensedetail hiddenfield[name=ProjectId]',
             //photoBtn: 'expensedetail #photo',
             dateFld: 'expensedetail extdatepickerfield[name=ExpenseClaimDate]',
             amountsFld: 'expensedetail extselectfield[name=AmountTaxStatus]',
             itemFld:  'expensedetail exttextfield[name=ItemName]',
-            lineItems: 'expensedetail expenselineitems',
+            lineItems: 'expensedetail expenselineitems'
         },
         control: {
             'expensedetail': {
@@ -25,7 +25,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
                 tap: 'back'
             },
             'expensedetail #save': {
-                tap: 'save'
+                tap: 'onSave'
             },
             //'expensedetail #photo': {
             //    tap: 'onPhoto'
@@ -172,7 +172,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
     },    
 
     isFormDirty: function(){        
-        return !RM.AppMgr.isFormValsEqual(this.getExpenseForm().getValues(), this.initialFormValues);        
+        return this.lineItemsDirty || !RM.AppMgr.isFormValsEqual(this.getExpenseForm().getValues(), this.initialFormValues);
     },   
     
     //setPhotoBtnIcon: function(){
@@ -285,15 +285,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
         if(!vals.Amount){
             this.getAmountFld().showValidation(false);
             isValid = false;
-        }
-        if(!vals.ItemName){
-            this.getItemFld().showValidation(false);
-            isValid = false;
-        }
-        if(!vals.SupplierName){
-            this.getSupplierFld().showValidation(false);
-            isValid = false;
-        }
+        }        
         
         if(!isValid){            
             RM.AppMgr.showInvalidFormMsg();
@@ -328,20 +320,61 @@ Ext.define('RM.controller.ExpenseDetailC', {
 
     },
 
+    onSave: function (button) {
+        if (this.isFormDirty()) {
+            this.save();
+        }
+        else {
+            this.goBack();
+        }
+    },
+
     save: function () {
         var formVals = this.getExpenseForm().getValues();
-        var vals = Ext.applyIf(formVals, this.detailsData);
+        formVals.LineItems = Ext.clone(this.getLineItems().getViewData());
 
-        //var receiptImageIsFile = this.receiptImage && (this.receiptImage.indexOf(';base64,') == -1);
-        
-        if(this.validateForm(vals)){        
-            //if(receiptImageIsFile){
-            //    this.uploadPhotoFile(vals);            
-            //}
-            //else{
-            //    this.uploadPhotoData(vals);
-            //}
+        var vals = Ext.applyIf(formVals, this.detailsData);        
+        if (vals.Items) {
+            delete vals.Items;
         }
+
+        // Some date fernagling, the default json serialization of dates will format the date in UTC which will alter the time from 00:00:00
+        //vals.ExpenseClaimDateDate = RM.util.Dates.encodeAsUTC(vals.ExpenseClaimDateDate);
+
+        if (this.validateForm(vals)) {
+            if (formVals.LineItems.length > 0) {
+                // Some line item admin
+                var lineNumber = 1;
+                formVals.LineItems.forEach(function (item) {
+                    item.lineNo = lineNumber;
+
+                    // Remove the temporary Id for any new items, since the server is way too trusting
+                    if (item.IsNew) {
+                        delete item.InvoiceLineItemId;
+                    }
+
+                    // Set the line numbers to handle new or deleted items
+                    lineNumber += 1;
+                });
+
+                this.detailsCb.call(this.detailsCbs, 'save', vals);
+                this.saveExpense(vals);
+            }
+            else {
+                RM.AppMgr.showErrorMsgBox('No items have been added to this invoice.');
+            }
+        }
+
+        //Photo receipt part
+        //var receiptImageIsFile = this.receiptImage && (this.receiptImage.indexOf(';base64,') == -1);        
+        //if(this.validateForm(vals)){        
+        //    if(receiptImageIsFile){
+        //        this.uploadPhotoFile(vals);            
+        //    }
+        //    else{
+        //        this.uploadPhotoData(vals);
+        //    }
+        //}
     },
     
     uploadPhotoFile: function(vals){   
@@ -547,7 +580,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
         // Send only the fields required by the calculation contract for line items
         vals.LineItems = lineItems.map(function (item) {
             return {
-                InvoiceLineItemId: item.ExpenseLineItemId, //To use InvoiceCalc and get calc response we have to pass ExpenseLineItemId as InvoiceLineItemId
+                InvoiceLineItemId: item.ExpenseClaimLineItemId, //To use InvoiceCalc and get calc response we have to pass ExpenseClaimLineItemId as InvoiceLineItemId
                 ItemType: item.ItemType,
                 ItemId: item.ItemId,
                 ProjectId: item.ProjectId,
@@ -568,12 +601,8 @@ Ext.define('RM.controller.ExpenseDetailC', {
 			function response(respRecs) {
 			    var respRec = respRecs[0];
 
-			    var data = this.detailsData;
-			    data.Amount = respRec.TotalIncludingTax;
-			    data.AmountExTax = respRec.TotalExcludingTax;
-			    data.Tax = respRec.Tax;
-			    data.Subtotal = respRec.Subtotal;
-			    data.Paid = respRec.AmountPaid;
+			    var data = {};
+			    data.ExpenseClaimAmount = respRec.TotalIncludingTax;			    
 			    data.BalanceDue = respRec.BalanceDue;
 
 			    var lineItemsPanel = this.getLineItems();
@@ -585,7 +614,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
 			        // find the result for the line
 			        var resultLine = null;
 			        Ext.Array.some(respRec.Items, function (item) {
-			            if (item.InvoiceLineItemId === currentLine.ExpenseLineItemId) {
+			            if (item.InvoiceLineItemId === currentLine.ExpenseClaimLineItemId) {
 			                resultLine = item;
 			                return true;
 			            }
@@ -606,6 +635,8 @@ Ext.define('RM.controller.ExpenseDetailC', {
 
 			    lineItemsPanel.setTaxStatus(vals.AmountTaxStatus);
 			    lineItemsPanel.addLineItems(lineItems);
+
+			    this.updateAfterAddingLines(data);
 			},
 			this,
             function (eventMsg) {
@@ -614,6 +645,10 @@ Ext.define('RM.controller.ExpenseDetailC', {
             },
             'Loading...'
 		);
+    },
+
+    updateAfterAddingLines: function(data){
+        this.getExpenseForm().setValues(data);
     },
 
     // Check all the lineItems for modifications to tax code or tax amount
@@ -629,6 +664,20 @@ Ext.define('RM.controller.ExpenseDetailC', {
         });
 
         return changesExist;
+    },
+
+    saveExpense: function (vals)
+    {
+        RM.AppMgr.saveServerRec('Expenses', this.isCreate, vals,
+                    function (recs) {
+                        RM.AppMgr.itemUpdated('expense');                        
+                        this.goBack();                        
+                    },
+                    this,
+                    function (recs, eventMsg) {
+                        RM.AppMgr.showOkMsgBox(eventMsg);
+                    }
+        );
     },
 
     onExpenseClaimDateChanged: function (dateField, newValue, oldValue) {

@@ -57,7 +57,7 @@ Ext.define('RM.component.ExpenseLineItems', {
 
     onAddItem: function () {
         var expenseData = this.up('#expenseForm').getValues();
-        RM.ExpensesMgr.showExpenseLineItem(true, this.customerId, true, expenseData, this.addNewLineItems, this);
+        RM.ExpensesMgr.showExpenseLineItem(true, this.customerId, { taxStatus: this.taxStatus, isCreate: true }, expenseData, this.addNewLineItems, this);
     },
 
     addNewLineItems: function (items) {

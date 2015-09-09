@@ -93,7 +93,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
         if (options.isCreate) {
             this.isCreate = true;
             this.detailsData.IsNew = true;
-            this.detailsData.ExpenseLineItemId = RM.util.PseudoGuid.next();
+            this.detailsData.ExpenseClaimLineItemId = RM.util.PseudoGuid.next();
             this.detailsData.UnitPriceAccuracy = 2;
             this.detailsData.Quantity = null;
             this.detailsData.TaxGroupId = null;
