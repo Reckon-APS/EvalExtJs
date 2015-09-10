@@ -154,7 +154,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
 					    this.previousAmountTaxStatus = data.AmountTaxStatus;
 					    this.applyViewEditableRules(); //needs to be called before adding line items below so that line items can have delete x hidden if necessary
 					    var lineItemsPanel = this.getLineItems();
-					    lineItemsPanel.addLineItems(data.Items);
+					    lineItemsPanel.addLineItems(data.LineItems);
 					    lineItemsPanel.setCustomerId(data.CustomerId);
 					    lineItemsPanel.setTaxStatus(data.AmountTaxStatus);
 					    lineItemsPanel.setExpenseDate(data.Date);
@@ -334,10 +334,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
         formVals.LineItems = Ext.clone(this.getLineItems().getViewData());
 
         var vals = Ext.applyIf(formVals, this.detailsData);        
-        if (vals.Items) {
-            delete vals.Items;
-        }
-
+        
         // Some date fernagling, the default json serialization of dates will format the date in UTC which will alter the time from 00:00:00
         //vals.ExpenseClaimDateDate = RM.util.Dates.encodeAsUTC(vals.ExpenseClaimDateDate);
 
