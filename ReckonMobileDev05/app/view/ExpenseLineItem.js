@@ -33,6 +33,11 @@ Ext.define('RM.view.ExpenseLineItem', {
             padding: 0,
             defaults: { clearIcon: false },
             items: [{
+                xtype: 'component',
+                itemId: 'status',
+                hidden: true,
+                cls: 'rm-hearderbg'
+            }, {
                 xtype: 'hiddenfield',
                 name: 'ProjectId'
             }, {
@@ -91,7 +96,7 @@ Ext.define('RM.view.ExpenseLineItem', {
                 toggleState: false,
                 cls: 'rm-flatfield',
                 label: 'Billable',
-                labelWidth: '10em',
+                labelWidth: '10em'
             }, {
                 xtype: 'exttextfield',
                 name: 'Notes',

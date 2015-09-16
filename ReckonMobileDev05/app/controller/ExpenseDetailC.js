@@ -14,7 +14,8 @@ Ext.define('RM.controller.ExpenseDetailC', {
             dateFld: 'expensedetail extdatepickerfield[name=ExpenseClaimDate]',
             amountsFld: 'expensedetail extselectfield[name=AmountTaxStatus]',
             itemFld:  'expensedetail exttextfield[name=ItemName]',
-            lineItems: 'expensedetail expenselineitems'
+            lineItems: 'expensedetail expenselineitems',
+            expenseClaimAmountFld: 'expensedetail field[name=ExpenseClaimAmount]'
         },
         control: {
             'expensedetail': {
@@ -56,7 +57,9 @@ Ext.define('RM.controller.ExpenseDetailC', {
 
     isEditable: function () {
         return RM.ExpensesMgr.isStatusEditable(this.detailsData.Status) &&
-        RM.PermissionsMgr.canAddEdit('ExpenseClaims');
+        RM.PermissionsMgr.canAddEdit('ExpenseClaims') &&
+        (!Ext.isDefined(this.detailsData.SaveSupport) || this.detailsData.SaveSupport) &&
+        this.detailsData.Amount === this.detailsData.BalanceDue;
     },
 
     applyViewEditableRules: function () {
@@ -103,7 +106,14 @@ Ext.define('RM.controller.ExpenseDetailC', {
 
         if (this.isCreate){
             //this.detailsData = {HasReceiptPhoto: false, Date: new Date(), StatusCode:'b'}; // { TaxTypeId: '52c59eb2-7dc3-411b-848a-27c4aa7378b7', UserId: '00000000-0000-0000-0000-000000000000', StatusCode: '' };
-            this.detailsData = { AmountTaxStatus: RM.CashbookMgr.getTaxPreferences().SalesFigures};
+            this.detailsData = {
+                AmountTaxStatus: RM.CashbookMgr.getTaxPreferences().SalesFigures,
+                Status: RM.ExpensesMgr.getInitialExpenseStatus(),
+                SaveSupport: true,
+                Amount: 0,
+                BalanceDue: 0,
+                ExpenseClaimTax: 0
+            };
         }
 
         var view = this.getExpenseDetail();
@@ -139,14 +149,14 @@ Ext.define('RM.controller.ExpenseDetailC', {
     },
 
     loadData: function(){
-        RM.AppMgr.getServerRecById(this.serverApiName, this.detailsData.ExpenseClaimID,
+        RM.AppMgr.getServerRecById(this.serverApiName, this.detailsData.ExpenseClaimId,
 					function (data) {
 					    //data.HasReceiptPhoto = true;
 					    this.getExpenseStatus().setHidden(false);
 					    this.getExpenseStatus().setHtml(RM.ExpensesMgr.getExpenseStatusText(data.Status));
 					    this.getLineItems().removeAllItems();
 					    this.detailsData = data;
-					    data.ExpenseClaimDate = new Date(data.ExpenseClaimDate);
+					    data.ExpenseClaimDate = RM.util.Dates.decodeAsLocal(data.ExpenseClaimDate);
 					    var expenseForm = this.getExpenseForm();
 					    expenseForm.setValues(data);
 					    //this.setPhotoBtnIcon();
@@ -198,7 +208,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
                 this.getProjectId().getValue(),
 				function (data) {
 				    tf.setValue(data.Name);
-				    this.getExpenseForm().setValues({ CustomerID: data.ContactId, CustomerName: data.Description });
+				    this.getExpenseForm().setValues({ CustomerId: data.ContactId, CustomerName: data.Description });
 				    this.getLineItems().setCustomerId(data.ContactId);
 				    this.calculateBreakdown();
 				},
@@ -211,7 +221,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
                 null,
 				function (data) {
 				    tf.setValue(data.Name);	
-				    this.getExpenseForm().setValues({ ProjectID: data.ProjectId, ProjectName: data.ProjectPath });
+				    this.getExpenseForm().setValues({ ProjectId: data.ProjectId, ProjectName: data.ProjectPath });
 				    this.getLineItems().setProjectId(data.ProjectId);
 				    this.calculateBreakdown();
 				},
@@ -282,14 +292,14 @@ Ext.define('RM.controller.ExpenseDetailC', {
     validateForm: function(vals){        
         var isValid = true;
         
-        if(!vals.Amount){
-            this.getAmountFld().showValidation(false);
-            isValid = false;
-        }        
+        //if(!vals.Amount){
+        //    this.getExpenseClaimAmountFld().showValidation(false);
+        //    isValid = false;
+        //}        
         
-        if(!isValid){            
-            RM.AppMgr.showInvalidFormMsg();
-        }
+        //if(!isValid){            
+        //    RM.AppMgr.showInvalidFormMsg();
+        //}
         
         return isValid;
     },    
@@ -336,7 +346,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
         var vals = Ext.applyIf(formVals, this.detailsData);        
         
         // Some date fernagling, the default json serialization of dates will format the date in UTC which will alter the time from 00:00:00
-        //vals.ExpenseClaimDateDate = RM.util.Dates.encodeAsUTC(vals.ExpenseClaimDateDate);
+        vals.ExpenseClaimDate = RM.util.Dates.encodeAsUTC(vals.ExpenseClaimDate);
 
         if (this.validateForm(vals)) {
             if (formVals.LineItems.length > 0) {
@@ -347,7 +357,20 @@ Ext.define('RM.controller.ExpenseDetailC', {
 
                     // Remove the temporary Id for any new items, since the server is way too trusting
                     if (item.IsNew) {
-                        delete item.InvoiceLineItemId;
+                        delete item.ExpenseClaimLineItemId;
+                    }
+
+
+                    //set header Project to line item
+                    if (vals.ProjectName) {
+                        item.ProjectName = vals.ProjectName;
+                        item.ProjectId = vals.ProjectId;
+                    }
+
+                    //set header customer to line item 
+                    if(vals.CustomerName){
+                        item.CustomerName = vals.CustomerName;
+                        item.CustomerId = vals.CustomerId;
                     }
 
                     // Set the line numbers to handle new or deleted items
@@ -548,7 +571,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
         var lineItems = this.getLineItems().getViewData();
         var vals = {
             CustomerId: formVals.CustomerId,
-            ExpenseClaimDate: formVals.Date,
+            ExpenseClaimDate: RM.util.Dates.encodeAsUTC(formVals.ExpenseClaimDate),
             AmountTaxStatus: formVals.AmountTaxStatus,
             PreviousAmountTaxStatus: this.previousAmountTaxStatus,
             LineItems: []

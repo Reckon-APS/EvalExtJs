@@ -7,6 +7,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
             itemTitle: 'expenselineitem #title',
             addBtn: 'expenselineitem #add',
             itemForm: 'expenselineitem #itemForm',
+            status: 'expenselineitem #status',
             description: 'expenselineitem field[name=Description]',
             unitPrice: 'expenselineitem field[name=UnitPrice]',
             quantity: 'expenselineitem field[name=Quantity]',
@@ -21,7 +22,8 @@ Ext.define('RM.controller.ExpenseLineItemC', {
             itemId: 'expenselineitem field[name=ItemId]',
             projectName: 'expenselineitem field[name=ProjectName]',
             customerName: 'expenselineitem field[name=CustomerName]',
-            dateFld: 'expenselineitem field[name=ExpenseClaimDate]'
+            dateFld: 'expenselineitem field[name=ExpenseClaimDate]',
+            billableFld: 'expenselineitem field[name=IsBillable]'
         },
         control: {
             'expenselineitem': {
@@ -58,6 +60,9 @@ Ext.define('RM.controller.ExpenseLineItemC', {
             },
             dateFld: {
                 change: 'dateChanged'
+            },
+            customerName: {
+                change: 'onCustomerChanged'
             }
         }
     },
@@ -87,8 +92,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
         this.detailsCbs = cbs;
         
         this.isCreate = false;
-        this.detailsData = Ext.clone(detailsData);
-        this.detailsData.ExpenseClaimDate = detailsData.ExpenseClaimDate ? new Date(detailsData.ExpenseClaimDate) : new Date();
+        this.detailsData = Ext.clone(detailsData);        
 
         if (options.isCreate) {
             this.isCreate = true;
@@ -98,6 +102,11 @@ Ext.define('RM.controller.ExpenseLineItemC', {
             this.detailsData.Quantity = null;
             this.detailsData.TaxGroupId = null;
             this.detailsData.TaxIsModified = false;            
+        }
+        else {
+            if (this.detailsData.ExpenseClaimId && this.detailsData.ExpenseClaimId !=='00000000-0000-0000-0000-000000000000') {
+                this.detailsData.ExpenseClaimDate = RM.util.Dates.decodeAsLocal(this.detailsData.ExpenseClaimDate);
+            }            
         }
 
         var view = this.getItemDetail();
@@ -124,6 +133,9 @@ Ext.define('RM.controller.ExpenseLineItemC', {
         this.getAddBtn().setHidden(!this.isEditable);
         this.getAddBtn().setText(this.isCreate ? 'Add' : 'Save');
         this.getTax().setReadOnly(!RM.CashbookMgr.getTaxPreferences().AllowTaxEdit);
+
+        this.getStatus().setHidden(false);
+        this.getStatus().setHtml(RM.ExpensesMgr.getExpenseLineItemStatusText(this.detailsData.Status));
 
         if (!RM.CashbookMgr.getTaxPreferences().AllowTaxEdit) {
             this.getTax().addCls(['rm-flatfield-disabled']);
@@ -180,6 +192,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
     setEditableBasedOnExpenseHeader: function () {
         this.getProjectName().setDisabled(this.detailsData.ProjectName);
         this.getCustomerName().setDisabled(this.detailsData.CustomerName);
+        this.setBillableFldAccess();
     },
 
     setTaxModified: function (isModified) {
@@ -318,8 +331,8 @@ Ext.define('RM.controller.ExpenseLineItemC', {
         }
 
         // More general validations (non-deterministic which field should be corrected)
-        if (vals.Amount < 0) {
-            RM.AppMgr.showOkMsgBox("The item amount can't be negative, please check discount & item amount.");
+        if (!vals.Amount) {
+            RM.AppMgr.showOkMsgBox("Amount cannot be zero");
             isValid = false;
         }
 
@@ -361,7 +374,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
 
     customerChanged: function(newCustomerData, oldCustomerId){
         this.getItemForm().setValues({
-            CustomerId: newCustomerData.CustomerId,
+            CustomerId: newCustomerData.ContactId,
             CustomerName: newCustomerData.Description
         });
     },
@@ -650,6 +663,14 @@ Ext.define('RM.controller.ExpenseLineItemC', {
             Ext.toast('Expense line date cannot be later than expense header date.', 3000);
             this.getDateFld().setValue(headerDate);
         }
+    },
+
+    onCustomerChanged: function () {
+        this.setBillableFldAccess();
+    },
+
+    setBillableFldAccess: function () {
+        this.getBillableFld().setDisabled(!this.getCustomerName().getValue());
     }
 
 });

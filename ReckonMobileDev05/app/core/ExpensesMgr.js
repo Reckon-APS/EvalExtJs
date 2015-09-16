@@ -21,6 +21,29 @@ Ext.define('RM.core.ExpensesMgr', {
 	    }
 	},
 
+	getExpenseLineItemStatusText: function(status){
+	    switch (status) {
+	        case RM.Consts.ExpenseLineItemStatus.UNBILLABLE:
+	            return 'Unbillable';
+	        case RM.Consts.ExpenseLineItemStatus.BILLABLE:
+	            return 'Billable';
+	        case RM.Consts.ExpenseLineItemStatus.INVOICED:
+	            return 'Invoiced';
+	        case RM.Consts.ExpenseLineItemStatus.BILLED:
+	            return 'Billed';
+	    }
+	    return 'Unallocated';
+	},
+
+	getInitialExpenseStatus: function () {
+	    if (RM.CashbookMgr.getPurchasePreferences().ApprovalProcessEnabled) {
+	        return RM.Consts.ExpenseStatus.DRAFT;
+	    }
+	    else {
+	        return RM.Consts.ExpenseStatus.APPROVED;
+	    }
+	},
+
 	showExpenseLineItem: function (editable, customerId, isCreate, detailsData, cb, cbs) {
 	    var invLineItem = RM.AppMgr.getAppControllerInstance('RM.controller.ExpenseLineItemC');
 	    invLineItem.showView(editable, customerId, isCreate, detailsData, cb, cbs);
