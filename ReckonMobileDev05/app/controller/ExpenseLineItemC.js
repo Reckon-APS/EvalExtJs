@@ -63,6 +63,9 @@ Ext.define('RM.controller.ExpenseLineItemC', {
             },
             customerName: {
                 change: 'onCustomerChanged'
+            },
+            billableFld: {
+                change: 'onBillableChanged'
             }
         }
     },
@@ -135,7 +138,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
         this.getTax().setReadOnly(!RM.CashbookMgr.getTaxPreferences().AllowTaxEdit);
 
         this.getStatus().setHidden(false);
-        this.getStatus().setHtml(RM.ExpensesMgr.getExpenseLineItemStatusText(this.detailsData.Status));
+        //this.getStatus().setHtml(RM.ExpensesMgr.getExpenseLineItemStatusText(this.detailsData.Status));
 
         if (!RM.CashbookMgr.getTaxPreferences().AllowTaxEdit) {
             this.getTax().addCls(['rm-flatfield-disabled']);
@@ -245,9 +248,11 @@ Ext.define('RM.controller.ExpenseLineItemC', {
                     false,
     				function (data) {
     				    this.showItemFields();
-    				    this.itemChanged(data[0])
+    				    this.itemChanged(data[0]);
     				},
-    				this
+    				this,
+                    null,
+                    RM.Consts.ChargeableItemPurchaseSoldType.PURCHASEDONLY
     			);
             }
             else if (tf.getName() == 'AccountName') {
@@ -255,7 +260,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
                     false,
     				function (data) {
     				    this.showAccountFields();
-    				    this.itemChanged(data[0])
+    				    this.itemChanged(data[0]);
     				},
     				this
     			);
@@ -671,6 +676,16 @@ Ext.define('RM.controller.ExpenseLineItemC', {
 
     setBillableFldAccess: function () {
         this.getBillableFld().setDisabled(!this.getCustomerName().getValue());
+    },
+
+    onBillableChanged: function (billableFld) {
+        if(billableFld.getValue()){
+            this.detailsData.Status = RM.Consts.ExpenseLineItemStatus.BILLABLE;
+        }            
+        else {
+            this.detailsData.Status = RM.Consts.ExpenseLineItemStatus.UNBILLABLE;
+        }
+        this.getStatus().setHtml(RM.ExpensesMgr.getExpenseLineItemStatusText(this.detailsData.Status));
     }
 
 });

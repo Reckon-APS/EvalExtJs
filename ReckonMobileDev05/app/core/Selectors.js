@@ -29,10 +29,10 @@ Ext.define('RM.core.Selectors', {
 		suppliersC.showView(cb, cbs);
 	},
 	
-	showItems: function(showItemTax, projectId, selectDetails, cb, cbs, itemType){
+	showItems: function (showItemTax, projectId, selectDetails, cb, cbs, itemType, itemPurchasedSoldType) {
 	    //var itemsC = RM.AppMgr.getAppControllerInstance('RM.controller.ItemsC');
 	    var itemsC = RM.AppMgr.getAppControllerInstance('RM.controller.ItemsAmountsC');
-		itemsC.showView(showItemTax, projectId, selectDetails, cb, cbs, itemType);
+	    itemsC.showView(showItemTax, projectId, selectDetails, cb, cbs, itemType, itemPurchasedSoldType);
 	},
     
     showAccounts: function(selectDetails, cb, cbs){

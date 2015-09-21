@@ -360,7 +360,6 @@ Ext.define('RM.controller.ExpenseDetailC', {
                         delete item.ExpenseClaimLineItemId;
                     }
 
-
                     //set header Project to line item
                     if (vals.ProjectName) {
                         item.ProjectName = vals.ProjectName;
