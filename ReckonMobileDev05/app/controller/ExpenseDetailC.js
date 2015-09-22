@@ -209,10 +209,15 @@ Ext.define('RM.controller.ExpenseDetailC', {
 				function (data) {
 				    tf.setValue(data.Name);
 				    this.getExpenseForm().setValues({ CustomerId: data.ContactId, CustomerName: data.Description });
-				    this.getLineItems().setCustomerId(data.ContactId);
+
+				    var lineItems = this.getLineItems()
+				    lineItems.setCustomerId(data.ContactId);
+				    lineItems.setCustomerName(data.Description);
+
 				    this.calculateBreakdown();
 				},
-				this
+				this,
+                'project'
 			);
         }
         else if (tf.getName() == 'ProjectName') {
@@ -222,7 +227,11 @@ Ext.define('RM.controller.ExpenseDetailC', {
 				function (data) {
 				    tf.setValue(data.Name);	
 				    this.getExpenseForm().setValues({ ProjectId: data.ProjectId, ProjectName: data.ProjectPath });
-				    this.getLineItems().setProjectId(data.ProjectId);
+
+				    var lineItems = this.getLineItems()
+				    lineItems.setProjectId(data.ProjectId);
+				    lineItems.setProjectName(data.ProjectPath);
+
 				    this.calculateBreakdown();
 				},
 				this

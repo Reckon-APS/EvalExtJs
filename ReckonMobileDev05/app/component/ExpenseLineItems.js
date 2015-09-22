@@ -38,8 +38,16 @@ Ext.define('RM.component.ExpenseLineItems', {
         this.customerId = customerId;
     },
 
+    setCustomerName: function(customerName){
+        this.customerName = customerName;
+    },
+
     setProjectId: function (projectId){
         this.projectId = projectId;
+    },
+
+    setProjectName: function(projectName){
+        this.projectName = projectName;
     },
 
     setExpenseDate: function (expenseDate) {
@@ -57,7 +65,7 @@ Ext.define('RM.component.ExpenseLineItems', {
 
     onAddItem: function () {
         var expenseData = this.up('#expenseForm').getValues();
-        RM.ExpensesMgr.showExpenseLineItem(true, this.customerId, { taxStatus: this.taxStatus, isCreate: true }, expenseData, this.addNewLineItems, this);
+        RM.ExpensesMgr.showExpenseLineItem(true, this.customerId, { taxStatus: this.taxStatus, isCreate: true, projectId: this.projectId, projectName: this.projectName, customerName: this.customerName }, expenseData, this.addNewLineItems, this);
     },
 
     addNewLineItems: function (items) {
@@ -155,7 +163,7 @@ Ext.define('RM.component.ExpenseLineItems', {
         		},
         		this
         	);*/
-        RM.ExpensesMgr.showExpenseLineItem(this.isEditable, this.customerId, { taxStatus: this.taxStatus, isCreate: false }, item,
+        RM.ExpensesMgr.showExpenseLineItem(this.isEditable, this.customerId, { taxStatus: this.taxStatus, isCreate: false, projectId: this.projectId, projectName: this.projectName, customerName: this.customerName }, item,
         		function (data) {
         		    this.updateLineItem(compId, data[0]);
         		    this.fireEvent('editlineitem');

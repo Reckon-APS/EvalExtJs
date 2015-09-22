@@ -39,9 +39,10 @@ Ext.define('RM.controller.CustomersC', {
         this.getApplication().addListener('itemupdated', 'onItemUpdated', this);
     },
     
-	showView: function(projectId, cb, cbs){
+	showView: function(projectId, cb, cbs, filterBy){
         this.projectIdFilter = projectId;
-        
+        this.filterBy = filterBy;
+
 		this.selectCb = cb;
 		this.selectCbs = cbs;
 		var view = this.getCustomers();
@@ -99,9 +100,13 @@ Ext.define('RM.controller.CustomersC', {
         
         store.clearFilter();
         store.filter('contacttype', 'customers');
+        
         if (this.projectIdFilter){
-            store.filter('projectid', this.projectIdFilter);
-        }        
+            store.filter('projectid', this.projectIdFilter);            
+        }
+        if (this.filterBy) {
+            store.filter('filterby', this.filterBy);
+        }
         if (this.searchFilter){
             store.filter('search', this.searchFilter);
         }          

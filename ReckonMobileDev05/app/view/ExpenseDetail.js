@@ -81,7 +81,6 @@ Ext.define('RM.view.ExpenseDetail', {
 							    xtype: 'exttextfield',
 							    name: 'CustomerName',
 							    label: 'Customer',
-							    clearIcon: false,
 							    cls: 'rm-flatfield',
 							    placeHolder: 'select (optional)',
 							    readOnly: true

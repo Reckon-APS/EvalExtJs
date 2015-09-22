@@ -90,12 +90,18 @@ Ext.define('RM.controller.ExpenseLineItemC', {
         this.ignoreEvents = false;
         this.isEditable = editable;
         this.customerId = customerId;
+        this.projectId = options.projectId;
         this.taxStatusCode = options.taxStatus;
         this.detailsCb = cb;
         this.detailsCbs = cbs;
         
         this.isCreate = false;
         this.detailsData = Ext.clone(detailsData);        
+
+        this.detailsData.CustomerId = options.customerId && options.customerId !== '00000000-0000-0000-0000-000000000000' ? options.customerId : this.detailsData.CustomerId;
+        this.detailsData.CustomerName = options.customerName || this.detailsData.CustomerName;
+        this.detailsData.ProjectId = options.projectId && options.projectId !== '00000000-0000-0000-0000-000000000000' ? options.projectId : this.detailsData.ProjectId;
+        this.detailsData.ProjectName = options.projectName || this.detailsData.ProjectName;
 
         if (options.isCreate) {
             this.isCreate = true;
@@ -193,8 +199,8 @@ Ext.define('RM.controller.ExpenseLineItemC', {
     },
 
     setEditableBasedOnExpenseHeader: function () {
-        this.getProjectName().setDisabled(this.detailsData.ProjectName);
-        this.getCustomerName().setDisabled(this.detailsData.CustomerName);
+        this.getProjectName().setDisabled(this.detailsData.ProjectName && (this.projectId && this.projectId !== '00000000-0000-0000-0000-000000000000'));
+        this.getCustomerName().setDisabled(this.detailsData.CustomerName && (this.customerId && this.customerId !== '00000000-0000-0000-0000-000000000000'));
         this.setBillableFldAccess();
     },
 
@@ -227,7 +233,8 @@ Ext.define('RM.controller.ExpenseLineItemC', {
                             this.customerChanged(data, currentValue);
                         }
                     },
-                    this
+                    this,
+                    'project'
                 );
             }
             else if(tf.getName() == 'SupplierName'){
@@ -382,6 +389,8 @@ Ext.define('RM.controller.ExpenseLineItemC', {
             CustomerId: newCustomerData.ContactId,
             CustomerName: newCustomerData.Description
         });
+
+        this.customerId = newCustomerData.ContactId;
     },
 
     supplierChanged: function (newSupplierData, oldSupplierId) {
@@ -396,6 +405,8 @@ Ext.define('RM.controller.ExpenseLineItemC', {
             ProjectId: newProjectData.ProjectId,
             ProjectName: newProjectData.ProjectPath
         });
+
+        this.projectId = newProjectData.ProjectId;
 
         // If an item is already selected, check if it has a rate override for the new project
         var currentItem = this.getItemId().getValue();
