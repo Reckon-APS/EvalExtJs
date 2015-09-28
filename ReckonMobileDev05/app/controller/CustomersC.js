@@ -102,11 +102,13 @@ Ext.define('RM.controller.CustomersC', {
         store.filter('contacttype', 'customers');
         
         if (this.projectIdFilter){
-            store.filter('projectid', this.projectIdFilter);            
+            store.filter('projectid', this.projectIdFilter);
+
+            if (this.filterBy && RM.AppMgr.isValidGuid(this.projectIdFilter)) {
+                store.filter('filterby', this.filterBy);
+            }
         }
-        if (this.filterBy) {
-            store.filter('filterby', this.filterBy);
-        }
+        
         if (this.searchFilter){
             store.filter('search', this.searchFilter);
         }          

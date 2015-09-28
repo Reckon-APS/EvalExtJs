@@ -901,6 +901,10 @@ Ext.define('RM.core.AppMgr', {
     validateURL: function(inputVal) {	
         return inputVal.indexOf('.') > -1 && inputVal.indexOf('"') === -1 && inputVal.indexOf(' ') == -1;
     },
+
+    isValidGuid: function(inputId){
+        return inputId && inputId !== RM.Consts.EmptyGuid;
+    },
     
     startUpTest: function(){
         //following line is required for testing screens below when not using login()

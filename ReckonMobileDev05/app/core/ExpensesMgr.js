@@ -56,6 +56,25 @@ Ext.define('RM.core.ExpensesMgr', {
 	    else {
 	        return true;
 	    }
+	},
+
+	showActions: function (expenseClaimId) {
+	    var actions = RM.AppMgr.getAppControllerInstance('RM.controller.ExpenseActionsC');
+	    actions.showView(expenseClaimId);
+	},
+
+	isExpenseStatusApprovable: function (status) {
+	    return (status == RM.Consts.ExpenseStatus.DRAFT);
+	},
+
+	isExpenseStatusEmailable: function (status) {
+	    //return (status == RM.Consts.ExpenseStatus.APPROVED) || (status == RM.Consts.ExpenseStatus.PAID);
+	    return true;
+	},
+
+	sendMsg: function (cb, cbs, invoiceData, msgType) {
+	    var emailExpense = RM.AppMgr.getAppControllerInstance('RM.controller.EmailExpenseC');
+	    emailExpense.showView(cb, cbs, invoiceData, msgType);
 	}
 	
 });

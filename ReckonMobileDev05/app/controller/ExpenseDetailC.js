@@ -15,7 +15,8 @@ Ext.define('RM.controller.ExpenseDetailC', {
             amountsFld: 'expensedetail extselectfield[name=AmountTaxStatus]',
             itemFld:  'expensedetail exttextfield[name=ItemName]',
             lineItems: 'expensedetail expenselineitems',
-            expenseClaimAmountFld: 'expensedetail field[name=ExpenseClaimAmount]'
+            expenseClaimAmountFld: 'expensedetail field[name=ExpenseClaimAmount]',
+            expenseClaimNumberFld: 'expensedetail exttextfield[name=ExpenseClaimNumber]'
         },
         control: {
             'expensedetail': {
@@ -24,6 +25,8 @@ Ext.define('RM.controller.ExpenseDetailC', {
             },
             'expensedetail #back': {
                 tap: 'back'
+            }, 'expensedetail #options': {
+                tap: 'onOptions'
             },
             'expensedetail #save': {
                 tap: 'onSave'
@@ -134,6 +137,8 @@ Ext.define('RM.controller.ExpenseDetailC', {
                 this.loadData();                
             }
             else {
+                //this.loadNewExpenseClaimNumber();
+                this.getExpenseClaimNumberFld().setHidden(!this.detailsData.ExpenseClaimNumber);
                 var expenseForm = this.getExpenseForm();
                 expenseForm.reset();
                 this.detailsData.ExpenseClaimDate = new Date();
@@ -179,7 +184,22 @@ Ext.define('RM.controller.ExpenseDetailC', {
     
     onHide: function(){
         RM.ViewMgr.deRegFormBackHandler(this.back);
-    },    
+    },
+
+    loadNewExpenseClaimNumber: function () {
+        RM.AppMgr.saveServerRec('ExpenseCreate', true, null,
+			function (recs) {
+			    this.getExpenseClaimNumberFld().setValue(recs[0].ExpenseClaimNumber);
+			    this.detailsData.ExpenseClaimNumber = recs[0].ExpenseClaimNumber;
+			},
+			this,
+            function (recs, eventMsg) {
+                this.goBack();
+                RM.AppMgr.showOkMsgBox(eventMsg);
+            },
+            'Loading...'
+		);
+    },
 
     isFormDirty: function(){        
         return this.lineItemsDirty || !RM.AppMgr.isFormValsEqual(this.getExpenseForm().getValues(), this.initialFormValues);
@@ -296,6 +316,31 @@ Ext.define('RM.controller.ExpenseDetailC', {
         this.detailsCb.call(this.detailsCbs, 'back');
         RM.ViewMgr.back();
         this.dataLoaded = false;        
+    },
+
+    onOptions: function () {
+        if (this.isFormDirty()) {
+            RM.AppMgr.showOkCancelMsgBox('You must save your changes to continue, save now?',
+                function (btn) {
+                    if (btn == 'ok') {
+                        this.save(this.onExpenseActions);
+                    }
+                },
+                this
+            );
+        }
+        else {
+            this.onExpenseActions();
+        }
+    },
+
+    onExpenseActions: function () {
+        if (this.isCreate) {
+            RM.AppMgr.showOkMsgBox('Expense actions are only available after saving new invoices.');
+        }
+        else {
+            RM.ExpensesMgr.showActions(this.detailsData);
+        }
     },
     
     validateForm: function(vals){        

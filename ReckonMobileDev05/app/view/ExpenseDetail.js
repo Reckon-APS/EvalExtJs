@@ -22,7 +22,12 @@ Ext.define('RM.view.ExpenseDetail', {
 						itemId: 'title'
 					},{
 						xtype: 'spacer'
-					},{
+					}, {
+					    itemId: 'options',
+					    icon: 'resources/images/icons/rm-actions.svg',
+					    ui: 'rm_topbarbuttonright',
+					    width: '2.6em'
+					}, {
 						text: 'Save',
 						itemId: 'save',	                        
 						ui: 'rm_topbarbuttonright'	

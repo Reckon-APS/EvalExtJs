@@ -98,9 +98,10 @@ Ext.define('RM.controller.ExpenseLineItemC', {
         this.isCreate = false;
         this.detailsData = Ext.clone(detailsData);        
 
-        this.detailsData.CustomerId = options.customerId && options.customerId !== '00000000-0000-0000-0000-000000000000' ? options.customerId : this.detailsData.CustomerId;
+        this.detailsData.ExpenseClaimDate = RM.util.Dates.decodeAsLocal(this.detailsData.ExpenseClaimDate.toString());
+        this.detailsData.CustomerId = RM.AppMgr.isValidGuid(options.customerId) ? options.customerId : this.detailsData.CustomerId;
         this.detailsData.CustomerName = options.customerName || this.detailsData.CustomerName;
-        this.detailsData.ProjectId = options.projectId && options.projectId !== '00000000-0000-0000-0000-000000000000' ? options.projectId : this.detailsData.ProjectId;
+        this.detailsData.ProjectId = RM.AppMgr.isValidGuid(options.projectId) ? options.projectId : this.detailsData.ProjectId;
         this.detailsData.ProjectName = options.projectName || this.detailsData.ProjectName;
 
         if (options.isCreate) {
@@ -111,12 +112,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
             this.detailsData.Quantity = null;
             this.detailsData.TaxGroupId = null;
             this.detailsData.TaxIsModified = false;            
-        }
-        else {
-            if (this.detailsData.ExpenseClaimId && this.detailsData.ExpenseClaimId !=='00000000-0000-0000-0000-000000000000') {
-                this.detailsData.ExpenseClaimDate = RM.util.Dates.decodeAsLocal(this.detailsData.ExpenseClaimDate);
-            }            
-        }
+        }       
 
         var view = this.getItemDetail();
 
@@ -199,8 +195,8 @@ Ext.define('RM.controller.ExpenseLineItemC', {
     },
 
     setEditableBasedOnExpenseHeader: function () {
-        this.getProjectName().setDisabled(this.detailsData.ProjectName && (this.projectId && this.projectId !== '00000000-0000-0000-0000-000000000000'));
-        this.getCustomerName().setDisabled(this.detailsData.CustomerName && (this.customerId && this.customerId !== '00000000-0000-0000-0000-000000000000'));
+        this.getProjectName().setDisabled(this.detailsData.ProjectName && RM.AppMgr.isValidGuid(this.projectId));
+        this.getCustomerName().setDisabled(this.detailsData.CustomerName && RM.AppMgr.isValidGuid(this.customerId));
         this.setBillableFldAccess();
     },
 

@@ -339,6 +339,7 @@
     <Content Include="app\controller\DashboardC.js">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="app\controller\EmailExpenseC.js" />
     <Content Include="app\controller\EmailInvoiceC.js">
       <SubType>Content</SubType>
     </Content>
@@ -348,6 +349,7 @@
     <Content Include="app\controller\EnterUsernameC.js">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="app\controller\ExpenseActionsC.js" />
     <Content Include="app\controller\ExpenseDetailC.js">
       <SubType>Content</SubType>
     </Content>
@@ -557,6 +559,7 @@
     <Content Include="app\model\ExpenseCalendar.js">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="app\model\ExpenseTemplate.js" />
     <Content Include="app\model\GSTCode.js">
       <SubType>Content</SubType>
     </Content>
@@ -645,6 +648,7 @@
     <Content Include="app\store\Expenses.js">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="app\store\ExpenseTemplates.js" />
     <Content Include="app\store\GSTCodes.js">
       <SubType>Content</SubType>
     </Content>
@@ -796,6 +800,7 @@
     <Content Include="app\view\dashboard\TopExpenses.js">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="app\view\EmailExpense.js" />
     <Content Include="app\view\EmailInvoice.js">
       <SubType>Content</SubType>
     </Content>
@@ -805,6 +810,7 @@
     <Content Include="app\view\EnterUsername.js">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="app\view\ExpenseActions.js" />
     <Content Include="app\view\ExpenseDetail.js">
       <SubType>Content</SubType>
     </Content>
