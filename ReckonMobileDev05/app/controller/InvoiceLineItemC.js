@@ -160,7 +160,22 @@ Ext.define('RM.controller.InvoiceLineItemC', {
             
             this.initialFormValues = itemForm.getValues();
             this.initShow = true;
-        }           
+        }
+
+        if (this.isCreate && !(this.getItemNameFld().getValue() || this.getAccountFld().getValue())) {
+            this.hideAddOption();
+        }
+        else {
+            this.showAddOption();
+        }
+    },
+
+    hideAddOption: function(){
+        this.getAddBtn().setHidden(true);
+    },
+
+    showAddOption: function(){
+        this.getAddBtn().setHidden(!this.isEditable);
     },
     
     onHide: function(){
@@ -227,7 +242,7 @@ Ext.define('RM.controller.InvoiceLineItemC', {
                     false,
     				function (data) { 
                         this.showItemFields();
-                        this.itemChanged(data[0])                        
+                        this.itemChanged(data[0]);
     				},
     				this
     			);
@@ -237,7 +252,7 @@ Ext.define('RM.controller.InvoiceLineItemC', {
                     false,
     				function (data) {                                               
                         this.showAccountFields();
-                        this.itemChanged(data[0])                        
+                        this.itemChanged(data[0]);
     				},
     				this
     			);                

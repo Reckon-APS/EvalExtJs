@@ -89,7 +89,16 @@ Ext.define('RM.view.InvoiceDetail', {
 				    name: 'Terms',
 				    placeHolder: 'choose',
 				    labelWidth: '9em'
-				},{
+				}, {
+				    xtype: 'exttextfield',
+				    name: 'PaymentDetails',
+				    label: 'Payment details',
+				    labelWidth: 160,
+				    placeHolder: 'enter (optional)',
+				    cls: 'rm-flatfield',
+				    clearIcon: false,
+				    readOnly: true				    
+				}, {
 					xtype: 'exttextfield',
 					name: 'InvCode',
                     readOnly: true,

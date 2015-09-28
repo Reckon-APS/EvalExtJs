@@ -18,7 +18,8 @@ Ext.define('RM.controller.InvoiceDetailC', {
             refNrFld: 'invoicedetail textfield[name=Ref]',
             amountsFld: 'invoicedetail extselectfield[name=AmountTaxStatus]',
             invStatus: 'invoicedetail #invoiceStatus',
-            termsFld: 'invoicedetail textfield[name=Terms]'
+            termsFld: 'invoicedetail textfield[name=Terms]',
+            paymentDetailsFld: 'invoicedetail textfield[name=PaymentDetails]'
         },
         control: {
             'invoicedetail': {
@@ -83,6 +84,7 @@ Ext.define('RM.controller.InvoiceDetailC', {
         this.detailsCbs = cbs;
 
         this.noteText = '';
+        this.paymentDetailsText = '';
         this.dataLoaded = false;        
                 
         if (isCreate) {
@@ -100,8 +102,11 @@ Ext.define('RM.controller.InvoiceDetailC', {
                 Subtotal: 0, 
                 Paid: 0,
                 BalanceDue: 0,
-                SaveSupport: true
+                SaveSupport: true,
+                PaymentDetails: RM.CashbookMgr.getSalesPreferences().PaymentDetails
             });
+
+            this.paymentDetailsText = this.detailsData.PaymentDetails;
 
             //Load the terms list from the store
             var store = Ext.getStore('Terms');
@@ -255,7 +260,8 @@ Ext.define('RM.controller.InvoiceDetailC', {
 			    data.Discount = (data.DiscountPerc && data.DiscountPerc != 0) ? data.DiscountPerc + '%' : 'None';
 			    data.Discount = (data.DiscountAmount && data.DiscountAmount != 0) ? RM.AppMgr.formatCurrency(data.DiscountAmount, 2) : data.Discount;			    
                 this.noteText = data.Notes; //Enables preserving of new lines when going from textfield to textarea
-                
+                this.paymentDetailsText = data.PaymentDetails;
+
                 data.Notes = data.Notes ? data.Notes.replace(/(\r\n|\n|\r)/g, ' ') : ''; //ensures new lines will be shown as spaces as Notes on form is previewed in one line. newlines entered in mobile seem to use \n where as entered in web app seem to use \r
                 invoiceForm.setValues(data);
                 
@@ -313,7 +319,10 @@ Ext.define('RM.controller.InvoiceDetailC', {
         
         if (fldName == 'Notes') {
             this.showNotes();
-        }          
+        }
+        else if(fldName === 'PaymentDetails'){
+            this.showPaymentDetails();
+        }
         else if(this.isEditable()){
             if (fldName == 'CustomerName') {
                 RM.Selectors.showCustomers(
@@ -414,7 +423,22 @@ Ext.define('RM.controller.InvoiceDetailC', {
             this
         );
         
-    },      
+    },
+
+    showPaymentDetails: function () {
+        RM.Selectors.showNoteText(
+            'Payment details',
+            this.isEditable(),
+            'SAVE',
+            this.paymentDetailsText,
+            function (paymentDetailsText) {
+                RM.ViewMgr.back();
+                this.paymentDetailsText = paymentDetailsText;
+                this.getPaymentDetailsFld().setValue(paymentDetailsText.replace(/(\r\n|\n|\r)/g, ' '));
+            },
+            this
+        );
+    },
     
     onAddLineItem: function () {
         this.lineItemsDirty = true;
@@ -692,7 +716,8 @@ Ext.define('RM.controller.InvoiceDetailC', {
         delete vals.Discount;
         
         vals.Notes = this.noteText;
-        
+        vals.PaymentDetails = this.paymentDetailsText;
+
         // Some date fernagling, the default json serialization of dates will format the date in UTC which will alter the time from 00:00:00
         vals.Date = RM.util.Dates.encodeAsUTC(vals.Date);
         vals.DueDate = vals.DueDate ? RM.util.Dates.encodeAsUTC(vals.DueDate) : null;
