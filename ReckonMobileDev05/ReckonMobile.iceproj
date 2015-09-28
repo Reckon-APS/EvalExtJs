@@ -1239,6 +1239,7 @@
     <Content Include="resources\images\icons\rm-refresh.svg">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="resources\images\icons\rm-returntolist.svg" />
     <Content Include="resources\images\icons\rm-search.svg">
       <SubType>Content</SubType>
     </Content>

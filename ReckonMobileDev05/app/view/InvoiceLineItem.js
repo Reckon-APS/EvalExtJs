@@ -15,7 +15,7 @@ Ext.define('RM.view.InvoiceLineItem', {
                     iconCls: 'rm-backbtniconcls'
 				},{
 					xtype: 'component',
-					html: 'Item/Account details',
+					html: 'Add invoice line',
 					cls: 'rm-topbartitle',
 					itemId: 'title'
 				},{
@@ -52,7 +52,7 @@ Ext.define('RM.view.InvoiceLineItem', {
 					cls: 'rm-flatfield',
                     clearIcon: true,
                     placeHolder: 'select (optional)',
-                    permissionFor: {action:'Select',name:'Projects'},
+                    permissionFor: {action:'Select',name:'Projects'}
 				},{
 					xtype: 'exttextfield',
 					name: 'ItemName',

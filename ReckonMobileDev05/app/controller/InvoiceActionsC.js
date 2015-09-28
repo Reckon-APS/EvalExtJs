@@ -48,6 +48,9 @@ Ext.define('RM.controller.InvoiceActionsC', {
             },
             'invoiceactions #markAsPaid': {
                 tap: 'onMarkAsPaid'
+            },
+            'invoiceactions #returnToList': {
+                tap: 'returnToList'
             }
         }
 
@@ -219,6 +222,10 @@ Ext.define('RM.controller.InvoiceActionsC', {
 
     back: function () {
         RM.ViewMgr.back();
+    },
+
+    returnToList: function () {
+        RM.ViewMgr.backTo('slidenavigationview');
     }
 
 });
