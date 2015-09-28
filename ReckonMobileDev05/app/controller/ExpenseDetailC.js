@@ -80,7 +80,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
             amounts.setCls('rm-flatfield-disabled');
         }
         if (this.isCreate) {
-            // New invoice behaviour
+            // New expense behaviour
             if (taxPrefs.IsTaxTracking) {
                 amounts.setHidden(false);
                 amounts.setValue(taxPrefs.SalesFigures);
@@ -91,7 +91,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
             }
         }
         else {
-            // Existing invoice behaviour
+            // Existing expense behaviour
             var showAmounts = taxPrefs.IsTaxTracking || amounts.getValue() !== RM.Consts.TaxStatus.NON_TAXED;
             amounts.setHidden(!showAmounts);
         }
@@ -336,7 +336,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
 
     onExpenseActions: function () {
         if (this.isCreate) {
-            RM.AppMgr.showOkMsgBox('Expense actions are only available after saving new invoices.');
+            RM.AppMgr.showOkMsgBox('Expense actions are only available after saving new expenses.');
         }
         else {
             RM.ExpensesMgr.showActions(this.detailsData);
@@ -434,7 +434,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
                 this.saveExpense(vals);
             }
             else {
-                RM.AppMgr.showErrorMsgBox('No items have been added to this invoice.');
+                RM.AppMgr.showErrorMsgBox('No items have been added to this expense claim.');
             }
         }
 
@@ -653,7 +653,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
         // Send only the fields required by the calculation contract for line items
         vals.LineItems = lineItems.map(function (item) {
             return {
-                InvoiceLineItemId: item.ExpenseClaimLineItemId, //To use InvoiceCalc and get calc response we have to pass ExpenseClaimLineItemId as InvoiceLineItemId
+                ExpenseClaimLineItemId: item.ExpenseClaimLineItemId, 
                 ItemType: item.ItemType,
                 ItemId: item.ItemId,
                 ProjectId: item.ProjectId,
@@ -669,8 +669,8 @@ Ext.define('RM.controller.ExpenseDetailC', {
             };
         });
 
-        //Calculation is same as Invoice so we are calling the same service InvoiceCalc
-        RM.AppMgr.saveServerRec('InvoiceCalc', true, vals,
+        
+        RM.AppMgr.saveServerRec('ExpenseCalc', true, vals,
 			function response(respRecs) {
 			    var respRec = respRecs[0];
 
@@ -687,7 +687,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
 			        // find the result for the line
 			        var resultLine = null;
 			        Ext.Array.some(respRec.Items, function (item) {
-			            if (item.InvoiceLineItemId === currentLine.ExpenseClaimLineItemId) {
+			            if (item.ExpenseClaimLineItemId === currentLine.ExpenseClaimLineItemId) {
 			                resultLine = item;
 			                return true;
 			            }
@@ -755,7 +755,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
 
     onExpenseClaimDateChanged: function (dateField, newValue, oldValue) {
         if (!this.dataLoaded) return;
-        //  Recalculate the invoice tax amounts, since tax rates are date dependent
+        //  Recalculate the expense tax amounts, since tax rates are date dependent
         this.calculateBreakdown();
     }
 

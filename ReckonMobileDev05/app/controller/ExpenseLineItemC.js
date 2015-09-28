@@ -586,7 +586,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
 
         // call the expense calculation method
         this.ignoreEvents = true;
-        RM.AppMgr.saveServerRec('InvoiceCalc', true, expense,
+        RM.AppMgr.saveServerRec('ExpenseCalc', true, expense,
 			function response(responseRecords) {
 			    var calculated = responseRecords[0].Items[0];
 
