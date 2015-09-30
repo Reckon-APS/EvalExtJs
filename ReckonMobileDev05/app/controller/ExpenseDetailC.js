@@ -653,7 +653,8 @@ Ext.define('RM.controller.ExpenseDetailC', {
         // Send only the fields required by the calculation contract for line items
         vals.LineItems = lineItems.map(function (item) {
             return {
-                ExpenseClaimLineItemId: item.ExpenseClaimLineItemId, 
+                ExpenseClaimLineItemId: item.ExpenseClaimLineItemId,
+                ExpenseClaimDate: item.ExpenseClaimDate,
                 ItemType: item.ItemType,
                 ItemId: item.ItemId,
                 ProjectId: item.ProjectId,

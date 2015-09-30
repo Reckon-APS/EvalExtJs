@@ -17,7 +17,13 @@ Ext.define('RM.core.ExpensesMgr', {
 	        return 'Paid';
 	    }
 	    else {
-	        return 'Unpaid';
+            switch (status) {
+                case RM.Consts.ExpenseStatus.DRAFT:
+                    return 'Unpaid (draft)';
+                case RM.Consts.ExpenseStatus.APPROVED:
+                    return 'Unpaid (approved)';                
+            }
+            return 'Unpaid (unallocated)';
 	    }
 	},
 
