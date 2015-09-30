@@ -540,8 +540,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
         var expense = {
             AmountTaxStatus: this.taxStatusCode,
             PreviousAmountTaxStatus: this.taxStatusCode,
-            CustomerId: formVals.CustomerId,
-            ExpenseDate: formVals.ExpenseClaimDate,
+            CustomerId: formVals.CustomerId,            
             LineItems: []
         };
 
@@ -557,7 +556,8 @@ Ext.define('RM.controller.ExpenseLineItemC', {
             Tax: this.detailsData.TaxIsModified ? formVals.Tax : null,
             UnitPriceExTax: this.detailsData.UnitPriceExTax,
             // For Account lines the amount itself is editable and has to be passed through.
-            TaxExclusiveTotalAmount: this.detailsData.AmountExTax
+            TaxExclusiveTotalAmount: this.detailsData.AmountExTax,
+            ExpenseClaimDate: formVals.ExpenseClaimDate
         };       
 
         switch (triggerField) {
