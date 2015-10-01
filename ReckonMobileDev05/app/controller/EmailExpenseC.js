@@ -86,7 +86,7 @@ Ext.define('RM.controller.EmailExpenseC', {
         store.getProxy().setUrl(RM.AppMgr.getApiUrl('ExpenseTemplates'));
 
         store.clearFilter();
-        store.filter('templateType', RM.Consts.DocTemplates.INVOICE);
+        store.filter('templateType', RM.Consts.DocTemplates.EXPENSE);
 
         RM.AppMgr.loadStore(store,
             function () {
