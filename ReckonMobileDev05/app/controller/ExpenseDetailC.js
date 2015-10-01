@@ -624,6 +624,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
         var lineItems = this.getLineItems().getViewData();
         var vals = {
             CustomerId: formVals.CustomerId,
+            ProjectId: formVals.ProjectId,
             ExpenseClaimDate: RM.util.Dates.encodeAsUTC(formVals.ExpenseClaimDate),
             AmountTaxStatus: formVals.AmountTaxStatus,
             PreviousAmountTaxStatus: this.previousAmountTaxStatus,
