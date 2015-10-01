@@ -63,7 +63,7 @@ Ext.define('RM.controller.ProjectsC', {
     loadList: function(){
         var store = this.getProjectsList().getStore();
         store.clearFilter();
-        if (this.customerIdFilter){
+        if (RM.AppMgr.isValidGuid(this.customerIdFilter)) {
             store.filter('customerid', this.customerIdFilter);
         }
         if (this.supplierIdFilter){
