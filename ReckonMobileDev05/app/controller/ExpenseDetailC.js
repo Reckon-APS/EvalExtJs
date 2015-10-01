@@ -678,7 +678,10 @@ Ext.define('RM.controller.ExpenseDetailC', {
 			    var data = {};
 			    data.ExpenseClaimAmount = respRec.TotalIncludingTax;			    
 			    data.BalanceDue = respRec.BalanceDue;
-
+			    data.Amount = respRec.TotalIncludingTax;
+			    data.AmountExTax = respRec.TotalExcludingTax;
+			    data.ExpenseClaimTax = respRec.Tax;
+                
 			    var lineItemsPanel = this.getLineItems();
 			    lineItemsPanel.removeAllItems();
 
@@ -723,6 +726,12 @@ Ext.define('RM.controller.ExpenseDetailC', {
 
     updateAfterAddingLines: function(data){
         this.getExpenseForm().setValues(data);
+        this.detailsData.ExpenseClaimAmount = data.ExpenseClaimAmount;
+        this.detailsData.BalanceDue = data.BalanceDue;
+        this.detailsData.Amount = data.Amount;
+        this.detailsData.AmountExTax = data.AmountExTax;
+        this.detailsData.ExpenseClaimTax = data.ExpenseClaimTax;
+        this.detailsData.Tax = data.ExpenseClaimTax;
     },
 
     // Check all the lineItems for modifications to tax code or tax amount

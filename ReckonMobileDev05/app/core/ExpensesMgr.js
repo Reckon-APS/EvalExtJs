@@ -56,11 +56,11 @@ Ext.define('RM.core.ExpensesMgr', {
 	},
 
 	isStatusEditable: function (status) {
-	    if (status === RM.Consts.ExpenseStatus.PAID) {
-	        return false;
+	    if (status === RM.Consts.ExpenseStatus.DRAFT) {
+	        return true;
 	    }
 	    else {
-	        return true;
+	        return false;
 	    }
 	},
 

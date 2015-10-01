@@ -61,8 +61,12 @@ Ext.define('RM.controller.EmailExpenseC', {
 
     onShow: function () {
         if (this.messageText) return;
+        if (this.dataLoaded) {
+            return;
+        }
         var emailExpenseForm = this.getEmailExpenseForm();
-        emailExpenseForm.reset();
+        emailExpenseForm.reset();        
+
         RM.ViewMgr.regFormBackHandler(this.back, this);
 
         RM.AppMgr.getServerRec('ExpenseMessagesTemplates', { ExpenseClaimId: this.expenseData.ExpenseClaimId },
@@ -75,6 +79,8 @@ Ext.define('RM.controller.EmailExpenseC', {
             null,
             this.goBack
         );
+
+        this.dataLoaded = true;
     },
 
     onHide: function () {
