@@ -683,6 +683,10 @@ Ext.define('RM.controller.ExpenseLineItemC', {
 
     setBillableFldAccess: function () {
         this.getBillableFld().setDisabled(!this.getCustomerName().getValue());
+        //set billable field to false when customer is removed
+        if (!this.getCustomerName().getValue()) {
+            this.getBillableFld().setValue(false);
+        }        
     },
 
     onBillableChanged: function (billableFld) {

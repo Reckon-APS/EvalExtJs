@@ -37,6 +37,12 @@ Ext.define('RM.controller.ExpenseDetailC', {
             'expensedetail #expenseForm exttextfield': {
                 tap: 'onFieldTap'
             },
+            'expensedetail #expenseForm exttextfield[name=CustomerName]': {
+                clearicontap: 'onFieldClear'
+            },
+            'expensedetail #expenseForm exttextfield[name=ProjectName]': {
+                clearicontap: 'onFieldClear'
+            },
             'expensedetail expenselineitems': {
                 addlineitem: 'onAddLineItem',
                 editlineitem: 'onEditLineItem',
@@ -230,7 +236,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
 				    tf.setValue(data.Name);
 				    this.getExpenseForm().setValues({ CustomerId: data.ContactId, CustomerName: data.Description });
 
-				    var lineItems = this.getLineItems()
+				    var lineItems = this.getLineItems();
 				    lineItems.setCustomerId(data.ContactId);
 				    lineItems.setCustomerName(data.Description);
 
@@ -248,7 +254,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
 				    tf.setValue(data.Name);	
 				    this.getExpenseForm().setValues({ ProjectId: data.ProjectId, ProjectName: data.ProjectPath });
 
-				    var lineItems = this.getLineItems()
+				    var lineItems = this.getLineItems();
 				    lineItems.setProjectId(data.ProjectId);
 				    lineItems.setProjectName(data.ProjectPath);
 
@@ -270,6 +276,58 @@ Ext.define('RM.controller.ExpenseDetailC', {
 				this
 			);
         }
+    },
+
+    onFieldClear: function (tf) {
+        if (!this.isEditable()) {
+            return;
+        }
+
+        if (tf.getName() === 'CustomerName') {
+            this.getCustomerId().setValue('');
+        }
+        else if (tf.getName() === 'ProjectName') {
+            this.getProjectId().setValue('');            
+        }
+
+        this.clearLineItemDataFromHeader(tf.getName());
+    },
+
+    clearLineItemDataFromHeader: function (fieldName) {
+        var formVals = this.getExpenseForm().getValues();
+        formVals.LineItems = Ext.clone(this.getLineItems().getViewData());
+
+        var lineItems = this.getLineItems();        
+
+        //copy data to formVals
+        Ext.applyIf(formVals, this.detailsData);        
+        
+        if (formVals.LineItems.length > 0) {
+            //set fileds of line item to blank
+            formVals.LineItems.forEach(function (item) {
+
+                if (fieldName === 'CustomerName') {
+                    item.CustomerName = '';
+                    item.CustomerId = '';
+                    lineItems.setCustomerId('');
+                    lineItems.setCustomerName('');
+                }
+                else if (fieldName === 'ProjectName') {
+                    item.ProjectName = '';
+                    item.ProjectId = '';                    
+                    lineItems.setProjectId('');
+                    lineItems.setProjectName('');
+                }
+            });
+        }
+        
+        //copy altered line items data back to origin object 
+        Ext.apply(this.detailsData, formVals);
+
+        //remove and reload line items
+        var lineItemsPanel = this.getLineItems();
+        lineItemsPanel.removeAllItems();
+        lineItemsPanel.addLineItems(this.detailsData.LineItems);
     },
 
     editDescription: function(){

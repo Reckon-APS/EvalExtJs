@@ -80,15 +80,13 @@ Ext.define('RM.view.ExpenseDetail', {
 								name: 'ProjectName',
 								label: 'Project',
 								cls: 'rm-flatfield',								
-								placeHolder: 'select (optional)',
-								readOnly: true
+								placeHolder: 'select (optional)'
 							}, {
 							    xtype: 'exttextfield',
 							    name: 'CustomerName',
 							    label: 'Customer',
 							    cls: 'rm-flatfield',
-							    placeHolder: 'select (optional)',
-							    readOnly: true
+							    placeHolder: 'select (optional)'
 							}, {
 							    xtype: 'exttextfield',
 							    name: 'ExpenseClaimNumber',
