@@ -60,7 +60,7 @@ Ext.define('RM.controller.ExpenseActionsC', {
 
         var hideApprove = !(RM.ExpensesMgr.isExpenseStatusApprovable(this.expenseData.Status) && RM.PermissionsMgr.canApprove('ExpenseClaims'));
         //Draft button can only be visible when Approvals is on and if the Expense has received no payments
-        var hideDraft = !(RM.PermissionsMgr.canAddEdit('ExpenseClaims') && RM.CashbookMgr.getPurchasePreferences().ApprovalProcessEnabled && (this.expenseData.Status === RM.Consts.ExpenseStatus.APPROVED && this.expenseData.BalanceDue === this.expenseData.Amount));
+        var hideDraft = !(RM.PermissionsMgr.canAddEdit('ExpenseClaims') && RM.CashbookMgr.getExpensePreferences().ApprovalProcessEnabled && (this.expenseData.Status === RM.Consts.ExpenseStatus.APPROVED && this.expenseData.BalanceDue === this.expenseData.Amount));
         //Delete option can only be visible when invoice is draft or approved and unpaid and canDelete permission turned on 
         var hideDelete = !(RM.PermissionsMgr.canDelete('ExpenseClaims') && (this.expenseData.Status === RM.Consts.ExpenseStatus.DRAFT || this.expenseData.Status === RM.Consts.ExpenseStatus.APPROVED) && this.expenseData.BalanceDue === this.expenseData.Amount);
         var hideEmail = !(RM.ExpensesMgr.isExpenseStatusEmailable(this.expenseData.Status) && RM.PermissionsMgr.canDo('ExpenseClaims', 'PrintEmail'));

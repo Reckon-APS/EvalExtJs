@@ -82,7 +82,7 @@ Ext.define('RM.view.EmailExpense', {
 							    placeHolder: 'select',
 							    cls: 'rm-flatfield',
 							    ui: 'plain'
-							    //permissionFor: { name: 'PurchasePreferences', action: 'View' }
+							    //permissionFor: { name: 'ExpensePreferences', action: 'View' }
 							}, {
 							    xtype: 'exttextareafield',
 							    maxRows: 8,

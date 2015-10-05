@@ -16,14 +16,16 @@ Ext.define('RM.core.ExpensesMgr', {
         if (status === RM.Consts.ExpenseStatus.PAID) {
 	        return 'Paid';
 	    }
-	    else {
-            switch (status) {
-                case RM.Consts.ExpenseStatus.DRAFT:
-                    return 'Unpaid (draft)';
-                case RM.Consts.ExpenseStatus.APPROVED:
-                    return 'Unpaid (approved)';                
+        else {
+            if (RM.CashbookMgr.getExpensePreferences().ApprovalProcessEnabled) {
+                switch (status) {
+                    case RM.Consts.ExpenseStatus.DRAFT:
+                        return 'Unpaid - Draft';
+                    case RM.Consts.ExpenseStatus.APPROVED:
+                        return 'Unpaid - Approved';
+                }                
             }
-            return 'Unpaid (unallocated)';
+            return 'Unpaid';            
 	    }
 	},
 
@@ -42,7 +44,7 @@ Ext.define('RM.core.ExpensesMgr', {
 	},
 
 	getInitialExpenseStatus: function () {
-	    if (RM.CashbookMgr.getPurchasePreferences().ApprovalProcessEnabled) {
+	    if (RM.CashbookMgr.getExpensePreferences().ApprovalProcessEnabled) {
 	        return RM.Consts.ExpenseStatus.DRAFT;
 	    }
 	    else {
