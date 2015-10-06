@@ -177,6 +177,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
 					    var lineItemsPanel = this.getLineItems();
 					    lineItemsPanel.addLineItems(data.LineItems);
 					    lineItemsPanel.setCustomerId(data.CustomerId);
+					    lineItemsPanel.setProjectId(data.ProjectId);
 					    lineItemsPanel.setTaxStatus(data.AmountTaxStatus);
 					    lineItemsPanel.setExpenseDate(data.Date);
 					    this.lineItemsDirty = false;
