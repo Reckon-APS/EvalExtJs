@@ -2496,3 +2496,9 @@ $font-family: 'Open Sans', sans-serif !default;
 .rm-notesfield-disabled{
     background-image: none;
 }
+
+//to set opaque white background to toast
+.x-toast .x-toast-text {
+    background-color: #FFF;
+    color: #475561;
+}

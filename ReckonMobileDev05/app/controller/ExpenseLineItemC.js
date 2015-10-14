@@ -8,7 +8,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
             addBtn: 'expenselineitem #add',
             itemForm: 'expenselineitem #itemForm',
             status: 'expenselineitem #status',
-            description: 'expenselineitem field[name=Description]',
+            notesFld: 'expenselineitem field[name=Notes]',
             unitPrice: 'expenselineitem field[name=UnitPrice]',
             quantity: 'expenselineitem field[name=Quantity]',
             taxCode: 'expenselineitem field[name=TaxGroupId]',
@@ -95,6 +95,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
         this.detailsCb = cb;
         this.detailsCbs = cbs;
         
+        this.notesText = detailsData.Notes;
         this.isCreate = false;
         this.detailsData = Ext.clone(detailsData);        
 
@@ -206,8 +207,14 @@ Ext.define('RM.controller.ExpenseLineItemC', {
     },
 
     onFieldTap: function (tf) {
+        var fldName = tf.getName();
+
+        if (fldName == 'Notes') {
+            this.showNotes();
+        }
+
         if (this.isEditable) {
-            if (tf.getName() == 'ProjectName') {
+            if (fldName == 'ProjectName') {
                 RM.Selectors.showProjects(
                     this.customerId,
                     null,
@@ -220,7 +227,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
     				this
     			);
             }
-            else if (tf.getName() == 'CustomerName') {
+            else if (fldName == 'CustomerName') {
                 RM.Selectors.showCustomers(
                     this.getProjectId().getValue(),
                     function (data) {
@@ -233,7 +240,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
                     'project'
                 );
             }
-            else if(tf.getName() == 'SupplierName'){
+            else if (fldName == 'SupplierName') {
                 RM.Selectors.showSuppliers(
                     function (data) {
                         var currentValue = this.getSupplierId().getValue();
@@ -244,7 +251,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
                     this
                 );
             }
-            else if (tf.getName() == 'ItemName') {
+            else if (fldName == 'ItemName') {
                 RM.Selectors.showItems(
                     true,
     				this.getProjectId().getValue(),
@@ -258,7 +265,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
                     RM.Consts.ChargeableItemPurchaseSoldType.PURCHASEDONLY
     			);
             }
-            else if (tf.getName() == 'AccountName') {
+            else if (fldName == 'AccountName') {
                 RM.Selectors.showAccounts(
                     false,
     				function (data) {
@@ -697,6 +704,21 @@ Ext.define('RM.controller.ExpenseLineItemC', {
             this.detailsData.Status = RM.Consts.ExpenseLineItemStatus.UNBILLABLE;
         }
         this.getStatus().setHtml(RM.ExpensesMgr.getExpenseLineItemStatusText(this.detailsData.Status));
+    },
+
+    showNotes: function () {
+        RM.Selectors.showNoteText(
+            'Notes',
+            this.isEditable,
+            'SAVE',
+            this.noteText,
+            function (noteText) {
+                RM.ViewMgr.back();
+                this.noteText = noteText;
+                this.getNotesFld().setValue(noteText.replace(/(\r\n|\n|\r)/g, ' '));
+            },
+            this
+        );
     }
 
 });

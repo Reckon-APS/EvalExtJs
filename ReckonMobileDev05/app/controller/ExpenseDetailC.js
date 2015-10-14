@@ -16,7 +16,9 @@ Ext.define('RM.controller.ExpenseDetailC', {
             itemFld:  'expensedetail exttextfield[name=ItemName]',
             lineItems: 'expensedetail expenselineitems',
             expenseClaimAmountFld: 'expensedetail field[name=ExpenseClaimAmount]',
-            expenseClaimNumberFld: 'expensedetail exttextfield[name=ExpenseClaimNumber]'
+            expenseClaimNumberFld: 'expensedetail exttextfield[name=ExpenseClaimNumber]',
+            customerName: 'expensedetail exttextfield[name=CustomerName]',
+            projectName: 'expensedetail exttextfield[name=ProjectName]'
         },
         control: {
             'expensedetail': {
@@ -51,9 +53,6 @@ Ext.define('RM.controller.ExpenseDetailC', {
             'expensedetail extselectfield[name=AmountTaxStatus]': {
                 change: 'onAmountTaxStatusSelected'
             },
-            'expensedetail #addItem': {
-                tap: 'onAddItem'
-            },
             dateFld: {
                 change: 'onExpenseClaimDateChanged'
             }
@@ -62,6 +61,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
 
     init: function () {
         this.serverApiName = 'Expenses';
+        this.getApplication().addListener('itemupdated', 'onItemUpdated', this);
     },
 
     isEditable: function () {
@@ -73,9 +73,13 @@ Ext.define('RM.controller.ExpenseDetailC', {
 
     applyViewEditableRules: function () {
         var editable = this.isEditable();
+
         this.getSaveBtn().setHidden(!editable);
         if (!editable) { RM.util.FormUtils.makeAllFieldsReadOnly(this.getExpenseForm()); }
         this.getLineItems().setIsEditable(editable);
+
+        this.getCustomerName().setReadOnly(!editable);
+        this.getProjectName().setReadOnly(!editable);
     },
 
     applyTaxRules: function () {
@@ -121,7 +125,8 @@ Ext.define('RM.controller.ExpenseDetailC', {
                 SaveSupport: true,
                 Amount: 0,
                 BalanceDue: 0,
-                ExpenseClaimTax: 0
+                ExpenseClaimTax: 0,
+                ExpenseClaimAmount: 0
             };
         }
 
@@ -191,6 +196,12 @@ Ext.define('RM.controller.ExpenseDetailC', {
     
     onHide: function(){
         RM.ViewMgr.deRegFormBackHandler(this.back);
+    },
+
+    onItemUpdated: function (itemType) {
+        if (itemType == 'expense' && !this.isCreate) {
+            this.dataLoaded = false;
+        }
     },
 
     loadNewExpenseClaimNumber: function () {
@@ -284,11 +295,17 @@ Ext.define('RM.controller.ExpenseDetailC', {
             return;
         }
 
+        var lineItems = this.getLineItems();
+
         if (tf.getName() === 'CustomerName') {
-            this.getCustomerId().setValue('');
+            this.getCustomerId().setValue(RM.util.PseudoGuid.guidMask);            
+            lineItems.setCustomerId(RM.util.PseudoGuid.guidMask);
+            lineItems.setCustomerName('');
         }
         else if (tf.getName() === 'ProjectName') {
-            this.getProjectId().setValue('');            
+            this.getProjectId().setValue(RM.util.PseudoGuid.guidMask);
+            lineItems.setProjectId(RM.util.PseudoGuid.guidMask);
+            lineItems.setProjectName('');
         }
 
         this.clearLineItemDataFromHeader(tf.getName());
@@ -297,8 +314,6 @@ Ext.define('RM.controller.ExpenseDetailC', {
     clearLineItemDataFromHeader: function (fieldName) {
         var formVals = this.getExpenseForm().getValues();
         formVals.LineItems = Ext.clone(this.getLineItems().getViewData());
-
-        var lineItems = this.getLineItems();        
 
         //copy data to formVals
         Ext.applyIf(formVals, this.detailsData);        
@@ -309,15 +324,11 @@ Ext.define('RM.controller.ExpenseDetailC', {
 
                 if (fieldName === 'CustomerName') {
                     item.CustomerName = '';
-                    item.CustomerId = '';
-                    lineItems.setCustomerId('');
-                    lineItems.setCustomerName('');
+                    item.CustomerId = '';                    
                 }
                 else if (fieldName === 'ProjectName') {
                     item.ProjectName = '';
                     item.ProjectId = '';                    
-                    lineItems.setProjectId('');
-                    lineItems.setProjectName('');
                 }
             });
         }
@@ -452,7 +463,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
         }
     },
 
-    save: function () {
+    save: function (afterSaveCallback) {
         var formVals = this.getExpenseForm().getValues();
         formVals.LineItems = Ext.clone(this.getLineItems().getViewData());
 
@@ -490,7 +501,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
                 });
 
                 this.detailsCb.call(this.detailsCbs, 'save', vals);
-                this.saveExpense(vals);
+                this.saveExpense(afterSaveCallback, vals);
             }
             else {
                 RM.AppMgr.showErrorMsgBox('No items have been added to this expense claim.');
@@ -564,62 +575,62 @@ Ext.define('RM.controller.ExpenseDetailC', {
         }
     },
     
-    handlePhotoUploadChoices: function(choice){
-        if(choice == 'retry'){
-            this.save();
-        }
-        if(choice == 'cancel'){            
+    //handlePhotoUploadChoices: function(choice){
+    //    if(choice == 'retry'){
+    //        this.save();
+    //    }
+    //    if(choice == 'cancel'){            
             
-        } 
-    },
+    //    } 
+    //},
     
-    uploadPhotoData: function(vals){
-        var boundary = '++++++reckononemobile.formBoundary', postData = '';       
-        if(vals.ExpenseId) postData += this.genFormDataFld('ExpenseId', vals.ExpenseId, boundary);
-        if(vals.ProjectId) postData += this.genFormDataFld('ProjectId', vals.ProjectId, boundary);
-        if(vals.CustomerId) postData += this.genFormDataFld('CustomerId', vals.CustomerId, boundary);
-        postData += this.genFormDataFld('Date', Ext.util.Format.date(vals.Date, 'c'), boundary);
-        postData += this.genFormDataFld('Amount', vals.Amount, boundary);
-        postData += this.genFormDataFld('ItemId', vals.ItemId, boundary);
-        //postData += this.genFormDataFld('SupplierId', vals.SupplierId, boundary);
-        postData += this.genFormDataFld('Notes', vals.Notes, boundary);
-        postData += this.genFormDataFld('Billable', vals.Billable, boundary);
-        postData += this.genFormDataFld('StatusCode', vals.StatusCode, boundary);
-        if(vals.TaxTypeId) postData += this.genFormDataFld('TaxTypeId', vals.TaxTypeId, boundary);
+    //uploadPhotoData: function(vals){
+    //    var boundary = '++++++reckononemobile.formBoundary', postData = '';       
+    //    if(vals.ExpenseId) postData += this.genFormDataFld('ExpenseId', vals.ExpenseId, boundary);
+    //    if(vals.ProjectId) postData += this.genFormDataFld('ProjectId', vals.ProjectId, boundary);
+    //    if(vals.CustomerId) postData += this.genFormDataFld('CustomerId', vals.CustomerId, boundary);
+    //    postData += this.genFormDataFld('Date', Ext.util.Format.date(vals.Date, 'c'), boundary);
+    //    postData += this.genFormDataFld('Amount', vals.Amount, boundary);
+    //    postData += this.genFormDataFld('ItemId', vals.ItemId, boundary);
+    //    //postData += this.genFormDataFld('SupplierId', vals.SupplierId, boundary);
+    //    postData += this.genFormDataFld('Notes', vals.Notes, boundary);
+    //    postData += this.genFormDataFld('Billable', vals.Billable, boundary);
+    //    postData += this.genFormDataFld('StatusCode', vals.StatusCode, boundary);
+    //    if(vals.TaxTypeId) postData += this.genFormDataFld('TaxTypeId', vals.TaxTypeId, boundary);
         
-        if(this.receiptImage){
-            var imgData = this.receiptImage.substr(this.receiptImage.indexOf(';base64,') + 8);
-            postData += this.genFormFileField('receipt.png', imgData, boundary);
-        }
-        postData += '--' + boundary + '--\r\n';
+    //    if(this.receiptImage){
+    //        var imgData = this.receiptImage.substr(this.receiptImage.indexOf(';base64,') + 8);
+    //        postData += this.genFormFileField('receipt.png', imgData, boundary);
+    //    }
+    //    postData += '--' + boundary + '--\r\n';
         
-        Ext.Ajax.request({
-            method:"POST",
-            headers: {
-                'Content-Type': 'multipart/form-data; boundary=' + boundary
-            },
-            rawData: postData,
-            url: RM.AppMgr.getApiUrl('Expenses'),
-            success: function (response) {
-                var resp = Ext.decode(response.responseText);
-                if(resp.success){
-                    RM.AppMgr.showSuccessMsgBox('Expense saved',function(){
-                       RM.AppMgr.itemUpdated('expense');
-                       this.goBack(); 
-                    }, this);                        
-                }
-                else{
-                     RM.AppMgr.showOkMsgBox(resp.eventMsg);
-                }
+    //    Ext.Ajax.request({
+    //        method:"POST",
+    //        headers: {
+    //            'Content-Type': 'multipart/form-data; boundary=' + boundary
+    //        },
+    //        rawData: postData,
+    //        url: RM.AppMgr.getApiUrl('Expenses'),
+    //        success: function (response) {
+    //            var resp = Ext.decode(response.responseText);
+    //            if(resp.success){
+    //                RM.AppMgr.showSuccessMsgBox('Expense saved',function(){
+    //                   RM.AppMgr.itemUpdated('expense');
+    //                   this.goBack(); 
+    //                }, this);                        
+    //            }
+    //            else{
+    //                 RM.AppMgr.showOkMsgBox(resp.eventMsg);
+    //            }
                 
-            },
-            failure: function (resp) {
-                RM.AppMgr.handleServerCallFailure(resp);
-            },
-            scope: this
-        });
+    //        },
+    //        failure: function (resp) {
+    //            RM.AppMgr.handleServerCallFailure(resp);
+    //        },
+    //        scope: this
+    //    });
         
-    },
+    //},
     
     genFormDataFld: function(fldName, fldVal, boundary){        
         return '--' + boundary + '\r\nContent-Disposition: form-data; name="' + fldName +  '"\r\n\r\n' + fldVal + '\r\n';
@@ -809,12 +820,26 @@ Ext.define('RM.controller.ExpenseDetailC', {
         return changesExist;
     },
 
-    saveExpense: function (vals)
+    saveExpense: function (afterSaveCallback, vals)
     {
         RM.AppMgr.saveServerRec('Expenses', this.isCreate, vals,
                     function (recs) {
-                        RM.AppMgr.itemUpdated('expense');                        
-                        this.goBack();                        
+                        RM.AppMgr.itemUpdated('expense');
+
+                        if (afterSaveCallback) {
+                            if (this.isCreate) {
+                                //Mobile server returns just ExpenseClaimId in save response
+                                this.detailsData.ExpenseClaimId = recs[0];
+                            }                            
+                            // Clear the loaded flag to force a reload of invoice information when the view is shown again                            
+                            this.dataLoaded = false;
+                            this.isCreate = false;
+                            afterSaveCallback.apply(this);
+                        }
+                        else {
+                            this.goBack();
+                        }
+                                                
                     },
                     this,
                     function (recs, eventMsg) {

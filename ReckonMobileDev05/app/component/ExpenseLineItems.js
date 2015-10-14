@@ -154,15 +154,6 @@ Ext.define('RM.component.ExpenseLineItems', {
 
     editLineItem: function (compId) {
         var item = this.lineItems[compId]
-
-        //if (item.ItemType == RM.Consts.ItemTypes.CHARGEABLE_ITEM) {
-            /*RM.Selectors.showItemDetail(this.showItemTax, item,
-        		function(closeType, data){
-                    this.updateLineItem(compId, data);
-                    this.fireEvent('editlineitem');
-        		},
-        		this
-        	);*/
         RM.ExpensesMgr.showExpenseLineItem(this.isEditable, this.customerId, { taxStatus: this.taxStatus, isCreate: false, projectId: this.projectId, projectName: this.projectName, customerName: this.customerName }, item,
         		function (data) {
         		    this.updateLineItem(compId, data[0]);
@@ -170,13 +161,9 @@ Ext.define('RM.component.ExpenseLineItems', {
         		},
         		this
         	);
-
-        //}
-
     },
 
     updateLineItem: function (compId, item) {
-        //this.getComponent(compId).getComponent(0).getComponent(0).getComponent(0).setHtml(((item.Quantity > 0) ? item.Quantity  + ' x ' : '') + (item.ItemPath ? item.ItemPath : item.ItemName));
         this.getComponent(compId).getComponent(0).getComponent(0).getComponent(0).setHtml(((item.Quantity > 0) ? item.Quantity + ' x ' : '') + item.Description);
         this.lineItems[compId] = item;
     },

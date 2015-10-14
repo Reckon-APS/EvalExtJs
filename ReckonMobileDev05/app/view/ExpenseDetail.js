@@ -128,7 +128,7 @@ Ext.define('RM.view.ExpenseDetail', {
 								labelWidth: '8em',
 								cls: 'rm-flatfield',                                    
 								placeHolder: 'enter',
-								clearIcon: false,   
+								readOnly: true,
                                 decimalPlaces: 2,
                                 prefix: '$'                                
 							}, {
@@ -138,7 +138,7 @@ Ext.define('RM.view.ExpenseDetail', {
 							    labelWidth: '8em',
 							    cls: ['rm-flatfield', 'rm-flatfield-last'],
 							    placeHolder: 'enter',
-							    clearIcon: false,
+                                readOnly: true,
 							    decimalPlaces: 2,
 							    prefix: '$'
 							}, {

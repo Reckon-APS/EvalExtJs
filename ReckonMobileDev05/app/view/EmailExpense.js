@@ -72,7 +72,7 @@ Ext.define('RM.view.EmailExpense', {
 							    rmmandatory: true
 							}, {
 							    xtype: 'selectfield',
-							    label: '<img src="resources/images/icons/rm-attach.svg" style="margin-right: 10px; width: 18px; height: 18px;">Invoice Template',
+							    label: '<img src="resources/images/icons/rm-attach.svg" style="margin-right: 10px; width: 18px; height: 18px;">Template',
 							    labelWidth: '10em',
 							    usePicker: true,
 							    name: 'ExpenseClaimTemplateId',
