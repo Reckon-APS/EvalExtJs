@@ -46,6 +46,8 @@ Ext.define('RM.controller.EmailInvoiceC', {
         this.invoiceData = invoiceData;
         this.msgType = msgType;
         this.messageText = '';
+        this.dataLoaded = false;
+
         RM.ViewMgr.regFormBackHandler(this.back, this);
         
         var view = this.getEmailInvoice();
