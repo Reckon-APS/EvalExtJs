@@ -95,7 +95,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
         this.detailsCb = cb;
         this.detailsCbs = cbs;
         
-        this.notesText = detailsData.Notes;
+        this.noteText = detailsData.Notes;
         this.isCreate = false;
         this.detailsData = Ext.clone(detailsData);        
 
