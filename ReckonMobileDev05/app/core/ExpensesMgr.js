@@ -58,12 +58,7 @@ Ext.define('RM.core.ExpensesMgr', {
 	},
 
 	isStatusEditable: function (status) {
-	    if (status === RM.Consts.ExpenseStatus.DRAFT) {
-	        return true;
-	    }
-	    else {
-	        return false;
-	    }
+	    return (status == this.getInitialExpenseStatus());
 	},
 
 	showActions: function (expenseClaimId) {

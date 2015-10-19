@@ -63,15 +63,7 @@ Ext.define('RM.view.TimeSheetDetail', {
 					    cls: 'rm-flatfield',
 					    ui: 'plain',
 					    placeHolder: 'select'
-					}, {
-						xtype: 'exttextfield',
-						name: 'CustomerName',
-						cls: 'rm-flatfield',
-						label: 'Customer',
-						clearIcon: false,
-						readOnly: true,
-                        placeHolder: 'select (optional)'
-					}, {
+					},  {
 						xtype: 'hiddenfield',
 						name: 'ProjectId'
 					}, {
@@ -81,6 +73,14 @@ Ext.define('RM.view.TimeSheetDetail', {
 						cls: 'rm-flatfield',						
 						readOnly: true,
                         placeHolder: 'select (optional)'
+					}, {
+					    xtype: 'exttextfield',
+					    name: 'CustomerName',
+					    cls: 'rm-flatfield',
+					    label: 'Customer',
+					    clearIcon: false,
+					    readOnly: true,
+					    placeHolder: 'select (optional)'
 					}, {
 						xtype: 'hiddenfield',
 						name: 'ItemId'

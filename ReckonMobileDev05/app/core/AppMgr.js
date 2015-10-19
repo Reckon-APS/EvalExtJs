@@ -499,6 +499,9 @@ Ext.define('RM.core.AppMgr', {
         else if(apiLocation == 'qaserver'){
             this.baseApiUrl = 'http://r1mobileqa.reckon.com.au/api';            
         }
+        else if (apiLocation == 'qqaserver') {
+            this.baseApiUrl = 'http://r1mobileqqa.reckoncloud.com.au/api';
+        }
         else if(apiLocation == 'devlocaliis'){
             this.baseApiUrl = 'http://localhost:/Reckon.Host.ReckonOneMobile/api';
         }        
