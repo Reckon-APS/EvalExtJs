@@ -346,7 +346,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
         }
 
         // More general validations (non-deterministic which field should be corrected)
-        if (!vals.Amount) {
+        if (!vals.Amount && (vals.ItemId || vals.AccountId)) {
             RM.AppMgr.showOkMsgBox("Amount cannot be zero");
             isValid = false;
         }
