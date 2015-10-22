@@ -232,7 +232,8 @@ Ext.define('RM.controller.TimeSheetDetailC', {
 				function (data) {
 				    this.getTimeSheetForm().setValues({ CustomerId: data.ContactId, CustomerName: data.Description });				    
 				},
-				this
+				this,
+                'project'
 			);
         }
         else if (tf.getName() == 'ProjectName') {

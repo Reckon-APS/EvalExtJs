@@ -141,7 +141,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
         this.getTax().setReadOnly(!RM.CashbookMgr.getTaxPreferences().AllowTaxEdit);
 
         this.getStatus().setHidden(false);
-        //this.getStatus().setHtml(RM.ExpensesMgr.getExpenseLineItemStatusText(this.detailsData.Status));
+        this.getStatus().setHtml(RM.ExpensesMgr.getExpenseLineItemStatusText(this.detailsData.Status));
 
         if (!RM.CashbookMgr.getTaxPreferences().AllowTaxEdit) {
             this.getTax().addCls(['rm-flatfield-disabled']);
@@ -422,7 +422,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
             function (result) {
                 if (result && result.length === 1) {
                     // There is a project rate for this item, apply it
-                    this.setNewUnitPriceExTax(result[0].SalePrice);
+                    this.setNewUnitPriceExTax(result[0].PurchasePrice);
                 }
             },
             this);
@@ -442,7 +442,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
             },
             function (result) {
                 if (result && result.length === 1) {
-                    this.setNewUnitPriceExTax(result[0].SalePrice);
+                    this.setNewUnitPriceExTax(result[0].PurchasePrice);
                 }
             },
             this);
@@ -454,14 +454,14 @@ Ext.define('RM.controller.ExpenseLineItemC', {
         // Reset item fields
         this.detailsData.ItemName = newItem.Name;
         this.detailsData.AccountName = newItem.Name;
-        this.detailsData.DefaultTaxGroupId = newItem.SaleTaxCodeId;
+        this.detailsData.DefaultTaxGroupId = newItem.PurchaseTaxCodeId;
         this.detailsData.UnitPriceExTax = newItem.UnitPriceExTax;
         this.setTaxModified(false);
 
         this.ignoreEvents = true;
 
-        var taxCode = newItem.SaleTaxCodeId ? newItem.SaleTaxCodeId : newItem.DefaultTaxGroupId;
-        var description = newItem.SalesDescription ? newItem.SalesDescription : newItem.Description;
+        var taxCode = newItem.PurchaseTaxCodeId ? newItem.PurchaseTaxCodeId : newItem.DefaultTaxGroupId;
+        var description = newItem.PurchaseDescription ? newItem.PurchaseDescription : newItem.Description;
 
         this.getItemForm().setValues({
             ItemId: newItem.ItemId,
@@ -472,6 +472,10 @@ Ext.define('RM.controller.ExpenseLineItemC', {
             Description: description,
             UnitPrice: this.isTaxInclusive() ? '' : newItem.UnitPriceExTax
         });
+        
+        if (newItem.PurchasePrice) {
+            this.setNewUnitPriceExTax(newItem.PurchasePrice);
+        }        
 
         this.ignoreEvents = false;
 
@@ -697,6 +701,10 @@ Ext.define('RM.controller.ExpenseLineItemC', {
     },
 
     onBillableChanged: function (billableFld) {
+        if (this.detailsData.Status === RM.Consts.ExpenseLineItemStatus.INVOICED || this.detailsData.Status === RM.Consts.ExpenseLineItemStatus.BILLED) {
+            return;
+        }
+
         if(billableFld.getValue()){
             this.detailsData.Status = RM.Consts.ExpenseLineItemStatus.BILLABLE;
         }            

@@ -20,7 +20,7 @@ Ext.define('RM.controller.ExpenseActionsC', {
                 tap: 'back'
             },
             expenseApproveBtn: {
-                tap: 'onApprove'
+                tap: 'approve'
             },
             expenseDeleteBtn: {
                 tap: 'onDelete'
@@ -61,7 +61,7 @@ Ext.define('RM.controller.ExpenseActionsC', {
         var hideApprove = !(RM.ExpensesMgr.isExpenseStatusApprovable(this.expenseData.Status) && RM.PermissionsMgr.canApprove('ExpenseClaims'));
         //Draft button can only be visible when Approvals is on and if the Expense has received no payments
         var hideDraft = !(RM.PermissionsMgr.canAddEdit('ExpenseClaims') && RM.CashbookMgr.getExpensePreferences().ApprovalProcessEnabled && (this.expenseData.Status === RM.Consts.ExpenseStatus.APPROVED && this.expenseData.BalanceDue === this.expenseData.Amount));
-        //Delete option can only be visible when invoice is draft or approved and unpaid and canDelete permission turned on 
+        //Delete option can only be visible when expense is draft or approved and unpaid and canDelete permission turned on 
         var hideDelete = !(RM.PermissionsMgr.canDelete('ExpenseClaims') && (this.expenseData.Status === RM.Consts.ExpenseStatus.DRAFT || this.expenseData.Status === RM.Consts.ExpenseStatus.APPROVED) && this.expenseData.BalanceDue === this.expenseData.Amount);
         var hideEmail = !(RM.ExpensesMgr.isExpenseStatusEmailable(this.expenseData.Status) && RM.PermissionsMgr.canDo('ExpenseClaims', 'PrintEmail'));
         
@@ -82,32 +82,6 @@ Ext.define('RM.controller.ExpenseActionsC', {
         this.getExpenseApproveBtn().setHidden(hideApprove);
         this.getExpenseEmailBtn().setHidden(hideEmail);
         this.getExpenseDraftBtn().setHidden(hideDraft);
-    },
-
-    onApprove: function () {
-        RM.AppMgr.getServerRecById('CustomerAvailableCreditLimit', this.expenseData.CustomerId,
-                  function (data) {
-                      if (data.HasCreditLimit && this.expenseData.BalanceDue > 0 && data.AvailableCredit < this.expenseData.BalanceDue) {
-                          RM.AppMgr.showCustomiseButtonMsgBox("This invoice will exceed the customer's credit limit. Approve anyway?", 'YES, APPROVE INVOICE', 'NO',
-                           function (result) {
-                               if (result === 'yes') {
-                                   this.approve();
-                               }
-                               else {
-                                   //Stay on the current screen for the user user to modify.
-                                   return;
-                               }
-                           }, this);
-                      }
-                      else {
-                          this.approve();
-                      };
-                  },
-                  this,
-                  function (eventMsg) {
-                      RM.AppMgr.showOkMsgBox(eventMsg);
-                  }
-              );
     },
 
     approve: function () {
@@ -143,7 +117,7 @@ Ext.define('RM.controller.ExpenseActionsC', {
     },
 
     onDelete: function () {
-        RM.AppMgr.showYesNoMsgBox("Do you want to delete the invoice?",
+        RM.AppMgr.showYesNoMsgBox("Do you want to delete the expense?",
             function (result) {
                 if (result === 'yes') {
                     RM.AppMgr.deleteServerRec('Expenses/' + this.expenseData.ExpenseClaimId,

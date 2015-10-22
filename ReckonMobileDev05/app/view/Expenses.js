@@ -43,7 +43,7 @@ Ext.define('RM.view.Expenses', {
 			                docked: 'top',
 			                sortfields: [
                                 { text: 'Date', value: 'ClaimDate' },
-                                { text: 'Amount', value: 'ClaimAmount' },
+                                { text: 'Amount', value: 'Amount' },
                                 { text: 'Status', value: 'Status' }
                                                                 
 			                ]
