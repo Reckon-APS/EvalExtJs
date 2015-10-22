@@ -50,13 +50,8 @@ Ext.define('RM.controller.ExpenseActionsC', {
         RM.ViewMgr.showPanel(view);
     },
 
-    onShow: function () {
-        //if (this.expenseData.Status === 2 && this.expenseData.BalanceDue < this.expenseData.Amount) {
-        //    this.getExpenseStatus().setHtml(RM.ExpensesMgr.getPartiallyPaidExpenseStatusText());
-        //}
-        //else {
-            this.getExpenseStatus().setHtml(RM.ExpensesMgr.getExpenseStatusText(this.expenseData.Status));
-        //}
+    onShow: function () {        
+        this.getExpenseStatus().setHtml(RM.ExpensesMgr.getExpenseStatusText(this.expenseData.Status));
 
         var hideApprove = !(RM.ExpensesMgr.isExpenseStatusApprovable(this.expenseData.Status) && RM.PermissionsMgr.canApprove('ExpenseClaims'));
         //Draft button can only be visible when Approvals is on and if the Expense has received no payments
@@ -65,19 +60,6 @@ Ext.define('RM.controller.ExpenseActionsC', {
         var hideDelete = !(RM.PermissionsMgr.canDelete('ExpenseClaims') && (this.expenseData.Status === RM.Consts.ExpenseStatus.DRAFT || this.expenseData.Status === RM.Consts.ExpenseStatus.APPROVED) && this.expenseData.BalanceDue === this.expenseData.Amount);
         var hideEmail = !(RM.ExpensesMgr.isExpenseStatusEmailable(this.expenseData.Status) && RM.PermissionsMgr.canDo('ExpenseClaims', 'PrintEmail'));
         
-        // Handle lock-off rules
-        //if (RM.CashbookMgr.getLockOffDate().getTime() >= this.expenseData.Date.getTime()) {
-        //    var showWarning = !(hideApprove && hidePay);
-        //    hideApprove = true;
-        //    hidePay = true;
-
-        //    if (showWarning) {
-        //        var warningMessage = this.getWarningMessage();
-        //        warningMessage.setHtml('<strong>Note:</strong> Certain actions for this Expense are not available because the Book is locked off until ' + RM.CashbookMgr.getLockOffDate().toLocaleDateString());
-        //        warningMessage.setHidden(false);
-        //    }
-        //}
-
         this.getExpenseDeleteBtn().setHidden(hideDelete);
         this.getExpenseApproveBtn().setHidden(hideApprove);
         this.getExpenseEmailBtn().setHidden(hideEmail);

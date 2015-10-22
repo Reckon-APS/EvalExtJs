@@ -43,8 +43,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
                 valueChange: 'unitPriceChanged'
             },
             tax: {
-                valueChange: 'taxAmountChanged'/*,
-                clearicontap: function() { this.taxAmountChanged(null,null); }*/
+                valueChange: 'taxAmountChanged'
             },
             taxCode: {
                 change: 'taxCodeChanged'
@@ -152,7 +151,6 @@ Ext.define('RM.controller.ExpenseLineItemC', {
         if (!this.initShow) {
             itemForm.reset();
             itemForm.setValues(this.detailsData);
-            //this.setDiscountDisplayValue(this.detailsData.DiscountPercentage, this.detailsData.DiscountAmount);
 
             var priceDisplayValue = RM.util.MathHelpers.roundToEven(this.isTaxInclusive() ? this.detailsData.UnitPrice : this.detailsData.UnitPriceExTax, this.detailsData.UnitPriceAccuracy);
             this.getUnitPrice().setValue(priceDisplayValue);
@@ -283,7 +281,6 @@ Ext.define('RM.controller.ExpenseLineItemC', {
         this.getItemTitle().setHtml('Account details');
         this.getItemNameFld().setHidden(true);
         this.getUnitPrice().setHidden(true);
-        //this.getDiscount().setHidden(true);
         this.getAmount().setReadOnly(!this.isEditable);
         if (!this.isEditable) {
             this.getAmount().addCls(['rm-flatfield-disabled']);

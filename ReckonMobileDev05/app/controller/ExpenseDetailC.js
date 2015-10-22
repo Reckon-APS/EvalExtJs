@@ -416,14 +416,14 @@ Ext.define('RM.controller.ExpenseDetailC', {
     validateForm: function(vals){        
         var isValid = true;
         
-        //if(!vals.Amount){
-        //    this.getExpenseClaimAmountFld().showValidation(false);
-        //    isValid = false;
-        //}        
+        if (!vals.ExpenseClaimDate) {
+            this.getDateFld().showValidation(false);
+            isValid = false;
+        }        
         
-        //if(!isValid){            
-        //    RM.AppMgr.showInvalidFormMsg();
-        //}
+        if(!isValid){            
+            RM.AppMgr.showInvalidFormMsg();
+        }
         
         return isValid;
     },    
