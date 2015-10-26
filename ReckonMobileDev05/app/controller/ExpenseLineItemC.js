@@ -61,7 +61,11 @@ Ext.define('RM.controller.ExpenseLineItemC', {
                 change: 'dateChanged'
             },
             customerName: {
-                change: 'onCustomerChanged'
+                change: 'onCustomerChanged',
+                clearicontap: 'customerCleared'
+            },
+            'expenselineitem field[name=SupplierName]': {
+                clearicontap: 'supplierCleared'
             },
             billableFld: {
                 change: 'onBillableChanged'
@@ -391,6 +395,14 @@ Ext.define('RM.controller.ExpenseLineItemC', {
         });
 
         this.customerId = newCustomerData.ContactId;
+    },
+
+    customerCleared: function () {
+        this.getCustomerId().setValue(null);
+    },
+
+    supplierCleared: function(){
+        this.getSupplierId().setValue(null);
     },
 
     supplierChanged: function (newSupplierData, oldSupplierId) {

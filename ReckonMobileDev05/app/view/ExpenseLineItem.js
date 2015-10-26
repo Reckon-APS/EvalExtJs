@@ -83,10 +83,9 @@ Ext.define('RM.view.ExpenseLineItem', {
                 xtype: 'exttextfield',
                 name: 'SupplierName',
                 label: 'Supplier',
-                clearIcon: false,
+                clearIcon: true,
                 cls: 'rm-flatfield',
-                placeHolder: 'select (optional)',
-                readOnly: true
+                placeHolder: 'select (optional)'                
             }, {
                 xtype: 'rmtogglefield',
                 name: 'IsBillable',

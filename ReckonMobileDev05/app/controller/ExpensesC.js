@@ -69,12 +69,13 @@ Ext.define('RM.controller.ExpensesC', {
 	            }
 	            else if (me.sortVal === 'Status') {
 	                return RM.ExpensesMgr.getExpenseStatusText(item.get(me.sortVal));;
-	            }
-	            else {
-	                return RM.AppMgr.formatCurrency(item.get(me.sortVal));
-	            }
+	            }	            
 	        }
 	    });
+
+	    if (me.sortVal === 'Amount') {
+	        this.getExpensesList().getStore().setGrouper(null);
+	    }
 
 	    this.getExpensesList().setItemTpl(new Ext.XTemplate(
                                         '<div class = "rm-colorgrey rm-nextgrayarrow">',
