@@ -107,6 +107,15 @@ Ext.define('RM.view.ExpenseDetail', {
 							    clearIcon: false,
 							    labelWidth: '8.5em'
 							}, {
+							    xtype: 'exttextfield',
+							    name: 'Notes',
+							    labelWidth: 160,
+							    label: 'Notes to company',
+							    placeHolder: 'enter',
+							    cls: 'rm-flatfield',
+							    clearIcon: false,
+							    labelWidth: '8.5em'
+							}, {
 							    xtype: 'extselectfield',
 							    label: 'Gross/Net',
 							    usePicker: true,

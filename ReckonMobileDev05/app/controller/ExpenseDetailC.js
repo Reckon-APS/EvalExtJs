@@ -18,7 +18,8 @@ Ext.define('RM.controller.ExpenseDetailC', {
             expenseClaimAmountFld: 'expensedetail field[name=ExpenseClaimAmount]',
             expenseClaimNumberFld: 'expensedetail exttextfield[name=ExpenseClaimNumber]',
             customerName: 'expensedetail exttextfield[name=CustomerName]',
-            projectName: 'expensedetail exttextfield[name=ProjectName]'
+            projectName: 'expensedetail exttextfield[name=ProjectName]',
+            notesFld: 'expensedetail exttextfield[name=Notes]'
         },
         control: {
             'expensedetail': {
@@ -175,6 +176,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
 					    data.ExpenseClaimDate = RM.util.Dates.decodeAsLocal(data.ExpenseClaimDate);
 					    var expenseForm = this.getExpenseForm();
 					    expenseForm.setValues(data);
+					    this.noteText = data.Notes
 					    //this.setPhotoBtnIcon();
 					    this.applyTaxRules();
 					    this.previousAmountTaxStatus = data.AmountTaxStatus;
@@ -237,11 +239,17 @@ Ext.define('RM.controller.ExpenseDetailC', {
     //},    
     
     onFieldTap: function (tf) {
+        var fldName = tf.getName();
+
+        if (fldName == 'Notes') {
+            this.showNotes();
+        }
+
         if (!this.isEditable()) {
             return;
         }
 
-        if (tf.getName() == 'CustomerName') {
+        if (fldName == 'CustomerName') {
             RM.Selectors.showCustomers(
                 this.getProjectId().getValue(),
 				function (data) {
@@ -258,7 +266,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
                 'project'
 			);
         }
-        else if (tf.getName() == 'ProjectName') {
+        else if (fldName == 'ProjectName') {
             RM.Selectors.showProjects(
                 this.getCustomerId().getValue(),
                 null,
@@ -275,7 +283,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
 				this
 			);
         }
-        else if (tf.getName() == 'ItemName') {
+        else if (fldName == 'ItemName') {
             RM.Selectors.showItems(
                 true,
 				this.getProjectId().getValue(),
@@ -342,23 +350,19 @@ Ext.define('RM.controller.ExpenseDetailC', {
         lineItemsPanel.addLineItems(this.detailsData.LineItems);
     },
 
-    editDescription: function(){
-        
-        var isEditable = true; //change this when doing expense business rules
-        
+    showNotes: function(){        
         RM.Selectors.showNoteText(
             'Description',
-            isEditable,
+            this.isEditable(),
             'Save',
             this.noteText,
             function(noteText){
                 RM.ViewMgr.back();
                 this.noteText = noteText; //Enables preserving of new lines when going from textfield to textarea
-                this.getDescription().setValue(noteText.replace(/(\r\n|\n|\r)/g, ' '));
+                this.getNotesFld().setValue(noteText.replace(/(\r\n|\n|\r)/g, ' '));
             },
             this
         );        
-        
     },
     
     back: function () {
@@ -520,60 +524,60 @@ Ext.define('RM.controller.ExpenseDetailC', {
         //}
     },
     
-    uploadPhotoFile: function(vals){   
+    //uploadPhotoFile: function(vals){   
         
-        var me = this, options = new FileUploadOptions();
-        options.fileKey = "file";
-        options.fileName = this.receiptImage.substr(this.receiptImage.lastIndexOf('/') + 1);
-        options.mimeType = "image/jpg";           
+    //    var me = this, options = new FileUploadOptions();
+    //    options.fileKey = "file";
+    //    options.fileName = this.receiptImage.substr(this.receiptImage.lastIndexOf('/') + 1);
+    //    options.mimeType = "image/jpg";           
         
-        options.params = {
-            Date: Ext.util.Format.date(vals.Date, 'c'),
-            Amount: vals.Amount,
-            ItemId: vals.ItemId,
-            //SupplierId: vals.SupplierId,
-            Notes: vals.Notes,
-            Billable: vals.Billable == 1 ? 'true' : 'false',
-            StatusCode: vals.StatusCode
-        };
+    //    options.params = {
+    //        Date: Ext.util.Format.date(vals.Date, 'c'),
+    //        Amount: vals.Amount,
+    //        ItemId: vals.ItemId,
+    //        //SupplierId: vals.SupplierId,
+    //        Notes: vals.Notes,
+    //        Billable: vals.Billable == 1 ? 'true' : 'false',
+    //        StatusCode: vals.StatusCode
+    //    };
         
-        if(vals.ExpenseId) options.params.ExpenseId = vals.ExpenseId;
-        if(vals.ProjectId) options.params.ProjectId = vals.ProjectId;
-        if(vals.CustomerId) options.params.CustomerId = vals.CustomerId;
-        if(vals.TaxTypeId) options.params.ExpenseId = vals.TaxTypeId;
+    //    if(vals.ExpenseId) options.params.ExpenseId = vals.ExpenseId;
+    //    if(vals.ProjectId) options.params.ProjectId = vals.ProjectId;
+    //    if(vals.CustomerId) options.params.CustomerId = vals.CustomerId;
+    //    if(vals.TaxTypeId) options.params.ExpenseId = vals.TaxTypeId;
         
-        var ft = new FileTransfer();            
+    //    var ft = new FileTransfer();            
         
-        ft.onprogress = function(progressEvent) {
-            /*if (progressEvent.lengthComputable) {
-              loadingStatus.setPercentage(progressEvent.loaded / progressEvent.total);
-            } else {
-              loadingStatus.increment();
-            }*/            
-        };
+    //    ft.onprogress = function(progressEvent) {
+    //        /*if (progressEvent.lengthComputable) {
+    //          loadingStatus.setPercentage(progressEvent.loaded / progressEvent.total);
+    //        } else {
+    //          loadingStatus.increment();
+    //        }*/            
+    //    };
         
-        ft.upload(this.receiptImage, RM.AppMgr.getApiUrl('Expenses'), win, fail, options);
-        var msgBox = RM.AppMgr.showRMProgressPopup('<b>Loading Expense with photo...</b>','<div style="color: #A0A0A0; font-size: 90%;">This may take a while</br>depending on your connection</div>','', [{text: 'CANCEL', itemId: 'cancel'}], function(){            
-            ft.abort(win, fail);
-        }, me);
+    //    ft.upload(this.receiptImage, RM.AppMgr.getApiUrl('Expenses'), win, fail, options);
+    //    var msgBox = RM.AppMgr.showRMProgressPopup('<b>Loading Expense with photo...</b>','<div style="color: #A0A0A0; font-size: 90%;">This may take a while</br>depending on your connection</div>','', [{text: 'CANCEL', itemId: 'cancel'}], function(){            
+    //        ft.abort(win, fail);
+    //    }, me);
         
-        function win(r) {
-            //alert("Code = " + r.responseCode + '  Response = ' + r.response + '  Sent = ' + r.bytesSent);
-            msgBox.hide();
-            RM.AppMgr.showSuccessMsgBox('Expense saved',function(){
-               me.goBack();
-                RM.AppMgr.itemUpdated('expense');
-            }, me);            
-        }
+    //    function win(r) {
+    //        //alert("Code = " + r.responseCode + '  Response = ' + r.response + '  Sent = ' + r.bytesSent);
+    //        msgBox.hide();
+    //        RM.AppMgr.showSuccessMsgBox('Expense saved',function(){
+    //           me.goBack();
+    //            RM.AppMgr.itemUpdated('expense');
+    //        }, me);            
+    //    }
         
-        function fail(error) {
-            msgBox.hide();
-            RM.AppMgr.showFailureMsgBox('Save not successful', me.handlePhotoUploadChoices, me);
-            alert("An error has occurred: Code = " + error.code);
-            console.log("upload error source " + error.source);
-            console.log("upload error target " + error.target);
-        }
-    },
+    //    function fail(error) {
+    //        msgBox.hide();
+    //        RM.AppMgr.showFailureMsgBox('Save not successful', me.handlePhotoUploadChoices, me);
+    //        alert("An error has occurred: Code = " + error.code);
+    //        console.log("upload error source " + error.source);
+    //        console.log("upload error target " + error.target);
+    //    }
+    //},
     
     //handlePhotoUploadChoices: function(choice){
     //    if(choice == 'retry'){

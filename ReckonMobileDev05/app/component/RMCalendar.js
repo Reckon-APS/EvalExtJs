@@ -101,7 +101,7 @@ Ext.define('RM.component.RMCalendar', {
             date = new Date(this.monthViewData[i].raw.Date);
             dayQuery = 'td[datetime="' + this.dateToString(date) + '"]';
             dayCell = this.element.select(dayQuery);
-            (this.monthViewData[i].raw.HasTS || this.monthViewData[i].raw.HasData) ? dayCell.addCls('hasdata') : dayCell.removeCls('hasdata');
+            (this.monthViewData[i].raw.HasData) ? dayCell.addCls('hasdata') : dayCell.removeCls('hasdata');
         }
     },
 
