@@ -413,7 +413,7 @@ Ext.define('RM.controller.InvoiceDetailC', {
         RM.Selectors.showNoteText(
             'Notes',
             this.isEditable(),
-            'SAVE',
+            'Save',
             this.noteText,
             function(noteText){
                 RM.ViewMgr.back();
@@ -429,7 +429,7 @@ Ext.define('RM.controller.InvoiceDetailC', {
         RM.Selectors.showNoteText(
             'Payment details',
             this.isEditable(),
-            'SAVE',
+            'Save',
             this.paymentDetailsText,
             function (paymentDetailsText) {
                 RM.ViewMgr.back();

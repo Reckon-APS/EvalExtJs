@@ -280,7 +280,7 @@ Ext.define('RM.controller.TimeSheetDetailC', {
         RM.Selectors.showNoteText(
             'Notes',
             editable,
-            'SAVE',
+            'Save',
             this.noteText,
             function(noteText){
                 RM.ViewMgr.back();

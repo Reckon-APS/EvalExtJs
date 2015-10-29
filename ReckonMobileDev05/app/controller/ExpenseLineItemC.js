@@ -98,7 +98,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
         this.detailsCb = cb;
         this.detailsCbs = cbs;
         
-        this.noteText = detailsData.Notes;
+        this.noteText = '';
         this.isCreate = false;
         this.detailsData = Ext.clone(detailsData);        
 
@@ -115,7 +115,8 @@ Ext.define('RM.controller.ExpenseLineItemC', {
             this.detailsData.UnitPriceAccuracy = 2;
             this.detailsData.Quantity = null;
             this.detailsData.TaxGroupId = null;
-            this.detailsData.TaxIsModified = false;            
+            this.detailsData.TaxIsModified = false;
+            this.detailsData.Notes = null;
         }       
 
         var view = this.getItemDetail();
@@ -181,6 +182,8 @@ Ext.define('RM.controller.ExpenseLineItemC', {
             this.initialFormValues = itemForm.getValues();
             this.initShow = true;
         }
+
+        this.noteText = this.detailsData.Notes;
 
         this.setEditableBasedOnExpenseHeader();
     },
@@ -398,6 +401,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
     },
 
     customerCleared: function () {
+        this.customerId = null;
         this.getCustomerId().setValue(null);
     },
 
@@ -439,6 +443,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
     },
 
     projectCleared: function () {
+        this.projectId = null;
         // The project field has been cleared using the clearIcon, we have to remove the Id also
         this.getProjectId().setValue(null);
 
@@ -727,7 +732,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
         RM.Selectors.showNoteText(
             'Notes',
             this.isEditable,
-            'SAVE',
+            'Save',
             this.noteText,
             function (noteText) {
                 RM.ViewMgr.back();

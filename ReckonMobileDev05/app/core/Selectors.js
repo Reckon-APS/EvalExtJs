@@ -62,7 +62,7 @@ Ext.define('RM.core.Selectors', {
 		addNoteC.showView(
             'Add a note',
             true,
-            'SAVE',
+            'Save',
             '',
 			function(noteText){
 				RM.AppMgr.saveServerRec('HistoryNotes', true, {HistoryType: historyType, HistoryItemId: historyItemId, Text: noteText},

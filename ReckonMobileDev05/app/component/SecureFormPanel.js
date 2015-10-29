@@ -27,7 +27,9 @@ Ext.define('RM.component.SecureFormPanel', {
             // Iterate over all form fields and make them ReadOnly, and remove any placeholder text
             this.getFieldsArray().forEach(function(field) {
                 if(field.setReadOnly) { field.setReadOnly(true); }
-                if(field.setPlaceHolder) { field.setPlaceHolder(''); }        
+                if (field.setPlaceHolder) { field.setPlaceHolder(''); }
+                // To set readonly on custome selector component
+                field.config.rmlocked = true;
             });
         }
         

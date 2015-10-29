@@ -352,7 +352,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
 
     showNotes: function(){        
         RM.Selectors.showNoteText(
-            'Description',
+            'Notes',
             this.isEditable(),
             'Save',
             this.noteText,
