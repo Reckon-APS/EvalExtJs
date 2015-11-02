@@ -65,25 +65,24 @@ Ext.define('RM.view.ExpenseLineItem', {
                 ui: 'plain',
                 placeHolder: 'select'
             }, {
-                xtype: 'rmselectscreenfield',
+                xtype: 'exttextfield',
                 name: 'ProjectName',
                 label: 'Project',
                 cls: 'rm-flatfield',
-                clearIcon: true,
-                placeHolder: 'select (optional)',
-                permissionFor: { action: 'Select', name: 'Projects' }
+                rmreadonly: true,
+                placeHolder: 'select (optional)'
             }, {
                 xtype: 'exttextfield',
                 name: 'CustomerName',
                 label: 'Customer',               
                 cls: 'rm-flatfield',
-                clearIcon: true,
+                rmreadonly: true,
                 placeHolder: 'select (optional)'                
             }, {
                 xtype: 'exttextfield',
                 name: 'SupplierName',
                 label: 'Supplier',
-                clearIcon: true,
+                rmreadonly: true,
                 cls: 'rm-flatfield',
                 placeHolder: 'select (optional)'                
             }, {
