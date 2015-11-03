@@ -30,8 +30,7 @@ Ext.define('RM.view.ExpenseLineItem', {
             xtype: 'secureformpanel',
             permissionFor: 'ExpenseClaims',
             itemId: 'itemForm',
-            padding: 0,
-            defaults: { clearIcon: false },
+            padding: 0,            
             items: [{
                 xtype: 'component',
                 itemId: 'status',
