@@ -598,7 +598,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
                 var taxExclTotal = this.getAmount().getValue();
                 // Calc service only accepts tax excl total amount, if we're showing amounts Gross we have to calculate the Net figure
                 if (this.isTaxInclusive() && lineItem.TaxGroupId) {
-                    var taxCode = RM.AppMgr.getTaxCode(lineItem.TaxGroupId);
+                    var taxCode = RM.AppMgr.getPurchaseTaxCode(lineItem.TaxGroupId);
                     if (taxCode) {
                         taxExclTotal = this.getAmount().getValue() / (100 + taxCode.Rate) * 100;
                     }

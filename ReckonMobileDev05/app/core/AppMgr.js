@@ -557,6 +557,11 @@ Ext.define('RM.core.AppMgr', {
         return rec ? rec.data : null;
     },
 
+    getPurchaseTaxCode: function (taxCode) {
+        var rec = Ext.data.StoreManager.lookup('PurchaseTaxCodes').findRecord('GSTCodeId', taxCode);
+        return rec ? rec.data : null;
+    },
+
     itemUpdated: function (itemType) {
         this.application.fireEvent('itemupdated', itemType);
     },
