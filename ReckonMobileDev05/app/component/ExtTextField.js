@@ -28,7 +28,8 @@ Ext.define('RM.component.ExtTextField', {
                     field.setReadOnly(true);
                 }
                 else {
-                    field.setReadOnly(false);
+                    var readOnly = (this.config.rmlocked && this.config.rmlocked === true) ? true : false;
+                    field.setReadOnly(readOnly);
                 }
             }, this);
         }
