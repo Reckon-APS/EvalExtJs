@@ -150,7 +150,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
             }
             else {
                 //this.loadNewExpenseClaimNumber();
-                this.getExpenseClaimNumberFld().setHidden(!this.detailsData.ExpenseClaimNumber);
+                this.getExpenseClaimNumberFld().setHidden(true);
                 var expenseForm = this.getExpenseForm();
                 expenseForm.reset();
                 this.detailsData.ExpenseClaimDate = new Date();
@@ -170,6 +170,7 @@ Ext.define('RM.controller.ExpenseDetailC', {
 					function (data) {
 					    //data.HasReceiptPhoto = true;
 					    this.getExpenseStatus().setHidden(false);
+					    this.getExpenseClaimNumberFld().setHidden(false);
 					    this.getExpenseStatus().setHtml(RM.ExpensesMgr.getExpenseStatusText(data.Status));
 					    this.getLineItems().removeAllItems();
 					    this.detailsData = data;
@@ -831,11 +832,9 @@ Ext.define('RM.controller.ExpenseDetailC', {
                         RM.AppMgr.itemUpdated('expense');
 
                         if (afterSaveCallback) {
-                            if (this.isCreate) {
-                                //Mobile server returns just ExpenseClaimId in save response
-                                this.detailsData.ExpenseClaimId = recs[0];
-                            }                            
-                            // Clear the loaded flag to force a reload of invoice information when the view is shown again                            
+                            if (this.isCreate) {                                
+                                this.detailsData = recs[0];
+                            }                                          
                             this.dataLoaded = false;
                             this.isCreate = false;
                             afterSaveCallback.apply(this);
