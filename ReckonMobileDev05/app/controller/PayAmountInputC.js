@@ -274,7 +274,7 @@ Ext.define('RM.controller.PayAmountInputC', {
         RM.Selectors.showNoteText(
             'Description',
             true,
-            'SAVE',
+            'Save',
             this.noteText,
             function(noteText){
                 RM.ViewMgr.back();

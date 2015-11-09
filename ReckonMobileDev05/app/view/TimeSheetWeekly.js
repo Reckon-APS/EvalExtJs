@@ -45,14 +45,6 @@ Ext.define('RM.view.TimeSheetWeekly', {
 					    xtype: 'hiddenfield',
 					    name: 'CustomerId'
 					}, {
-					    xtype: 'exttextfield',
-					    name: 'CustomerName',
-					    cls: 'rm-flatfield',
-					    label: 'Customer',
-					    clearIcon: false,
-					    readOnly: true,
-					    placeHolder: 'select (optional)'
-					}, {
 					    xtype: 'hiddenfield',
 					    name: 'ProjectId'
 					}, {
@@ -60,6 +52,14 @@ Ext.define('RM.view.TimeSheetWeekly', {
 					    name: 'ProjectName',
 					    label: 'Project',
 					    cls: 'rm-flatfield',
+					    readOnly: true,
+					    placeHolder: 'select (optional)'
+					}, {
+					    xtype: 'exttextfield',
+					    name: 'CustomerName',
+					    cls: 'rm-flatfield',
+					    label: 'Customer',
+					    clearIcon: false,
 					    readOnly: true,
 					    placeHolder: 'select (optional)'
 					}, {

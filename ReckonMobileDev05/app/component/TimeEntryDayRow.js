@@ -64,7 +64,7 @@ Ext.define('RM.component.TimeEntryDayRow', {
         RM.Selectors.showNoteText(
             'Notes',
             editable,
-            'SAVE',
+            'Save',
             this.noteText,
             function (noteText) {
                 RM.ViewMgr.back();

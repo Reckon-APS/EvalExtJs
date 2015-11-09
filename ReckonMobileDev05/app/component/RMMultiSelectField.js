@@ -10,8 +10,11 @@ Ext.define('RM.component.RMMultiSelectField', {
         this.on('painted', this.onPainted, this);
     },
 
-    onTap: function (field) {        
-        this.showOptionList();        
+    onTap: function (field) {
+        if (field.config.rmlocked) {
+            return;
+        }
+        this.showOptionList();
     },
 
     onPainted: function () {

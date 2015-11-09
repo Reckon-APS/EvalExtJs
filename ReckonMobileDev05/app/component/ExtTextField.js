@@ -20,6 +20,20 @@ Ext.define('RM.component.ExtTextField', {
             }, 
             this
         );
+
+        //show or hide clear icon on readonly fields for the selector - project, customer and supplier
+        if (this.config.rmreadonly) {
+            this.on('change', function (field, newValue) {
+                if (!newValue) {
+                    field.setReadOnly(true);
+                }
+                else {
+                    var readOnly = (this.config.rmlocked && this.config.rmlocked === true) ? true : false;
+                    field.setReadOnly(readOnly);
+                }
+            }, this);
+        }
+
         if(this.config.cursorSimulate){
             this.on('focus', this.onMyFocus, this);
             this.on('blur', this.onMyBlur, this);

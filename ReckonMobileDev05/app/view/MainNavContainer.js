@@ -178,7 +178,7 @@ Ext.define('RM.view.MainNavContainer', {
         }, {
             xtype: 'expenses',
             index: 'ExpenseClaims',
-            title: 'Employee expenses',
+            title: 'Expenses',
             activated: true,
             group: 'RECKON ONE',
             slideButton: {

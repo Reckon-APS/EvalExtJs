@@ -5,19 +5,21 @@ Ext.define('RM.controller.ExpenseDetailC', {
         refs: {
             expenseDetail: 'expensedetail',
             expenseTitle: 'expensedetail #title',
+            expenseStatus: 'expensedetail #expenseStatus',
             saveBtn: 'expensedetail #save',
             expenseForm: 'expensedetail #expenseForm',
             customerId: 'expensedetail hiddenfield[name=CustomerId]',
-            supplierId: 'expensedetail hiddenfield[name=SupplierId]',
             projectId: 'expensedetail hiddenfield[name=ProjectId]',
-            description: 'expensedetail #description',
-            billableCheckbox: 'expensedetail rmtogglefield[name=Billable]',
-            historyFld: 'expensedetail #history',
-            photoBtn: 'expensedetail #photo',
-            dateFld: 'expensedetail extdatepickerfield[name=Date]',
-            amountFld:  'expensedetail exttextfield[name=Amount]',
+            //photoBtn: 'expensedetail #photo',
+            dateFld: 'expensedetail extdatepickerfield[name=ExpenseClaimDate]',
+            amountsFld: 'expensedetail extselectfield[name=AmountTaxStatus]',
             itemFld:  'expensedetail exttextfield[name=ItemName]',
-            supplierFld:  'expensedetail exttextfield[name=SupplierName]'
+            lineItems: 'expensedetail expenselineitems',
+            expenseClaimAmountFld: 'expensedetail field[name=ExpenseClaimAmount]',
+            expenseClaimNumberFld: 'expensedetail exttextfield[name=ExpenseClaimNumber]',
+            customerName: 'expensedetail exttextfield[name=CustomerName]',
+            projectName: 'expensedetail exttextfield[name=ProjectName]',
+            notesFld: 'expensedetail exttextfield[name=Notes]'
         },
         control: {
             'expensedetail': {
@@ -26,33 +28,107 @@ Ext.define('RM.controller.ExpenseDetailC', {
             },
             'expensedetail #back': {
                 tap: 'back'
+            }, 'expensedetail #options': {
+                tap: 'onOptions'
             },
             'expensedetail #save': {
-                tap: 'save'
+                tap: 'onSave'
             },
-            'expensedetail #photo': {
-                tap: 'onPhoto'
-            },
+            //'expensedetail #photo': {
+            //    tap: 'onPhoto'
+            //},
             'expensedetail #expenseForm exttextfield': {
                 tap: 'onFieldTap'
+            },
+            'expensedetail #expenseForm exttextfield[name=CustomerName]': {
+                clearicontap: 'onFieldClear'
+            },
+            'expensedetail #expenseForm exttextfield[name=ProjectName]': {
+                clearicontap: 'onFieldClear'
+            },
+            'expensedetail expenselineitems': {
+                addlineitem: 'onAddLineItem',
+                editlineitem: 'onEditLineItem',
+                deletelineitem: 'onDeleteLineItem'
+            },
+            'expensedetail extselectfield[name=AmountTaxStatus]': {
+                change: 'onAmountTaxStatusSelected'
+            },
+            dateFld: {
+                change: 'onExpenseClaimDateChanged'
             }
         }
     },
 
     init: function () {
         this.serverApiName = 'Expenses';
+        this.getApplication().addListener('itemupdated', 'onItemUpdated', this);
+    },
+
+    isEditable: function () {
+        return RM.ExpensesMgr.isStatusEditable(this.detailsData.Status) &&
+        RM.PermissionsMgr.canAddEdit('ExpenseClaims') &&
+        (!Ext.isDefined(this.detailsData.SaveSupport) || this.detailsData.SaveSupport) &&
+        this.detailsData.Amount === this.detailsData.BalanceDue;
+    },
+
+    applyViewEditableRules: function () {
+        var editable = this.isEditable();
+
+        this.getSaveBtn().setHidden(!editable);
+        if (!editable) { RM.util.FormUtils.makeAllFieldsReadOnly(this.getExpenseForm()); }
+        this.getLineItems().setIsEditable(editable);
+
+        this.getCustomerName().setReadOnly(!editable);
+        this.getProjectName().setReadOnly(!editable);
+    },
+
+    applyTaxRules: function () {
+        var amounts = this.getAmountsFld();
+        var taxPrefs = RM.CashbookMgr.getTaxPreferences();
+        amounts.setReadOnly(!this.isEditable() || !taxPrefs.AllowUserIncludeTax);
+        if (!this.isEditable() || !taxPrefs.AllowUserIncludeTax) {
+            amounts.setCls('rm-flatfield-disabled');
+        }
+        if (this.isCreate) {
+            // New expense behaviour
+            if (taxPrefs.IsTaxTracking) {
+                amounts.setHidden(false);
+                amounts.setValue(taxPrefs.SalesFigures);
+            }
+            else {
+                amounts.setHidden(true);
+                amounts.setValue(RM.Consts.TaxStatus.NON_TAXED);
+            }
+        }
+        else {
+            // Existing expense behaviour
+            var showAmounts = taxPrefs.IsTaxTracking || amounts.getValue() !== RM.Consts.TaxStatus.NON_TAXED;
+            amounts.setHidden(!showAmounts);
+        }
     },
 
     showView: function (data, cb, cbs) {
+        this.lineItemsDirty = false;
         this.isCreate = (data == null);
         this.detailsData = data;
         this.detailsCb = cb;
         this.detailsCbs = cbs;
 
         this.noteText = '';
-        
+        this.dataLoaded = false;
+
         if (this.isCreate){
-            this.detailsData = {HasReceiptPhoto: false, Date: new Date(), StatusCode:'b'}; // { TaxTypeId: '52c59eb2-7dc3-411b-848a-27c4aa7378b7', UserId: '00000000-0000-0000-0000-000000000000', StatusCode: '' };
+            //this.detailsData = {HasReceiptPhoto: false, Date: new Date(), StatusCode:'b'}; // { TaxTypeId: '52c59eb2-7dc3-411b-848a-27c4aa7378b7', UserId: '00000000-0000-0000-0000-000000000000', StatusCode: '' };
+            this.detailsData = {
+                AmountTaxStatus: RM.CashbookMgr.getTaxPreferences().SalesFigures,
+                Status: RM.ExpensesMgr.getInitialExpenseStatus(),
+                SaveSupport: true,
+                Amount: 0,
+                BalanceDue: 0,
+                ExpenseClaimTax: 0,
+                ExpenseClaimAmount: 0
+            };
         }
 
         var view = this.getExpenseDetail();
@@ -66,87 +142,149 @@ Ext.define('RM.controller.ExpenseDetailC', {
     onShow: function () {
         RM.ViewMgr.regFormBackHandler(this.back, this);
         this.getExpenseTitle().setHtml(this.isCreate ? 'Add Expense' : 'View Expense');
-        
-        if (!this.dataLoaded) {
-            this.getHistoryFld().setHidden(this.isCreate);
-            var expenseForm = this.getExpenseForm();
+        this.applyViewEditableRules();
+
+        if (!this.dataLoaded) {            
             if (!this.isCreate) {
-                RM.AppMgr.getServerRecById(this.serverApiName, this.detailsData.ExpenseId,
+                this.loadData();                
+            }
+            else {
+                //this.loadNewExpenseClaimNumber();
+                this.getExpenseClaimNumberFld().setHidden(true);
+                var expenseForm = this.getExpenseForm();
+                expenseForm.reset();
+                this.detailsData.ExpenseClaimDate = new Date();
+                expenseForm.setValues(this.detailsData);
+                this.applyTaxRules();
+                this.previousAmountTaxStatus = this.detailsData.AmountTaxStatus;
+                this.initialFormValues = expenseForm.getValues();                
+                this.getLineItems().setTaxStatus(this.detailsData.AmountTaxStatus);
+                //this.setPhotoBtnIcon();
+                this.dataLoaded = true;
+            }            
+        }
+    },
+
+    loadData: function(){
+        RM.AppMgr.getServerRecById(this.serverApiName, this.detailsData.ExpenseClaimId,
 					function (data) {
-                        //data.HasReceiptPhoto = true;
-					    this.detailsData = data;                        
-					    data.Date = new Date(data.Date);
-					    //delete data.Notes;
-                        //data.SaleTaxCodeId = data.TaxTypeId;
-					    //expenseForm.setValues(data);
-                        this.noteText = data.Notes; //Enables preserving of new lines when going from textfield to textarea
-                        data.Notes = data.Notes ? data.Notes.replace(/(\r\n|\n|\r)/g, ' ') : '';
-                        expenseForm.setValues(data);
-					    this.getBillableCheckbox().setValue(data.Billable);
-                        this.setPhotoBtnIcon();
-                        this.initialFormValues = expenseForm.getValues();
-                        this.hasExistingReceiptPhoto = data.HasReceiptPhoto;
+					    //data.HasReceiptPhoto = true;
+					    this.getExpenseStatus().setHidden(false);
+					    this.getExpenseClaimNumberFld().setHidden(false);
+					    this.getExpenseStatus().setHtml(RM.ExpensesMgr.getExpenseStatusText(data.Status));
+					    this.getLineItems().removeAllItems();
+					    this.detailsData = data;
+					    data.ExpenseClaimDate = RM.util.Dates.decodeAsLocal(data.ExpenseClaimDate);
+					    var expenseForm = this.getExpenseForm();
+					    expenseForm.setValues(data);
+					    this.noteText = data.Notes
+					    //this.setPhotoBtnIcon();
+					    this.applyTaxRules();
+					    this.previousAmountTaxStatus = data.AmountTaxStatus;
+					    this.applyViewEditableRules(); //needs to be called before adding line items below so that line items can have delete x hidden if necessary
+					    var lineItemsPanel = this.getLineItems();
+					    lineItemsPanel.addLineItems(data.LineItems);
+					    lineItemsPanel.setCustomerId(data.CustomerId);
+					    lineItemsPanel.setProjectId(data.ProjectId);
+					    lineItemsPanel.setTaxStatus(data.AmountTaxStatus);
+					    lineItemsPanel.setExpenseDate(data.Date);
+					    this.lineItemsDirty = false;
+					    this.initialFormValues = expenseForm.getValues();
+					    this.dataLoaded = true;
+					    //this.hasExistingReceiptPhoto = data.HasReceiptPhoto;
 					},
 					this
 				);
-            }
-            else{                
-                expenseForm.reset();
-                expenseForm.setValues(this.detailsData);
-                this.setPhotoBtnIcon();
-                this.initialFormValues = expenseForm.getValues();               
-            }
-            this.dataLoaded = true;
-        }
-
-        //this.getExpenseForm().setValues(this.detailsData);
     },
     
     onHide: function(){
         RM.ViewMgr.deRegFormBackHandler(this.back);
-    },    
+    },
+
+    onItemUpdated: function (itemType) {
+        if (itemType == 'expense' && !this.isCreate) {
+            this.dataLoaded = false;
+        }
+    },
+
+    loadNewExpenseClaimNumber: function () {
+        RM.AppMgr.saveServerRec('ExpenseCreate', true, null,
+			function (recs) {
+			    this.getExpenseClaimNumberFld().setValue(recs[0].ExpenseClaimNumber);
+			    this.detailsData.ExpenseClaimNumber = recs[0].ExpenseClaimNumber;
+			},
+			this,
+            function (recs, eventMsg) {
+                this.goBack();
+                RM.AppMgr.showOkMsgBox(eventMsg);
+            },
+            'Loading...'
+		);
+    },
 
     isFormDirty: function(){        
-        return !RM.AppMgr.isFormValsEqual(this.getExpenseForm().getValues(), this.initialFormValues);        
-    },
+        return this.lineItemsDirty || !RM.AppMgr.isFormValsEqual(this.getExpenseForm().getValues(), this.initialFormValues);
+    },   
     
-    setPhotoBtnIcon: function(){
-        var photoBtn = this.getPhotoBtn(),iconDir = 'resources/images/icons/';
-        if(this.detailsData.HasReceiptPhoto){
-            photoBtn.setIcon(iconDir + 'rm-attach.svg');
-            photoBtn.setText('Photo attached');             
-        }
-        else{
-            photoBtn.setIcon(iconDir + 'rm-photo.svg');
-            photoBtn.setText('Photograph the receipt');             
-        }
+    //setPhotoBtnIcon: function(){
+    //    var photoBtn = this.getPhotoBtn(),iconDir = 'resources/images/icons/';
+    //    if(this.detailsData.HasReceiptPhoto){
+    //        photoBtn.setIcon(iconDir + 'rm-attach.svg');
+    //        photoBtn.setText('Photo attached');             
+    //    }
+    //    else{
+    //        photoBtn.setIcon(iconDir + 'rm-photo.svg');
+    //        photoBtn.setText('Photograph the receipt');             
+    //    }
        
-    },    
+    //},    
     
     onFieldTap: function (tf) {
+        var fldName = tf.getName();
 
-        if (tf.getName() == 'CustomerName') {
+        if (fldName == 'Notes') {
+            this.showNotes();
+        }
+
+        if (!this.isEditable()) {
+            return;
+        }
+
+        if (fldName == 'CustomerName') {
             RM.Selectors.showCustomers(
                 this.getProjectId().getValue(),
 				function (data) {
-				    //tf.setValue(data.Name);
+				    tf.setValue(data.Name);
 				    this.getExpenseForm().setValues({ CustomerId: data.ContactId, CustomerName: data.Description });
+
+				    var lineItems = this.getLineItems();
+				    lineItems.setCustomerId(data.ContactId);
+				    lineItems.setCustomerName(data.Description);
+
+				    this.calculateBreakdown();
 				},
-				this
+				this,
+                'project'
 			);
         }
-        else if (tf.getName() == 'ProjectName') {
+        else if (fldName == 'ProjectName') {
             RM.Selectors.showProjects(
                 this.getCustomerId().getValue(),
-                this.getSupplierId().getValue(),
+                null,
 				function (data) {
-				    //tf.setValue(data.Name);	
-				    this.getExpenseForm().setValues({ ProjectId: data.ProjectId, ProjectName: data.ProjectPath});
+				    tf.setValue(data.Name);	
+				    this.getExpenseForm().setValues({ ProjectId: data.ProjectId, ProjectName: data.ProjectPath });
+
+				    var lineItems = this.getLineItems();
+				    lineItems.setProjectId(data.ProjectId);
+				    lineItems.setProjectName(data.ProjectPath);
+
+				    this.calculateBreakdown();
 				},
 				this
 			);
         }
-        else if (tf.getName() == 'ItemName') {
+        else if (fldName == 'ItemName') {
             RM.Selectors.showItems(
                 true,
 				this.getProjectId().getValue(),
@@ -154,47 +292,78 @@ Ext.define('RM.controller.ExpenseDetailC', {
 				function (data) {   
                     var rec = data[0];
 				    this.detailsData.TaxTypeId = rec.SaleTaxCodeId;
-				    //this.getExpenseForm().setValues({ ItemId: data[0].ItemId, ItemName: data[0].Name, SaleTaxCodeId: data[0].SaleTaxCodeId });
                     this.getExpenseForm().setValues({ ItemId:rec.ItemId, ItemName:rec.ItemPath});
 				},
 				this
 			);
         }
-        else if (tf.getName() == 'SupplierName') {
-            RM.Selectors.showSuppliers(
-				function (data) {
-				    //tf.setValue(data.Name);
-				    this.getExpenseForm().setValues({ SupplierId: data.SupplierId, SupplierName: data.Name });
-				},
-				this
-			);
-        }
-        else if (tf.getName() == 'Notes') {
-            this.editDescription();
-        }
-        else if (tf.getItemId() == 'history') {
-            RM.Selectors.showHistory('Expense', RM.Consts.HistoryTypes.EXPENSE, this.detailsData.ExpenseId);
-        }         
-
     },
 
-    editDescription: function(){
+    onFieldClear: function (tf) {
+        if (!this.isEditable()) {
+            return;
+        }
+
+        var lineItems = this.getLineItems();
+
+        if (tf.getName() === 'CustomerName') {
+            this.getCustomerId().setValue(RM.util.PseudoGuid.guidMask);            
+            lineItems.setCustomerId(RM.util.PseudoGuid.guidMask);
+            lineItems.setCustomerName('');
+        }
+        else if (tf.getName() === 'ProjectName') {
+            this.getProjectId().setValue(RM.util.PseudoGuid.guidMask);
+            lineItems.setProjectId(RM.util.PseudoGuid.guidMask);
+            lineItems.setProjectName('');
+        }
+
+        this.clearLineItemDataFromHeader(tf.getName());
+    },
+
+    clearLineItemDataFromHeader: function (fieldName) {
+        var formVals = this.getExpenseForm().getValues();
+        formVals.LineItems = Ext.clone(this.getLineItems().getViewData());
+
+        //copy data to formVals
+        Ext.applyIf(formVals, this.detailsData);        
         
-        var isEditable = true; //change this when doing expense business rules
+        if (formVals.LineItems.length > 0) {
+            //set fileds of line item to blank
+            formVals.LineItems.forEach(function (item) {
+
+                if (fieldName === 'CustomerName') {
+                    item.CustomerName = '';
+                    item.CustomerId = '';                    
+                }
+                else if (fieldName === 'ProjectName') {
+                    item.ProjectName = '';
+                    item.ProjectId = '';                    
+                }
+            });
+        }
         
+        //copy altered line items data back to origin object 
+        Ext.apply(this.detailsData, formVals);
+
+        //remove and reload line items
+        var lineItemsPanel = this.getLineItems();
+        lineItemsPanel.removeAllItems();
+        lineItemsPanel.addLineItems(this.detailsData.LineItems);
+    },
+
+    showNotes: function(){        
         RM.Selectors.showNoteText(
-            'Description',
-            isEditable,
-            'OK',
+            'Notes',
+            this.isEditable(),
+            'Save',
             this.noteText,
             function(noteText){
                 RM.ViewMgr.back();
                 this.noteText = noteText; //Enables preserving of new lines when going from textfield to textarea
-                this.getDescription().setValue(noteText.replace(/(\r\n|\n|\r)/g, ' '));
+                this.getNotesFld().setValue(noteText.replace(/(\r\n|\n|\r)/g, ' '));
             },
             this
         );        
-        
     },
     
     back: function () {
@@ -223,22 +392,39 @@ Ext.define('RM.controller.ExpenseDetailC', {
         RM.ViewMgr.back();
         this.dataLoaded = false;        
     },
+
+    onOptions: function () {
+        if (this.isFormDirty()) {
+            RM.AppMgr.showOkCancelMsgBox('You must save your changes to continue, save now?',
+                function (btn) {
+                    if (btn == 'ok') {
+                        this.save(this.onExpenseActions);
+                    }
+                },
+                this
+            );
+        }
+        else {
+            this.onExpenseActions();
+        }
+    },
+
+    onExpenseActions: function () {
+        if (this.isCreate) {
+            RM.AppMgr.showOkMsgBox('Expense actions are only available after saving new expenses.');
+        }
+        else {
+            RM.ExpensesMgr.showActions(this.detailsData);
+        }
+    },
     
     validateForm: function(vals){        
         var isValid = true;
         
-        if(!vals.Amount){
-            this.getAmountFld().showValidation(false);
+        if (!vals.ExpenseClaimDate) {
+            this.getDateFld().showValidation(false);
             isValid = false;
-        }
-        if(!vals.ItemName){
-            this.getItemFld().showValidation(false);
-            isValid = false;
-        }
-        if(!vals.SupplierName){
-            this.getSupplierFld().showValidation(false);
-            isValid = false;
-        }
+        }        
         
         if(!isValid){            
             RM.AppMgr.showInvalidFormMsg();
@@ -273,135 +459,183 @@ Ext.define('RM.controller.ExpenseDetailC', {
 
     },
 
-    save: function () {
-        var formVals = this.getExpenseForm().getValues();
-        formVals.Billable = this.getBillableCheckbox().getValue();
-        var vals = Ext.applyIf(formVals, this.detailsData);
-
-        vals.Notes = this.noteText;
-        var receiptImageIsFile = this.receiptImage && (this.receiptImage.indexOf(';base64,') == -1);
-        
-        if(this.validateForm(vals)){        
-            if(receiptImageIsFile){
-                this.uploadPhotoFile(vals);            
-            }
-            else{
-                this.uploadPhotoData(vals);
-            }
-        }
-    },
-    
-    uploadPhotoFile: function(vals){   
-        
-        var me = this, options = new FileUploadOptions();
-        options.fileKey = "file";
-        options.fileName = this.receiptImage.substr(this.receiptImage.lastIndexOf('/') + 1);
-        options.mimeType = "image/jpg";           
-        
-        options.params = {
-            Date: Ext.util.Format.date(vals.Date, 'c'),
-            Amount: vals.Amount,
-            ItemId: vals.ItemId,
-            SupplierId: vals.SupplierId,
-            Notes: vals.Notes,
-            Billable: vals.Billable == 1 ? 'true' : 'false',
-            StatusCode: vals.StatusCode
-        };
-        
-        if(vals.ExpenseId) options.params.ExpenseId = vals.ExpenseId;
-        if(vals.ProjectId) options.params.ProjectId = vals.ProjectId;
-        if(vals.CustomerId) options.params.CustomerId = vals.CustomerId;
-        if(vals.TaxTypeId) options.params.ExpenseId = vals.TaxTypeId;
-        
-        var ft = new FileTransfer();            
-        
-        ft.onprogress = function(progressEvent) {
-            /*if (progressEvent.lengthComputable) {
-              loadingStatus.setPercentage(progressEvent.loaded / progressEvent.total);
-            } else {
-              loadingStatus.increment();
-            }*/            
-        };
-        
-        ft.upload(this.receiptImage, RM.AppMgr.getApiUrl('Expenses'), win, fail, options);
-        var msgBox = RM.AppMgr.showRMProgressPopup('<b>Loading Expense with photo...</b>','<div style="color: #A0A0A0; font-size: 90%;">This may take a while</br>depending on your connection</div>','', [{text: 'CANCEL', itemId: 'cancel'}], function(){            
-            ft.abort(win, fail);
-        }, me);
-        
-        function win(r) {
-            //alert("Code = " + r.responseCode + '  Response = ' + r.response + '  Sent = ' + r.bytesSent);
-            msgBox.hide();
-            RM.AppMgr.showSuccessMsgBox('Expense saved',function(){
-               me.goBack();
-                RM.AppMgr.itemUpdated('expense');
-            }, me);            
-        }
-        
-        function fail(error) {
-            msgBox.hide();
-            RM.AppMgr.showFailureMsgBox('Save not successful', me.handlePhotoUploadChoices, me);
-            alert("An error has occurred: Code = " + error.code);
-            console.log("upload error source " + error.source);
-            console.log("upload error target " + error.target);
-        }
-    },
-    
-    handlePhotoUploadChoices: function(choice){
-        if(choice == 'retry'){
+    onSave: function (button) {
+        if (this.isFormDirty()) {
             this.save();
         }
-        if(choice == 'cancel'){            
-            
-        } 
+        else {
+            this.goBack();
+        }
+    },
+
+    save: function (afterSaveCallback) {
+        var formVals = this.getExpenseForm().getValues();
+        formVals.LineItems = Ext.clone(this.getLineItems().getViewData());
+
+        var vals = Ext.applyIf(formVals, this.detailsData);        
+        
+        // Some date fernagling, the default json serialization of dates will format the date in UTC which will alter the time from 00:00:00
+        vals.ExpenseClaimDate = RM.util.Dates.encodeAsUTC(vals.ExpenseClaimDate);
+
+        if (this.validateForm(vals)) {
+            if (formVals.LineItems.length > 0) {
+                // Some line item admin
+                var lineNumber = 1;
+                formVals.LineItems.forEach(function (item) {
+                    item.lineNo = lineNumber;
+
+                    // Remove the temporary Id for any new items, since the server is way too trusting
+                    if (item.IsNew) {
+                        delete item.ExpenseClaimLineItemId;
+                    }
+
+                    //set header Project to line item
+                    if (vals.ProjectName) {
+                        item.ProjectName = vals.ProjectName;
+                        item.ProjectId = vals.ProjectId;
+                    }
+
+                    //set header customer to line item 
+                    if(vals.CustomerName){
+                        item.CustomerName = vals.CustomerName;
+                        item.CustomerId = vals.CustomerId;
+                    }
+
+                    // Set the line numbers to handle new or deleted items
+                    lineNumber += 1;
+                });
+
+                this.detailsCb.call(this.detailsCbs, 'save', vals);
+                this.saveExpense(afterSaveCallback, vals);
+            }
+            else {
+                RM.AppMgr.showErrorMsgBox('No items have been added to this expense claim.');
+            }
+        }
+
+        //Photo receipt part
+        //var receiptImageIsFile = this.receiptImage && (this.receiptImage.indexOf(';base64,') == -1);        
+        //if(this.validateForm(vals)){        
+        //    if(receiptImageIsFile){
+        //        this.uploadPhotoFile(vals);            
+        //    }
+        //    else{
+        //        this.uploadPhotoData(vals);
+        //    }
+        //}
     },
     
-    uploadPhotoData: function(vals){
-        var boundary = '++++++reckononemobile.formBoundary', postData = '';       
-        if(vals.ExpenseId) postData += this.genFormDataFld('ExpenseId', vals.ExpenseId, boundary);
-        if(vals.ProjectId) postData += this.genFormDataFld('ProjectId', vals.ProjectId, boundary);
-        if(vals.CustomerId) postData += this.genFormDataFld('CustomerId', vals.CustomerId, boundary);
-        postData += this.genFormDataFld('Date', Ext.util.Format.date(vals.Date, 'c'), boundary);
-        postData += this.genFormDataFld('Amount', vals.Amount, boundary);
-        postData += this.genFormDataFld('ItemId', vals.ItemId, boundary);
-        postData += this.genFormDataFld('SupplierId', vals.SupplierId, boundary);
-        postData += this.genFormDataFld('Notes', vals.Notes, boundary);
-        postData += this.genFormDataFld('Billable', vals.Billable, boundary);
-        postData += this.genFormDataFld('StatusCode', vals.StatusCode, boundary);
-        if(vals.TaxTypeId) postData += this.genFormDataFld('TaxTypeId', vals.TaxTypeId, boundary);
+    //uploadPhotoFile: function(vals){   
         
-        if(this.receiptImage){
-            var imgData = this.receiptImage.substr(this.receiptImage.indexOf(';base64,') + 8);
-            postData += this.genFormFileField('receipt.png', imgData, boundary);
-        }
-        postData += '--' + boundary + '--\r\n';
+    //    var me = this, options = new FileUploadOptions();
+    //    options.fileKey = "file";
+    //    options.fileName = this.receiptImage.substr(this.receiptImage.lastIndexOf('/') + 1);
+    //    options.mimeType = "image/jpg";           
         
-        Ext.Ajax.request({
-            method:"POST",
-            headers: {
-                'Content-Type': 'multipart/form-data; boundary=' + boundary
-            },
-            rawData: postData,
-            url: RM.AppMgr.getApiUrl('Expenses'),
-            success: function (response) {
-                var resp = Ext.decode(response.responseText);
-                if(resp.success){
-                    RM.AppMgr.showSuccessMsgBox('Expense saved',function(){
-                       RM.AppMgr.itemUpdated('expense');
-                       this.goBack(); 
-                    }, this);                        
-                }
-                else{
-                     RM.AppMgr.showOkMsgBox(resp.eventMsg);
-                }
+    //    options.params = {
+    //        Date: Ext.util.Format.date(vals.Date, 'c'),
+    //        Amount: vals.Amount,
+    //        ItemId: vals.ItemId,
+    //        //SupplierId: vals.SupplierId,
+    //        Notes: vals.Notes,
+    //        Billable: vals.Billable == 1 ? 'true' : 'false',
+    //        StatusCode: vals.StatusCode
+    //    };
+        
+    //    if(vals.ExpenseId) options.params.ExpenseId = vals.ExpenseId;
+    //    if(vals.ProjectId) options.params.ProjectId = vals.ProjectId;
+    //    if(vals.CustomerId) options.params.CustomerId = vals.CustomerId;
+    //    if(vals.TaxTypeId) options.params.ExpenseId = vals.TaxTypeId;
+        
+    //    var ft = new FileTransfer();            
+        
+    //    ft.onprogress = function(progressEvent) {
+    //        /*if (progressEvent.lengthComputable) {
+    //          loadingStatus.setPercentage(progressEvent.loaded / progressEvent.total);
+    //        } else {
+    //          loadingStatus.increment();
+    //        }*/            
+    //    };
+        
+    //    ft.upload(this.receiptImage, RM.AppMgr.getApiUrl('Expenses'), win, fail, options);
+    //    var msgBox = RM.AppMgr.showRMProgressPopup('<b>Loading Expense with photo...</b>','<div style="color: #A0A0A0; font-size: 90%;">This may take a while</br>depending on your connection</div>','', [{text: 'CANCEL', itemId: 'cancel'}], function(){            
+    //        ft.abort(win, fail);
+    //    }, me);
+        
+    //    function win(r) {
+    //        //alert("Code = " + r.responseCode + '  Response = ' + r.response + '  Sent = ' + r.bytesSent);
+    //        msgBox.hide();
+    //        RM.AppMgr.showSuccessMsgBox('Expense saved',function(){
+    //           me.goBack();
+    //            RM.AppMgr.itemUpdated('expense');
+    //        }, me);            
+    //    }
+        
+    //    function fail(error) {
+    //        msgBox.hide();
+    //        RM.AppMgr.showFailureMsgBox('Save not successful', me.handlePhotoUploadChoices, me);
+    //        alert("An error has occurred: Code = " + error.code);
+    //        console.log("upload error source " + error.source);
+    //        console.log("upload error target " + error.target);
+    //    }
+    //},
+    
+    //handlePhotoUploadChoices: function(choice){
+    //    if(choice == 'retry'){
+    //        this.save();
+    //    }
+    //    if(choice == 'cancel'){            
+            
+    //    } 
+    //},
+    
+    //uploadPhotoData: function(vals){
+    //    var boundary = '++++++reckononemobile.formBoundary', postData = '';       
+    //    if(vals.ExpenseId) postData += this.genFormDataFld('ExpenseId', vals.ExpenseId, boundary);
+    //    if(vals.ProjectId) postData += this.genFormDataFld('ProjectId', vals.ProjectId, boundary);
+    //    if(vals.CustomerId) postData += this.genFormDataFld('CustomerId', vals.CustomerId, boundary);
+    //    postData += this.genFormDataFld('Date', Ext.util.Format.date(vals.Date, 'c'), boundary);
+    //    postData += this.genFormDataFld('Amount', vals.Amount, boundary);
+    //    postData += this.genFormDataFld('ItemId', vals.ItemId, boundary);
+    //    //postData += this.genFormDataFld('SupplierId', vals.SupplierId, boundary);
+    //    postData += this.genFormDataFld('Notes', vals.Notes, boundary);
+    //    postData += this.genFormDataFld('Billable', vals.Billable, boundary);
+    //    postData += this.genFormDataFld('StatusCode', vals.StatusCode, boundary);
+    //    if(vals.TaxTypeId) postData += this.genFormDataFld('TaxTypeId', vals.TaxTypeId, boundary);
+        
+    //    if(this.receiptImage){
+    //        var imgData = this.receiptImage.substr(this.receiptImage.indexOf(';base64,') + 8);
+    //        postData += this.genFormFileField('receipt.png', imgData, boundary);
+    //    }
+    //    postData += '--' + boundary + '--\r\n';
+        
+    //    Ext.Ajax.request({
+    //        method:"POST",
+    //        headers: {
+    //            'Content-Type': 'multipart/form-data; boundary=' + boundary
+    //        },
+    //        rawData: postData,
+    //        url: RM.AppMgr.getApiUrl('Expenses'),
+    //        success: function (response) {
+    //            var resp = Ext.decode(response.responseText);
+    //            if(resp.success){
+    //                RM.AppMgr.showSuccessMsgBox('Expense saved',function(){
+    //                   RM.AppMgr.itemUpdated('expense');
+    //                   this.goBack(); 
+    //                }, this);                        
+    //            }
+    //            else{
+    //                 RM.AppMgr.showOkMsgBox(resp.eventMsg);
+    //            }
                 
-            },
-            failure: function (resp) {
-                RM.AppMgr.handleServerCallFailure(resp);
-            },
-            scope: this
-        });
+    //        },
+    //        failure: function (resp) {
+    //            RM.AppMgr.handleServerCallFailure(resp);
+    //        },
+    //        scope: this
+    //    });
         
-    },
+    //},
     
     genFormDataFld: function(fldName, fldVal, boundary){        
         return '--' + boundary + '\r\nContent-Disposition: form-data; name="' + fldName +  '"\r\n\r\n' + fldVal + '\r\n';
@@ -409,7 +643,219 @@ Ext.define('RM.controller.ExpenseDetailC', {
     
     genFormFileField: function(fileName, fileData, boundary){
         return '--' + boundary + '\r\nContent-Disposition: form-data; name="file"; filename="' + fileName + '"\r\nContent-Transfer-Encoding: base64\r\nContent-Type: image/png\r\n\Content-Length: ' + fileData.length + '\r\n\r\n' + fileData + '\r\n';
-    }
+    },
+
+    onAddLineItem: function () {
+        this.lineItemsDirty = true;
+        this.calculateBreakdown();
+    },
+
+    onDeleteLineItem: function () {
+        this.lineItemsDirty = true;
+        this.calculateBreakdown();
+    },
+
+    onEditLineItem: function () {
+        this.lineItemsDirty = true;
+        this.calculateBreakdown();
+    },
+
+    onAmountTaxStatusSelected: function (amountTaxStatusFld, newValue, oldValue) {
+        if (!this.dataLoaded) return;
+        this.detailsData.AmountTaxStatus = newValue;
+        this.previousAmountTaxStatus = oldValue;
+
+        var that = this;
+        function proceedWithChange() {
+            that.calculateBreakdown();
+            that.getLineItems().setTaxStatus(newValue);
+            that.previousAmountTaxStatus = newValue;
+        }
+
+        // Make sure the user is aware of the impact of certain changes
+        if (newValue === RM.Consts.TaxStatus.NON_TAXED && this.taxModificationsExist()) {
+            RM.AppMgr.showYesNoMsgBox('This change will remove the modified tax information on all your line items, are you sure you want to do this?',
+            function (result) {
+                if (result === 'yes') {
+                    proceedWithChange();
+                }
+                else {
+                    // Put the old value back, suppressing the change event at the same time
+                    amountTaxStatusFld.suspendEvents();
+                    amountTaxStatusFld.setValue(oldValue);
+                    this.detailsData.AmountTaxStatus = oldValue;
+                    amountTaxStatusFld.resumeEvents(true);
+                }
+            }, this);
+        }
+        else {
+            proceedWithChange();
+        }
+    },
     
+    calculateBreakdown: function () {
+
+        var formVals = this.getExpenseForm().getValues();
+        var lineItems = this.getLineItems().getViewData();
+        var vals = {
+            CustomerId: formVals.CustomerId,
+            ProjectId: formVals.ProjectId,
+            ExpenseClaimDate: RM.util.Dates.encodeAsUTC(formVals.ExpenseClaimDate),
+            AmountTaxStatus: formVals.AmountTaxStatus,
+            PreviousAmountTaxStatus: this.previousAmountTaxStatus,
+            LineItems: []
+        };
+
+        if (vals.PreviousAmountTaxStatus !== vals.AmountTaxStatus) {
+            if (vals.AmountTaxStatus === RM.Consts.TaxStatus.NON_TAXED) {
+                // House keeping. The calcs api doesn't handle removing things like the tax group and tax amounts when 
+                // switching to NON-TAXED so we remove them first.
+                lineItems = lineItems.map(function (item) {
+                    item.TaxGroupId = null;
+                    item.Tax = null;
+                    item.TaxIsModified = false;
+                    return item;
+                });
+            }
+            else if (vals.PreviousAmountTaxStatus === RM.Consts.TaxStatus.NON_TAXED) {
+                // User is changing from NON-TAXED to a Tax-incl state. Apply the default tax group to each of the line items.
+                lineItems = lineItems.map(function (item) {
+                    item.TaxGroupId = item.DefaultTaxGroupId;
+                    return item;
+                });
+            }
+        }
+
+        // Send only the fields required by the calculation contract for line items
+        vals.LineItems = lineItems.map(function (item) {
+            return {
+                ExpenseClaimLineItemId: item.ExpenseClaimLineItemId,
+                ExpenseClaimDate: item.ExpenseClaimDate,
+                ItemType: item.ItemType,
+                ItemId: item.ItemId,
+                ProjectId: item.ProjectId,
+                Quantity: item.Quantity,
+                UnitPriceExTax: item.UnitPriceExTax,                
+                TaxGroupId: item.TaxGroupId,
+                Tax: item.Tax,
+                TaxIsModified: item.TaxIsModified,
+                AccountId: item.AccountId,
+                TaxExclusiveTotalAmount: item.AmountExTax,
+                IsParent: item.IsParent,
+                IsSubTotal: item.IsSubTotal
+            };
+        });
+
+        
+        RM.AppMgr.saveServerRec('ExpenseCalc', true, vals,
+			function response(respRecs) {
+			    var respRec = respRecs[0];
+
+			    var data = {};
+			    data.ExpenseClaimAmount = respRec.TotalIncludingTax;			    
+			    data.BalanceDue = respRec.BalanceDue;
+			    data.Amount = respRec.TotalIncludingTax;
+			    data.AmountExTax = respRec.TotalExcludingTax;
+			    data.ExpenseClaimTax = respRec.Tax;
+                
+			    var lineItemsPanel = this.getLineItems();
+			    lineItemsPanel.removeAllItems();
+
+			    for (var i = 0; i < lineItems.length; i++) {
+			        var currentLine = lineItems[i];
+
+			        // find the result for the line
+			        var resultLine = null;
+			        Ext.Array.some(respRec.Items, function (item) {
+			            if (item.ExpenseClaimLineItemId === currentLine.ExpenseClaimLineItemId) {
+			                resultLine = item;
+			                return true;
+			            }
+			        });
+
+			        // If the item isn't in the response, it must be removed (project/customer filtering is potentially applied server-side)
+			        if (!resultLine) {
+			            lineItems[i] = null;
+			        }
+			        else {
+			            // Map the calculated values across
+			            Ext.apply(currentLine, resultLine);
+			        }
+			    }
+
+			    // Clean out any deleted items
+			    lineItems = Ext.Array.clean(lineItems);
+
+			    lineItemsPanel.setTaxStatus(vals.AmountTaxStatus);
+			    lineItemsPanel.addLineItems(lineItems);
+
+			    this.updateAfterAddingLines(data);
+			},
+			this,
+            function (eventMsg) {
+                RM.AppMgr.showOkMsgBox(eventMsg);
+                this.goBack();
+            },
+            'Loading...'
+		);
+    },
+
+    updateAfterAddingLines: function(data){
+        this.getExpenseForm().setValues(data);
+        this.detailsData.ExpenseClaimAmount = data.ExpenseClaimAmount;
+        this.detailsData.BalanceDue = data.BalanceDue;
+        this.detailsData.Amount = data.Amount;
+        this.detailsData.AmountExTax = data.AmountExTax;
+        this.detailsData.ExpenseClaimTax = data.ExpenseClaimTax;
+        this.detailsData.Tax = data.ExpenseClaimTax;
+    },
+
+    // Check all the lineItems for modifications to tax code or tax amount
+    taxModificationsExist: function () {
+        var lineItems = this.getLineItems().getViewData();
+        var changesExist = false;
+
+        Ext.Array.some(lineItems, function (item) {
+            if (item.TaxIsModified || item.TaxGroupId !== item.DefaultTaxGroupId) {
+                changesExist = true;
+                return true;
+            }
+        });
+
+        return changesExist;
+    },
+
+    saveExpense: function (afterSaveCallback, vals)
+    {
+        RM.AppMgr.saveServerRec('Expenses', this.isCreate, vals,
+                    function (recs) {
+                        RM.AppMgr.itemUpdated('expense');
+
+                        if (afterSaveCallback) {
+                            if (this.isCreate) {                                
+                                this.detailsData = recs[0];
+                            }                                          
+                            this.dataLoaded = false;
+                            this.isCreate = false;
+                            afterSaveCallback.apply(this);
+                        }
+                        else {
+                            this.goBack();
+                        }
+                                                
+                    },
+                    this,
+                    function (recs, eventMsg) {
+                        RM.AppMgr.showOkMsgBox(eventMsg);
+                    }
+        );
+    },
+
+    onExpenseClaimDateChanged: function (dateField, newValue, oldValue) {
+        if (!this.dataLoaded) return;
+        //  Recalculate the expense tax amounts, since tax rates are date dependent
+        this.calculateBreakdown();
+    }
+
 
 });

@@ -42,7 +42,7 @@ Ext.define('RM.component.RMToggleField', {
     },
 
     setValue: function (boolVal) {
-        this.val = boolVal;
+        this.val = (boolVal && boolVal === true) ? true : false;
         this.setFieldState();
     },
     

@@ -61,8 +61,9 @@ Ext.define('RM.controller.AddNoteC', {
         RM.ViewMgr.deRegFormBackHandler(this.back);
     },
 
-    isFormDirty: function(){        
-        return this.getNoteText().getValue() !== this.noteText;        
+    isFormDirty: function () {
+        //ignore carriage return \r and line feed \n 
+        return this.getNoteText().getValue().replace(/\r?\n|\r/g, '') !== this.noteText.replace(/\r?\n|\r/g, '');
     },    
     
     onAdd: function () {
