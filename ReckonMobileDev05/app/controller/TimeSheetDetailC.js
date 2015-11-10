@@ -1,6 +1,6 @@
 Ext.define('RM.controller.TimeSheetDetailC', {
     extend: 'Ext.app.Controller',
-
+    requires: ['Ext.Toast'],
     config: {
         refs: {
             timeSheetDetail: 'timesheetdetail',

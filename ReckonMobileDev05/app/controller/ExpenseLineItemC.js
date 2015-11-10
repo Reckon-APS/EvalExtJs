@@ -1,6 +1,6 @@
 Ext.define('RM.controller.ExpenseLineItemC', {
     extend: 'Ext.app.Controller',
-    requires: ['RM.view.ExpenseLineItem', 'RM.util.FormUtils', 'RM.util.PseudoGuid', 'RM.util.MathHelpers'],
+    requires: ['RM.view.ExpenseLineItem', 'RM.util.FormUtils', 'RM.util.PseudoGuid', 'RM.util.MathHelpers', 'Ext.Toast'],
     config: {
         refs: {
             itemDetail: 'expenselineitem',
