@@ -59,6 +59,7 @@ Ext.define('RM.view.TimeSheetDetail', {
 					    xtype: 'extdatepickerfield',
 					    name: 'Date',
 					    label: 'Date',
+					    rmmandatory: true,
 					    dateFormat: 'jS M Y',
 					    cls: 'rm-flatfield',
 					    ui: 'plain',

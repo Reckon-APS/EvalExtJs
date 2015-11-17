@@ -1,6 +1,6 @@
 Ext.define('RM.controller.ExpenseLineItemC', {
     extend: 'Ext.app.Controller',
-    requires: ['RM.view.ExpenseLineItem', 'RM.util.FormUtils', 'RM.util.PseudoGuid', 'RM.util.MathHelpers', 'Ext.Toast'],
+    requires: ['RM.view.ExpenseLineItem', 'RM.util.FormUtils', 'RM.util.PseudoGuid', 'RM.util.MathHelpers'],
     config: {
         refs: {
             itemDetail: 'expenselineitem',
@@ -697,7 +697,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
         var headerDate = new Date(this.detailsData.ExpenseClaimDate);
         var expenseLineDate = new Date(this.getDateFld().getValue());
         if (expenseLineDate.getTime() > headerDate.getTime()) {
-            Ext.toast('Expense line date cannot be later than expense header date.', 3000);
+            RM.AppMgr.showToast('Expense line date cannot be later than expense header date.', 3000);
             this.getDateFld().setValue(headerDate);
         }
     },

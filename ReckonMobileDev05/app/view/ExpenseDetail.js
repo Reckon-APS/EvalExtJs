@@ -72,7 +72,7 @@ Ext.define('RM.view.ExpenseDetail', {
 							    label: 'Date',
 							    rmmandatory: true,
 							    dateFormat: 'jS M Y',
-							    cls: 'Date-icon rm-flatfield',
+							    cls: 'rm-flatfield',
 							    ui: 'plain',
 							    placeHolder: 'select'
 							}, {

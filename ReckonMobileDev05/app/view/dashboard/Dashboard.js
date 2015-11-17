@@ -30,13 +30,17 @@ Ext.define('RM.view.dashboard.Dashboard', {
                 padding: 5,                
                 items: [                    
                     {
-                        xtype: 'dbnetposition',                
+                        xtype: 'dbnetposition',
+                        hidden: true
                     }, {
-                        xtype: 'dbalerts'
+                        xtype: 'dbalerts',
+                        hidden: true
                     }, {
-                        xtype: 'dbtopexpenses'
+                        xtype: 'dbtopexpenses',
+                        hidden: true
                     }, {
-                        xtype: 'dbbudgetoverview'
+                        xtype: 'dbbudgetoverview',
+                        hidden: true
                     }
                 ]
             }, {

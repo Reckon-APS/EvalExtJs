@@ -329,6 +329,7 @@ Ext.define('RM.controller.InvoiceDetailC', {
                     null,
     				function (data) {
     				    //tf.setValue(data.Name);
+    				    this.detailsData.CustomerEmail = data.Email;    //to load email in invoice action - email invoice screen
     				    this.getInvoiceForm().setValues({ CustomerId: data.ContactId, CustomerName: data.Description });
     				    this.loadCustomerSpecificTermsList(data.ContactId);    				    
                         this.getLineItems().setCustomerId(data.ContactId);
