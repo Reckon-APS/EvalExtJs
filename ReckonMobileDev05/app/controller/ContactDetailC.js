@@ -446,7 +446,7 @@ Ext.define('RM.controller.ContactDetailC', {
         RM.Selectors.showNoteText(
             'Notes',
             this.isEditable && !this.getContactForm().addEditDenied,
-            'SAVE',
+            'Save',
             this.formattedNoteValue || '',
             function (noteText) {
                 RM.ViewMgr.back();

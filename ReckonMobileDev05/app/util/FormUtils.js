@@ -4,7 +4,9 @@ Ext.define('RM.util.FormUtils', {
     makeAllFieldsReadOnly: function(form) {
         form.getFieldsArray().forEach(function(field) {
             if(field.setReadOnly) field.setReadOnly(true);
-            if(field.setPlaceHolder) field.setPlaceHolder('');
+            if (field.setPlaceHolder) field.setPlaceHolder('');
+            // To set readonly on custome selector component
+            field.config.rmlocked = true;
         });
     }
 });

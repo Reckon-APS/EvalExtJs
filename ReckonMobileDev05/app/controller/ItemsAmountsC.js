@@ -34,10 +34,11 @@ Ext.define('RM.controller.ItemsAmountsC', {
         this.getApplication().addListener('itemupdated', 'onItemUpdated', this);
     },    
 
-    showView: function (showItemTax, projectId, selectDetails, cb, cbs, itemType) {
+    showView: function (showItemTax, projectId, selectDetails, cb, cbs, itemType, itemPurchasedSoldType) {
         this.showItemTax = showItemTax;
         this.projectIdFilter = projectId;
         this.itemType = itemType;
+        this.itemPurchasedSoldType = itemPurchasedSoldType;
 
         this.selectDetails = selectDetails;
         this.selectCb = cb;
@@ -109,6 +110,9 @@ Ext.define('RM.controller.ItemsAmountsC', {
         }
         if (this.itemType) {
             store.filter('ItemType', this.itemType);
+        }
+        if (this.itemPurchasedSoldType) {
+            store.filter('itempurchasedsoldtype', this.itemPurchasedSoldType);
         }
 
         RM.AppMgr.loadStore(store);

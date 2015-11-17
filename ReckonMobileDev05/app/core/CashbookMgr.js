@@ -24,6 +24,10 @@ Ext.define('RM.core.CashbookMgr', {
         return this.getCurrentCashbook().SalesPreferences;
     },
     
+    getExpensePreferences: function () {
+        return this.getCurrentCashbook().ExpensePreferences;
+    },
+
     hasLockOffDate: function() {
         return this.getCurrentCashbook().LockoffDate !== null;
     },
@@ -83,7 +87,8 @@ Ext.define('RM.core.CashbookMgr', {
                 me.setCashbookId(cashbookId);  
                 me.setCurrentCashbook(recs[0]);
                 
-	            Ext.data.StoreManager.lookup('GSTCodes').setData(recs[0].GSTCodes);
+                Ext.data.StoreManager.lookup('GSTCodes').setData(recs[0].GSTCodes);
+                Ext.data.StoreManager.lookup('PurchaseTaxCodes').setData(recs[0].PurchaseTaxCodes);
                 Ext.data.StoreManager.lookup('AccountingCategories').setData(recs[0].AccountingCategories);
                 
                 Ext.data.StoreManager.lookup('TaxStatuses').setData(recs[0].AmountTaxStatuses);

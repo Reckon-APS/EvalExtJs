@@ -46,6 +46,8 @@ Ext.define('RM.controller.EmailInvoiceC', {
         this.invoiceData = invoiceData;
         this.msgType = msgType;
         this.messageText = '';
+        this.dataLoaded = false;
+
         RM.ViewMgr.regFormBackHandler(this.back, this);
         
         var view = this.getEmailInvoice();
@@ -60,9 +62,13 @@ Ext.define('RM.controller.EmailInvoiceC', {
 
     
     onShow: function(){
-        if(this.messageText) return;
-        var emailInvoiceForm = this.getEmailInvoiceForm();                
+        if (this.messageText) return;
+        if (this.dataLoaded) {
+            return;
+        }
+        var emailInvoiceForm = this.getEmailInvoiceForm();
         emailInvoiceForm.reset();
+        
         RM.ViewMgr.regFormBackHandler(this.back, this);
         
         RM.AppMgr.getServerRec('InvoiceMessagesTemplates', {InvoiceId: this.invoiceData.InvoiceId}, 
@@ -74,7 +80,9 @@ Ext.define('RM.controller.EmailInvoiceC', {
             this.goBack,
             null,
             this.goBack
-        );        
+        );
+
+        this.dataLoaded = true;
     },
     
     onHide: function(){

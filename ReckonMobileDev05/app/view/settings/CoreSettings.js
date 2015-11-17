@@ -44,7 +44,8 @@ Ext.define('RM.view.settings.CoreSettings', {
                         {text: 'Production', value: 'production'},
                         {text: 'Pre Production', value: 'preproduction'},
                         {text: 'Staging', value: 'staging'},
-                        {text: 'QA Server', value: 'qaserver'},                    
+                        { text: 'QA Server', value: 'qaserver' },
+                        {text: 'QQA Server', value: 'qqaserver' },
                         {text: 'Dev Server', value: 'devserver'},                                                
                         {text: 'Dev Local IIS',  value: 'devlocaliis'}
                     ]

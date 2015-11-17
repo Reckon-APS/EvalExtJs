@@ -14,9 +14,9 @@ Ext.define('RM.core.Selectors', {
 		cashBooksC.showView(cb, cbs);	
 	},		
 	
-	showCustomers: function(projectId, cb, cbs){
+	showCustomers: function(projectId, cb, cbs, filterBy){
 		var customersC = RM.AppMgr.getAppControllerInstance('RM.controller.CustomersC');
-		customersC.showView(projectId, cb, cbs);
+		customersC.showView(projectId, cb, cbs, filterBy);
 	},	
 	
 	showProjects: function(customerId, supplierId, cb, cbs){
@@ -29,10 +29,10 @@ Ext.define('RM.core.Selectors', {
 		suppliersC.showView(cb, cbs);
 	},
 	
-	showItems: function(showItemTax, projectId, selectDetails, cb, cbs, itemType){
+	showItems: function (showItemTax, projectId, selectDetails, cb, cbs, itemType, itemPurchasedSoldType) {
 	    //var itemsC = RM.AppMgr.getAppControllerInstance('RM.controller.ItemsC');
 	    var itemsC = RM.AppMgr.getAppControllerInstance('RM.controller.ItemsAmountsC');
-		itemsC.showView(showItemTax, projectId, selectDetails, cb, cbs, itemType);
+	    itemsC.showView(showItemTax, projectId, selectDetails, cb, cbs, itemType, itemPurchasedSoldType);
 	},
     
     showAccounts: function(selectDetails, cb, cbs){
@@ -62,7 +62,7 @@ Ext.define('RM.core.Selectors', {
 		addNoteC.showView(
             'Add a note',
             true,
-            'SAVE',
+            'Save',
             '',
 			function(noteText){
 				RM.AppMgr.saveServerRec('HistoryNotes', true, {HistoryType: historyType, HistoryItemId: historyItemId, Text: noteText},

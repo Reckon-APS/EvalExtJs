@@ -1,7 +1,7 @@
 Ext.define('RM.model.Expense', {
     extend: 'Ext.data.Model',    	
     config: {
-		idProperty: 'ExpenseId',
-        fields: ['ExpenseId', 'PeriodName', 'ProjectName', {name:'PeriodAmount', type:'float'}, {name:'Date', type:'date', dateFormat: 'c'}, 'ItemId', 'ItemName', {name:'Amount', type:'float'}, 'CustomerId', 'CustomerName', 'SupplierId', 'SupplierName', 'Notes', {name:'Billable', type:'bool'}, {name:'HasReceiptPhoto', type:'bool'}, 'StatusCode']
+		idProperty: 'ExpenseClaimId',
+        fields: ['AccountsPayableCategoryId', { name: 'Balance', type: 'float' }, { name: 'ClaimAmount', type: 'float' }, { name: 'ClaimDate', type: 'date', dateFormat: 'c' }, 'ClaimNumber', 'ContactId', 'ContactName', 'CustomerName', 'ExpenseClaimId', { name: 'HasAttachments', type: 'bool' }, 'Notes', 'ProjectName', 'ProjectPath', 'Reference', 'Status', { name: 'UnbilledAmount', type: 'float' }]
     }
 });		

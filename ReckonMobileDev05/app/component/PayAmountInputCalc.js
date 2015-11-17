@@ -514,7 +514,7 @@ Ext.define('RM.component.PayAmountInputCalc', {
         RM.Selectors.showNoteText(
             'Notes',
             true,
-            'SAVE',
+            'Save',
             this.noteText,
             function(noteText){
                 RM.ViewMgr.back();

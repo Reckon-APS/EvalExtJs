@@ -44,7 +44,7 @@ Ext.define('RM.controller.PayTransRefundC',{
       RM.Selectors.showNoteText(
             'Notes',
             true,
-            'SAVE',
+            'Save',
             this.noteText,
             function(noteText){
                 RM.ViewMgr.back();
