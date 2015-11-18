@@ -1,6 +1,5 @@
 Ext.define('RM.controller.TimeSheetDetailC', {
-    extend: 'Ext.app.Controller',
-    requires: ['Ext.Toast'],
+    extend: 'Ext.app.Controller',    
     config: {
         refs: {
             timeSheetDetail: 'timesheetdetail',
@@ -326,19 +325,14 @@ Ext.define('RM.controller.TimeSheetDetailC', {
         var vals = Ext.applyIf(formVals, this.detailsData);        
         vals.Notes = this.noteText;
                 
-        if (this.validateForm(vals)) {
-            if (!this.isCreate) {
-                this.loadTimeData(function(respRecs) {
-                    if (!respRecs[0].Duration || this.isCombinationSameAsOriginal(vals)) {
-                        this.saveTimeSheet(vals);
-                    } else {
-                        Ext.toast('Timesheet with the same combination already exists.', 3000);
-                    }
-                }, this);
-            } 
-            else {
-                this.saveTimeSheet(vals);
-            }
+        if (this.validateForm(vals)) {            
+            this.loadTimeData(function(respRecs) {
+                if (!respRecs[0].Duration || this.isCombinationSameAsOriginal(vals)) {
+                    this.saveTimeSheet(vals);
+                } else {
+                    RM.AppMgr.showToast('Timesheet with the same combination already exists.', 3000);
+                }
+            }, this);            
         }
     },
 

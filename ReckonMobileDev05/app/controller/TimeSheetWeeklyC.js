@@ -158,7 +158,8 @@ Ext.define('RM.controller.TimeSheetWeeklyC', {
 				function (data) {
 				    this.getTimeSheetForm().setValues({ CustomerId: data.ContactId, CustomerName: data.Description });
 				},
-				this
+				this,
+                'project'
 			);
         }
         else if (tf.getName() == 'ProjectName') {
