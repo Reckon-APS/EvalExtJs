@@ -18,11 +18,11 @@ Ext.define('RM.view.dashboard.Alerts', {
                     {
 						itemId: 'invoices',
                         flex: 1
-					}
-                    /*{
+					},
+                    {
 						itemId: 'bills',
                         flex: 1
-					},{
+					}/*,{
                         itemId: 'blankCont',                        
                         flex: 1
                     }*/
@@ -34,7 +34,7 @@ Ext.define('RM.view.dashboard.Alerts', {
     initialize: function() {        
 		this.callParent(arguments);		
 		var cont = this.getComponent(1);
-		//cont.getComponent('bills').element.on('tap', this.onBillsTap, this);
+		cont.getComponent('bills').element.on('tap', this.onBillsTap, this);
 		cont.getComponent('invoices').element.on('tap', this.onInvoicesTap, this);
 	},  
 	
@@ -42,13 +42,13 @@ Ext.define('RM.view.dashboard.Alerts', {
         
         var alertCont = this.getComponent(1);
         var canViewInvoices = RM.PermissionsMgr.canView('Invoices');
-        //var canViewBills = RM.PermissionsMgr.canView('Bills');
+        var canViewBills = RM.PermissionsMgr.canView('Bills');
         var msgCont = alertCont.getComponent('msg');
-        //msgCont.setHidden(canViewInvoices || canViewBills);
+        msgCont.setHidden(canViewInvoices || canViewBills);
         msgCont.setHidden(canViewInvoices);
         msgCont.setHtml('<div class="rm-dashboard-nodata">' + RM.Consts.NoAccessMsg + '</div>');
         alertCont.getComponent('invoices').setHidden(!canViewInvoices);
-        //alertCont.getComponent('bills').setHidden(!canViewBills);
+        alertCont.getComponent('bills').setHidden(!canViewBills);
         //alertCont.getComponent('blankCont').setHidden(!(canViewInvoices || canViewBills ) || (canViewInvoices && canViewBills));
         
         if (!canViewInvoices && !canViewBills) {           
@@ -69,19 +69,19 @@ Ext.define('RM.view.dashboard.Alerts', {
             '</div>'
             );
         
-        /*alertCont.getComponent('bills').setHtml(
+        alertCont.getComponent('bills').setHtml(
             '<div class="rm-digitpanel">' +
             '<div >' +
             '<div class="rm-digittext">' + data.BillsOverdueNr + '</div>' +
             '<div class="rm-fltl rm-mt5">' +
-            '<div class="rm-billtext rm-pl5 rm-nextgrayarrow rm-fontsize96">Bills</div>' +
-            '<div class="rm-billtext">Due soon</div>' + 
+            '<div class="rm-billtext rm-nextgrayarrow rm-fontsize96">Bills</div>' +
+            '<div class="rm-billtext">overdue</div>' + 
             '<div class="rm-billamount">' + RM.AppMgr.formatCurrency(data.BillsOverdueAmount, 2) + '</div>' + 
             '</div>' +
             '<div class="rm-clr"></div>' +
             '</div>' +
             '</div>'           
-            );*/
+            );
         /*
         this.getComponent(1).getComponent('bills').setHtml(
         '<div class="rm-digitpanel">' +
@@ -99,9 +99,9 @@ Ext.define('RM.view.dashboard.Alerts', {
         */
     },
 	
-	/*onBillsTap: function(){
+	onBillsTap: function(){
         RM.ViewMgr.showBills();
-	},*/	
+	},	
 	
 	onInvoicesTap: function(){
 		RM.ViewMgr.showInvoices();	

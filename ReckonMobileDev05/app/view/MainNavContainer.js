@@ -148,7 +148,7 @@ Ext.define('RM.view.MainNavContainer', {
                 selector: 'toolbar'
             },
             data : { permsRequired : true }
-        },/* {
+        },{
             xtype: 'bills',
             index: 'bills',
             title: 'Bills',
@@ -156,8 +156,9 @@ Ext.define('RM.view.MainNavContainer', {
             group: 'RECKON ONE',
             slideButton: {
                 selector: 'toolbar'
-            }
-        },*//* {
+            },
+            data : { permsRequired : true }
+        },/* {
             xtype: 'budgets',
             index: 'budgets',
             title: 'Budgets',
