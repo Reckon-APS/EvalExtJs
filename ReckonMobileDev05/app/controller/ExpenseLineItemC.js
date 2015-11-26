@@ -186,6 +186,12 @@ Ext.define('RM.controller.ExpenseLineItemC', {
         this.noteText = this.detailsData.Notes;
 
         this.setEditableBasedOnExpenseHeader();
+        this.applyViewEditableRules();
+    },
+
+    applyViewEditableRules: function () {
+        //Show or hide project field based on Timesheets_SelectProject permission for both time and expenses
+        this.getProjectName().setHidden(!RM.PermissionsMgr.canSelectProject('Timesheets'));
     },
 
     onHide: function () {
@@ -707,7 +713,7 @@ Ext.define('RM.controller.ExpenseLineItemC', {
     },
 
     setBillableFldAccess: function () {
-        this.getBillableFld().setDisabled(!this.getCustomerName().getValue());
+        this.getBillableFld().setDisabled(!RM.PermissionsMgr.canBillEntry('ExpenseClaims') || !this.getCustomerName().getValue());
         //set billable field to false when customer is removed
         if (!this.getCustomerName().getValue()) {
             this.getBillableFld().setValue(false);
