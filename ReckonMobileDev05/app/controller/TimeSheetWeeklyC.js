@@ -77,7 +77,6 @@ Ext.define('RM.controller.TimeSheetWeeklyC', {
     
     onShow: function () {
         RM.ViewMgr.regFormBackHandler(this.back, this);
-        this.applyViewEditableRules();
     },
 
     onHide: function () {
@@ -86,11 +85,6 @@ Ext.define('RM.controller.TimeSheetWeeklyC', {
 
     applyBillablePermission: function () {
         this.getBillableCheckbox().setDisabled(!RM.PermissionsMgr.canBillEntry('Timesheets') || !this.getCustomerName().getValue());
-    },
-
-    applyViewEditableRules: function(){
-        //Show or hide project field based on Timesheets_SelectProject permission for both time and expenses
-        this.getProjectName().setHidden(!RM.PermissionsMgr.canSelectProject('Timesheets'));
     },
 
     loadTimeData: function () {

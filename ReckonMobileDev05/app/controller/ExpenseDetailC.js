@@ -81,8 +81,6 @@ Ext.define('RM.controller.ExpenseDetailC', {
 
         this.getCustomerName().setReadOnly(!editable);
         this.getProjectName().setReadOnly(!editable);
-        //Show or hide project field based on Timesheets_SelectProject permission for both time and expenses
-        this.getProjectName().setHidden(!RM.PermissionsMgr.canSelectProject('Timesheets'));
     },
 
     applyTaxRules: function () {

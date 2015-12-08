@@ -69,6 +69,7 @@ Ext.define('RM.view.ExpenseLineItem', {
                 label: 'Project',
                 cls: 'rm-flatfield',
                 rmreadonly: true,
+                permissionFor: {action:'Select',name:'Projects'},
                 placeHolder: 'select (optional)'
             }, {
                 xtype: 'exttextfield',
