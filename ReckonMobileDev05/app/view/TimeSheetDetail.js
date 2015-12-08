@@ -73,7 +73,8 @@ Ext.define('RM.view.TimeSheetDetail', {
 						label: 'Project',
 						cls: 'rm-flatfield',						
 						readOnly: true,
-                        placeHolder: 'select (optional)'
+						placeHolder: 'select (optional)',
+						permissionFor: { action: 'Select', name: 'Projects' }
 					}, {
 					    xtype: 'exttextfield',
 					    name: 'CustomerName',

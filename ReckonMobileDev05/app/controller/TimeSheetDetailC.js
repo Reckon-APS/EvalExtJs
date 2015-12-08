@@ -75,7 +75,6 @@ Ext.define('RM.controller.TimeSheetDetailC', {
     onShow: function () {
         RM.ViewMgr.regFormBackHandler(this.back, this);
         this.getTimeSheetTitle().setHtml(this.isCreate ? 'Add entry' : 'View entry');
-        this.applyProjectSelectPermission();
 
         if (!this.dataLoaded) {
             var timesheetForm = this.getTimeSheetForm();
@@ -122,11 +121,6 @@ Ext.define('RM.controller.TimeSheetDetailC', {
         this.getDeleteBtn().setHidden((!editable && !this.isCreate) || !RM.PermissionsMgr.canDelete('Timesheets'));
         this.getTimeSheetForm().setDisabled(!editable);
         this.applyBillablePermission();
-    },
-
-    applyProjectSelectPermission: function(){
-        //Show or hide project field based on Timesheets_SelectProject permission for both time and expenses
-        this.getProjectName().setHidden(!RM.PermissionsMgr.canSelectProject('Timesheets'));
     },
 
     applyBillablePermission: function(){
@@ -332,14 +326,19 @@ Ext.define('RM.controller.TimeSheetDetailC', {
         var vals = Ext.applyIf(formVals, this.detailsData);        
         vals.Notes = this.noteText;
                 
-        if (this.validateForm(vals)) {            
-            this.loadTimeData(function(respRecs) {
-                if (!respRecs[0].Duration || this.isCombinationSameAsOriginal(vals)) {
-                    this.saveTimeSheet(vals);
-                } else {
-                    RM.AppMgr.showToast('Timesheet with the same combination already exists.', 3000);
-                }
-            }, this);            
+        if (this.validateForm(vals)) {
+            if (!this.isCreate) {
+                this.loadTimeData(function (respRecs) {
+                    if (!respRecs[0].Duration || this.isCombinationSameAsOriginal(vals)) {
+                        this.saveTimeSheet(vals);
+                    } else {
+                        RM.AppMgr.showToast('Timesheet with the same combination already exists.', 3000);
+                    }
+                }, this);
+            }
+            else {
+                this.saveTimeSheet(vals);
+            }                        
         }
     },
 
