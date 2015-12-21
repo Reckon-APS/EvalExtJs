@@ -1,6 +1,6 @@
 Ext.define('RM.view.ContactDetail', {
 	extend: 'RM.component.SecurePanel',
-	requires: ['RM.component.SecureFormPanel', 'RM.component.SecureButton', 'RM.component.RMPhoneField', 'RM.component.RMToggleField', 'RM.component.RMMultiSelectField'],
+	requires: ['RM.component.SecureFormPanel', 'RM.component.SecureButton', 'RM.component.RMPhoneField', 'RM.component.RMToggleField', 'RM.component.RMMultiSelectField', 'RM.component.BankDetails'],
 	xtype: 'contactdetail',
     
 	config: {		
@@ -37,30 +37,30 @@ Ext.define('RM.view.ContactDetail', {
                 permissionFor: 'Contacts',
 				itemId: 'contactForm',
 				padding: 0,
-                defaults:{xtype: 'exttextfield', labelWidth: 180, cls: 'rm-flatfield', placeHolder: 'enter', clearIcon: false},
+                defaults:{xtype: 'exttextfield', cls: 'rm-flatfield', placeHolder: 'enter', clearIcon: false},
 				items: [
 					{
 						xtype: 'hiddenfield',
 						name: 'ContactId'			
-					},{
+					}, {
+					    xtype: 'rmmultiselectfield',
+					    name: 'CustomerOrSupplier',
+					    itemId: 'customerOrSupplier',
+					    label: 'Type of contact',
+					    labelWidth: '9em',
+					    options: [
+                            { text: 'Customer', value: 'Customer' },
+                            { text: 'Supplier', value: 'Supplier' }
+					    ],
+					    rmmandatory: true,
+					    placeHolder: 'choose'
+					}, {
 						name: 'Description',
 						label: 'Display name',
                         maxLength: 100,
                         labelWidth: '8em',
                         rmmandatory: true
-					},{
-					    xtype: 'rmmultiselectfield',
-					    name: 'CustomerOrSupplier',
-						itemId: 'customerOrSupplier',
-						label: 'Type of contact',
-                        labelWidth: '9em',                        
-                        options: [                            
-                            {text: 'Customer', value: 'Customer'},
-                            {text: 'Supplier', value: 'Supplier'}                        
-                        ],                        
-                        rmmandatory: true,                                          
-                        placeHolder: 'choose'
-                    },{
+					}, {
                         xtype: 'extselectfield',
                         cls: 'rm-flatfield', 
                         usePicker: true,
@@ -74,20 +74,21 @@ Ext.define('RM.view.ContactDetail', {
                         name: 'Terms',
                         placeHolder: 'choose',
                         labelWidth: '9em'                                
-                    },
-                    {
+                    }, {
                         xtype: 'rmamountfield',
     					name: 'CreditLimit',                        
     					label: 'Credit limit',
     					placeHolder: 'enter',                                            
                         decimalPlaces: 2,
                         prefix: '$'
-                    },
-                    {
+                    }, {
+                        xtype: 'bankdetails',
+                        cls: 'rm-noborder'
+                    }, {
 						xtype: 'extselectfield',
                         name: 'BusinessOrIndividual',
                         itemId: 'businessOrIndividual',
-						label: 'Business or individual',
+						label: 'Business/Individual',
                         labelWidth: '13em',
                         options: [
                             {text: 'Business',  value: 'Business'},
@@ -100,7 +101,7 @@ Ext.define('RM.view.ContactDetail', {
                         placeHolder: 'choose',
                         border: '1 0 1 0',
                         style: 'border-color: #DBDBDB; border-style: solid;'
-			        },{
+                    }, {
                         xtype: 'container',
                         itemId: 'detailsFields',
                         defaults:{xtype: 'exttextfield', labelWidth: 180, cls: 'rm-flatfield', placeHolder: 'enter', clearIcon: false},

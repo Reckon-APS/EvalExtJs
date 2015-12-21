@@ -153,6 +153,13 @@
     <Content Include="app.json">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="app\component\BankDetails.js" />
+    <Content Include="app\component\BankDetailsAU.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="app\component\BankDetailsNZ.js">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="app\component\CalcKeypad.js">
       <SubType>Content</SubType>
     </Content>
@@ -1230,9 +1237,7 @@
     <Content Include="resources\images\icons\rm-popupcross.svg">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="resources\images\icons\rm-receive.svg">
-      <SubType>Content</SubType>
-    </Content>
+    <Content Include="resources\images\icons\rm-receive.svg" />
     <Content Include="resources\images\icons\rm-reckon-icon.svg">
       <SubType>Content</SubType>
     </Content>

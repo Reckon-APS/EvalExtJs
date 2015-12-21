@@ -105,17 +105,16 @@ Ext.define('RM.controller.ContactDetailC', {
             var contactForm = this.getContactForm(), businessOrIndividual = this.getBusinessOrIndividual();
 
             //simply setting the field disabled works in simulator but doesn't display value in iOS
-            businessOrIndividual.setReadOnly(!this.isCreate);
-            if (!this.isCreate) {
-                businessOrIndividual.addCls('rm-flatfield-disabled');
-            }
+            businessOrIndividual.setReadOnly(!this.isCreate);            
 
             if (!this.isCreate) {
+                businessOrIndividual.addCls('rm-flatfield-disabled');
                 this.loadFormData();
             }
             else {
                 var data = {};
                 contactForm.setValues(data);
+                this.hideFields(true);
                 this.getCustomerOrSupplier().setValue(null);
                 this.getBusinessOrIndividual().setValue(null);
                 this.detailsData.IsPerson = null;
@@ -203,6 +202,15 @@ Ext.define('RM.controller.ContactDetailC', {
         for (var i = 0; i < addressFields.length; i++) {
             this.showBusinessAddressField(addressFields[i]);
         }
+    },
+
+    hideFields: function (boolValue) {
+        var contactDetail = this.getContactDetail();
+        contactDetail.down('field[name=Description]').setHidden(boolValue);
+        contactDetail.down('field[name=Terms]').setHidden(boolValue);
+        contactDetail.down('field[name=CreditLimit]').setHidden(boolValue);
+        contactDetail.down('bankdetails').setHidden(boolValue);
+        contactDetail.down('field[name=BusinessOrIndividual]').setHidden(boolValue);        
     },
 
     hideAllPostalAddressFields: function (boolValue) {
@@ -349,13 +357,55 @@ Ext.define('RM.controller.ContactDetailC', {
             isValid = false;
             RM.AppMgr.showInvalidURLMsg();
             return isValid;
-        }
+        }     
 
         if (!isValid) {
             RM.AppMgr.showInvalidFormMsg();
         }
 
+        if (!this.validateBankDetails(vals)) {
+            return false;
+        }
+
         return isValid;
+    },
+
+    validateBankDetails: function (vals) {
+        var countryCode = RM.CashbookMgr.getCountrySettings().CountryCode;
+
+        if (countryCode === "AU") {
+            if (!vals.BankAccountNumber && vals.BankBranch) {
+                RM.AppMgr.showErrorMsgBox("If BSB number is entered, then account number must also be entered.");
+                this.getContactDetail().down('field[name=BankAccountNumber]').showValidation(false);
+                return false;
+            }
+            if (!vals.BankBranch && vals.BankAccountNumber) {
+                RM.AppMgr.showErrorMsgBox("If account number is entered, then BSB number must also be entered.");
+                this.getContactDetail().down('field[name=BankBranch]').showValidation(false);
+                return false;
+            }
+            if (vals.BankBranch && vals.BankBranch.length < 6) {
+                RM.AppMgr.showErrorMsgBox("BSB number should not be less than 6 characters in length.");
+                this.getContactDetail().down('field[name=BankBranch]').showValidation(false);
+                return false;
+            }
+        }
+        if (countryCode === "NZ") {
+            if (!vals.BankAccountNumberExtra && vals.BankBranch) {
+                RM.AppMgr.showErrorMsgBox("If Bank is entered then Branch must also be entered.");
+                return false;
+            }
+            if (!vals.BankAccountNumber && !vals.BankSuffix && vals.BankAccountNumberExtra) {
+                RM.AppMgr.showErrorMsgBox("If Bank and Branch are entered then Account number and Suffix must also be entered.");
+                return false;
+            }
+            if (vals.BankBranch && vals.BankBranch.length < 2) {
+                RM.AppMgr.showErrorMsgBox("Bank number should not be less than 2 characters in length.");
+                return false;
+            }
+        }
+
+        return true;
     },
 
     save: function () {
@@ -481,6 +531,7 @@ Ext.define('RM.controller.ContactDetailC', {
     },
 
     onCustomerOrSupplierSelect: function () {
+        this.hideFields(false);
         var selection = this.getCustomerOrSupplier().getSelectedOptions();
         this.detailsData.IsCustomer = false;
         this.detailsData.IsSupplier = false;
@@ -494,6 +545,7 @@ Ext.define('RM.controller.ContactDetailC', {
         //hide and reset paymentterms and creditlimit fields when supplier is selected 
         this.getTermsFld().setHidden(!this.detailsData.IsCustomer);
         this.getCreditLimitFld().setHidden(!this.detailsData.IsCustomer);
+        this.getContactDetail().down('bankdetails').setHidden(!this.detailsData.IsSupplier);
         if (!this.detailsData.IsCustomer) {
             this.getTermsFld().setValue(null);
             this.getCreditLimitFld().setValue('');

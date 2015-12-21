@@ -34,7 +34,7 @@ Ext.define('RM.component.ExtTextField', {
                 }
                 else {
                     //block UI to avoid autofocus on the next field in iOS
-                    RM.ViewMgr.blockUIFor(500);
+                    if (Ext.os.is.ios) RM.ViewMgr.blockUIFor(500);
                     var readOnly = (this.config.rmlocked && this.config.rmlocked === true) ? true : false;
                     field.setReadOnly(readOnly);
                 }

@@ -7647,3 +7647,7 @@ body.x-desktop {
 .x-toast .x-toast-text {
   background-color: #FFF;
   color: #475561; }
+
+.rm-noborder {
+  border: 0;
+  border-radius: 0; }
