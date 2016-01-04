@@ -150,7 +150,7 @@ Ext.define('RM.view.MainNavContainer', {
             data : { permsRequired : true }
         },{
             xtype: 'bills',
-            index: 'bills',
+            index: 'Bills',
             title: 'Bills',
             activated: true,
             group: 'RECKON ONE',

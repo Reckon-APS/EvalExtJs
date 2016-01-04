@@ -4,7 +4,7 @@ Ext.define('RM.core.AppMgr', {
     requires: ['RM.view.TestScreen', 'RM.core.PermissionsMgr', 'RM.core.EventMgr', 'RM.core.ViewMgr', 
     'RM.core.Selectors', 'RM.core.HomeSettingsMgr', 'RM.core.CashbookMgr', 'RM.core.ContactsMgr', 
     'RM.core.TimeSheetsMgr', 'RM.core.ExpensesMgr', 'RM.core.InvoicesMgr', 'RM.util.MathHelpers',
-    'RM.core.SessionManager', 'RM.core.PayMgr'],
+    'RM.core.SessionManager', 'RM.core.PayMgr', 'RM.core.BillsMgr'],
 
     init: function (application) {
         this.application = application;        

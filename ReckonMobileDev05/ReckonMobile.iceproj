@@ -153,6 +153,9 @@
     <Content Include="app.json">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="app\component\BillLineItems.js">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="app\component\CalcKeypad.js">
       <SubType>Content</SubType>
     </Content>
@@ -301,6 +304,12 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="app\controller\AppStopC.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="app\controller\BillDetailC.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="app\controller\BillLineItemC.js">
       <SubType>Content</SubType>
     </Content>
     <Content Include="app\controller\BillsC.js">
@@ -482,6 +491,9 @@
     </Content>
     <Content Include="app\controller\TimeSheetWeeklyC.js" />
     <Content Include="app\core\AppMgr.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="app\core\BillsMgr.js">
       <SubType>Content</SubType>
     </Content>
     <Content Include="app\core\CashbookMgr.js">
@@ -747,6 +759,12 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="app\view\bankaccounts\BankAccounts.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="app\view\BillDetail.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="app\view\BillLineItem.js">
       <SubType>Content</SubType>
     </Content>
     <Content Include="app\view\bills\Bills.js">
@@ -1247,6 +1265,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="resources\images\icons\rm-slidemenu-icon.svg">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="resources\images\icons\rm-tick.svg">
       <SubType>Content</SubType>
     </Content>
     <Content Include="resources\images\icons\rm-togglefield-off.svg">

@@ -24,7 +24,13 @@ Ext.define('RM.controller.BillsC', {
 			},
             'bills #back': {
                 tap: 'back'
-            }
+            },
+            'bills #add': {
+                tap: 'add'
+            },
+            billsList: {
+                select: 'onItemTap'
+            },
         }
 
     },
@@ -67,6 +73,42 @@ Ext.define('RM.controller.BillsC', {
         
 	},
 	
+	onItemTap: function (list, rec) {
+	    //if (Ext.fly(e.target).hasCls('rm-emailreminder')) {
+	    //    this.sendBillReminder(rec.data.BillId);
+	    //}
+	    //else {
+	        RM.BillsMgr.showBillDetail(false, rec.data,
+                function (closeType, data) {
+                    return null;
+                },
+                this
+            );
+	    //}
+
+	},
+
+    //This method which will be called from onItemTap will currently never be called as RM.ViewMgr.showEmailReminder() always returns false
+    //- it was set to return false as although the initial mobile ux had an reminder functionality the web app doesn't at this stage so decision was to turn it off in mobile as well
+	sendBillReminder: function (billId) {
+	    RM.AppMgr.getServerRecById('Bills', billId,
+            function (data) {
+                RM.BillsMgr.sendMsg(
+                    function () {
+                        RM.ViewMgr.backTo('bills');
+                    },
+                    this,
+                    data,
+                    'emailreminder'
+                );
+            },
+            this,
+            function (eventMsg) {
+                RM.AppMgr.showOkMsgBox(eventMsg);
+            }
+        );
+	},
+
 	back: function(){
 		RM.ViewMgr.back();
 	},
@@ -81,6 +123,15 @@ Ext.define('RM.controller.BillsC', {
             this.loadTimer = null;
         }
         this.loadTimer = Ext.defer(this.loadList, 1000, this);
+    },
+
+    add: function () {
+        RM.BillsMgr.showBillDetail(true, null,
+			function (closeType, data) {
+			    return null;
+			},
+			this
+		);
     }
 
 
