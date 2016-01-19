@@ -10,21 +10,25 @@ Ext.define('RM.core.BillsMgr', {
 
     getInitialBillStatus: function () {
         if (RM.CashbookMgr.getSalesPreferences().ApprovalProcessEnabled) {
-            return RM.Consts.InvoiceStatus.DRAFT;
+            return RM.Consts.BillStatus.DRAFT;
         }
         else {
-            return RM.Consts.InvoiceStatus.APPROVED;
+            return RM.Consts.BillStatus.APPROVED;
         }
+    },
+
+    getPartiallyPaidBillStatusText: function () {
+        return 'PART-PAID';
     },
 
     getBillStatusText: function (status) {
 
         switch (status) {
-            case RM.Consts.InvoiceStatus.DRAFT:
+            case RM.Consts.BillStatus.DRAFT:
                 return 'DRAFT';
-            case RM.Consts.InvoiceStatus.APPROVED:
-                return RM.CashbookMgr.getSalesPreferences().ApprovalProcessEnabled ? 'APPROVED' : 'UNPAID';
-            case RM.Consts.InvoiceStatus.PAID:
+            case RM.Consts.BillStatus.APPROVED:
+                return RM.CashbookMgr.getBillPreferences().ApprovalProcessEnabled ? 'APPROVED' : 'UNPAID';
+            case RM.Consts.BillStatus.PAID:
                 return 'PAID';
         }
 
@@ -32,11 +36,11 @@ Ext.define('RM.core.BillsMgr', {
     },
 
     isBillStatusApprovable: function (status) {
-        return (status == RM.Consts.InvoiceStatus.DRAFT);
+        return (status == RM.Consts.BillStatus.DRAFT);
     },
 
     isBillStatusPayable: function (status) {
-        return (status == RM.Consts.InvoiceStatus.APPROVED) || (status == RM.Consts.InvoiceStatus.PARTIALLY_PAID);
+        return (status == RM.Consts.BillStatus.APPROVED) || (status == RM.Consts.BillStatus.PARTIALLY_PAID);
     },
 
     isBillStatusEditable: function (status) {
@@ -54,12 +58,31 @@ Ext.define('RM.core.BillsMgr', {
     },
 
     showBillLineItem: function (editable, supplierId, isCreate, detailsData, cb, cbs) {
-        var invLineItem = RM.AppMgr.getAppControllerInstance('RM.controller.BillLineItemC');
-        invLineItem.showView(editable, supplierId, isCreate, detailsData, cb, cbs);
+        var billLineItem = RM.AppMgr.getAppControllerInstance('RM.controller.BillLineItemC');
+        billLineItem.showView(editable, supplierId, isCreate, detailsData, cb, cbs);
     },
 
-    sendMsg: function (cb, cbs, invoiceData, msgType) {
-        var emailBill = RM.AppMgr.getAppControllerInstance('RM.controller.EmailInvoiceC');
-        emailBill.showView(cb, cbs, invoiceData, msgType);
+    showActions: function (billId) {
+        var actions = RM.AppMgr.getAppControllerInstance('RM.controller.BillActionsC');
+        actions.showView(billId);
+    },
+
+    sendMsg: function (cb, cbs, billData, msgType) {
+        var emailBill = RM.AppMgr.getAppControllerInstance('RM.controller.EmailBillC');
+        emailBill.showView(cb, cbs, billData, msgType);
+    },
+
+    showSupplierBills: function (billsTitle, supplierId, supplierName, sortVal) {
+        var supplierBillsC = RM.AppMgr.getAppControllerInstance('RM.controller.SupplierBillsC');
+        supplierBillsC.showView(billsTitle, supplierId, supplierName, sortVal);
+    },
+
+    showBalanceBreakdown: function (data) {
+        var balBreakdown = RM.AppMgr.getAppControllerInstance('RM.controller.BillBalanceBreakdownC');
+        balBreakdown.showView(data);
+    },
+
+    showAcceptPayment: function (billData) {
+        RM.AppMgr.getAppControllerInstance('RM.controller.AcceptPaymentC').showView(billData);
     }
 });

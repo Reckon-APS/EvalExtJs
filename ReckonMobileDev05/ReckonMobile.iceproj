@@ -156,6 +156,7 @@
     <Content Include="app\component\BillLineItems.js">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="app\component\BillsList.js" />
     <Content Include="app\component\CalcKeypad.js">
       <SubType>Content</SubType>
     </Content>
@@ -287,6 +288,7 @@
     <Content Include="app\component\SortSearchBar.js">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="app\component\SupplierBillSummaryList.js" />
     <Content Include="app\component\TimeEntryDayRow.js" />
     <Content Include="app\component\VisibleOnFocus.js">
       <SubType>Content</SubType>
@@ -306,6 +308,7 @@
     <Content Include="app\controller\AppStopC.js">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="app\controller\BillActionsC.js" />
     <Content Include="app\controller\BillDetailC.js">
       <SubType>Content</SubType>
     </Content>
@@ -348,6 +351,7 @@
     <Content Include="app\controller\DashboardC.js">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="app\controller\EmailBillC.js" />
     <Content Include="app\controller\EmailExpenseC.js" />
     <Content Include="app\controller\EmailInvoiceC.js">
       <SubType>Content</SubType>
@@ -477,6 +481,7 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="app\controller\SelectWeekC.js" />
+    <Content Include="app\controller\SupplierBillsC.js" />
     <Content Include="app\controller\SuppliersC.js">
       <SubType>Content</SubType>
     </Content>
@@ -547,6 +552,7 @@
     <Content Include="app\model\Bill.js">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="app\model\BillTemplate.js" />
     <Content Include="app\model\BudgetLineItem.js">
       <SubType>Content</SubType>
     </Content>
@@ -609,6 +615,7 @@
     <Content Include="app\model\Supplier.js">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="app\model\SupplierBill.js" />
     <Content Include="app\model\TaxStatus.js">
       <SubType>Content</SubType>
     </Content>
@@ -639,6 +646,7 @@
     <Content Include="app\store\Bills.js">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="app\store\BillTemplates.js" />
     <Content Include="app\store\BudgetLineItems.js">
       <SubType>Content</SubType>
     </Content>
@@ -658,6 +666,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="app\store\Expenses.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="app\store\ExpensesCalendar.js">
       <SubType>Content</SubType>
     </Content>
     <Content Include="app\store\ExpenseTemplates.js" />
@@ -695,6 +706,7 @@
     <Content Include="app\store\RmBaseStore.js">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="app\store\SupplierBills.js" />
     <Content Include="app\store\Suppliers.js">
       <SubType>Content</SubType>
     </Content>
@@ -761,13 +773,14 @@
     <Content Include="app\view\bankaccounts\BankAccounts.js">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="app\view\BillActions.js" />
     <Content Include="app\view\BillDetail.js">
       <SubType>Content</SubType>
     </Content>
     <Content Include="app\view\BillLineItem.js">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="app\view\bills\Bills.js">
+    <Content Include="app\view\Bills.js">
       <SubType>Content</SubType>
     </Content>
     <Content Include="app\view\budgets\Budgets.js">
@@ -818,6 +831,7 @@
     <Content Include="app\view\dashboard\TopExpenses.js">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="app\view\EmailBill.js" />
     <Content Include="app\view\EmailExpense.js" />
     <Content Include="app\view\EmailInvoice.js">
       <SubType>Content</SubType>
@@ -965,6 +979,7 @@
     <Content Include="app\view\settings\MyPreferences.js">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="app\view\SupplierBills.js" />
     <Content Include="app\view\Suppliers.js">
       <SubType>Content</SubType>
     </Content>
@@ -9356,7 +9371,6 @@
     <Folder Include="app\util\" />
     <Folder Include="app\view\" />
     <Folder Include="app\view\bankaccounts\" />
-    <Folder Include="app\view\bills\" />
     <Folder Include="app\view\budgets\" />
     <Folder Include="app\view\dashboard\" />
     <Folder Include="app\view\settings\" />

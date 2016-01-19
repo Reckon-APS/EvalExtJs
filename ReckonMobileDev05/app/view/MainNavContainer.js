@@ -10,7 +10,7 @@ Ext.define('RM.view.MainNavContainer', {
 		//'RM.view.bankaccounts.BankAccounts',
 		'RM.view.dashboard.Dashboard',
 		'RM.view.Invoices',
-		'RM.view.bills.Bills',
+		'RM.view.Bills',
 		'RM.view.budgets.Budgets',
 		'RM.view.TimeSheets',
 		'RM.view.Expenses',

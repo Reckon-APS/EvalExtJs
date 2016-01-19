@@ -38,8 +38,8 @@ Ext.define('RM.component.BillLineItems', {
         this.supplierId = supplierId;
     },
 
-    setSupplierName: function (customerName) {
-        this.customerName = customerName;
+    setSupplierName: function (supplierName) {
+        this.supplierName = supplierName;
     },
 
     setProjectId: function (projectId) {
@@ -61,7 +61,7 @@ Ext.define('RM.component.BillLineItems', {
 
     onAddItem: function () {
         if (this.supplierId == null) {
-            RM.AppMgr.showOkMsgBox("You must select a Supplier before adding an invoice line.");
+            RM.AppMgr.showOkMsgBox("You must select a Supplier before adding an bill line.");
         }
         else {
             var billData = this.up('#billForm').getValues();
@@ -153,7 +153,7 @@ Ext.define('RM.component.BillLineItems', {
 
     editLineItem: function (compId) {
         var item = this.lineItems[compId]
-        RM.ExpensesMgr.showExpenseLineItem(this.isEditable, this.supplierId, { taxStatus: this.taxStatus, isCreate: false, projectId: this.projectId, projectName: this.projectName, supplierName: this.supplierName }, item,
+        RM.BillsMgr.showBillLineItem(this.isEditable, this.supplierId, { taxStatus: this.taxStatus, isCreate: false, projectId: this.projectId, projectName: this.projectName, supplierName: this.supplierName }, item,
         		function (data) {
         		    this.updateLineItem(compId, data[0]);
         		    this.fireEvent('editlineitem');

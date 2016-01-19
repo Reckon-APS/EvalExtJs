@@ -84,7 +84,7 @@ Ext.define('RM.controller.BillLineItemC', {
         this.detailsCb = cb;
         this.detailsCbs = cbs;
 
-        if (detailsData) {
+        if (!options.isCreate) {
             this.isCreate = false;
             this.detailsData = Ext.clone(detailsData);
         }
@@ -92,7 +92,7 @@ Ext.define('RM.controller.BillLineItemC', {
             this.isCreate = true;
             this.detailsData = {
                 IsNew: true,
-                InvoiceLineItemId: RM.util.PseudoGuid.next(),
+                BillLineItemId: RM.util.PseudoGuid.next(),
                 UnitPriceAccuracy: 2,
                 Quantity: null,
                 TaxGroupId: null,
@@ -224,7 +224,7 @@ Ext.define('RM.controller.BillLineItemC', {
             }
             else if (tf.getName() == 'ProjectName') {
                 RM.Selectors.showProjects(
-                    this.customerId,
+                    this.supplierId,
                     null,
     				function (data) {
     				    var currentValue = this.getProjectId().getValue();
@@ -531,7 +531,7 @@ Ext.define('RM.controller.BillLineItemC', {
         var bill = {
             AmountTaxStatus: this.taxStatusCode,
             PreviousAmountTaxStatus: this.taxStatusCode,
-            CustomerId: this.customerId,
+            SupplierId: this.supplierId,
             BillDate: this.billDate,
             LineItems: []
         };
@@ -594,7 +594,7 @@ Ext.define('RM.controller.BillLineItemC', {
 
         // call the bill calculation method
         this.ignoreEvents = true;
-        RM.AppMgr.saveServerRec('InvoiceCalc', true, bill,
+        RM.AppMgr.saveServerRec('BillCalc', true, bill,
 			function response(responseRecords) {
 			    var calculated = responseRecords[0].Items[0];
 

@@ -215,7 +215,7 @@ Ext.define('RM.view.BillDetail', {
 
 				}, {
 				    xtype: 'button',
-				    text: 'Invoice actions',
+				    text: 'Bill actions',
 				    itemId: 'invActions',
 				    ui: 'rm_btnaslistrow'
 				}

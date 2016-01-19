@@ -12,7 +12,7 @@ Ext.define('RM.controller.BillDetailC', {
             balanceDue: 'billdetail #balanceDue',
             billNumberFld: 'billdetail textfield[name=BillNumber]',
             notesFld: 'billdetail textfield[name=Notes]',
-            supplierFld: 'billdetail textfield[name=CustomerName]',
+            supplierFld: 'billdetail textfield[name=SupplierName]',
             dueDateFld: 'billdetail extdatepickerfield[name=DueDate]',
             dateFld: 'billdetail extdatepickerfield[name=Date]',
             refNrFld: 'billdetail textfield[name=Ref]',
@@ -62,9 +62,9 @@ Ext.define('RM.controller.BillDetailC', {
 
     isEditable: function () {
         return RM.BillsMgr.isBillStatusEditable(this.detailsData.Status) &&
-        RM.PermissionsMgr.canAddEdit('Bills') &&
-        (!Ext.isDefined(this.detailsData.SaveSupport) || this.detailsData.SaveSupport) &&
-        !(this.detailsData.Paid > 0);
+        RM.PermissionsMgr.canAddEdit('Bills');// &&
+        //(!Ext.isDefined(this.detailsData.SaveSupport) || this.detailsData.SaveSupport) &&
+        //(this.detailsData.Amount === this.detailsData.Balance);
     },
 
     showView: function (isCreate, data, cb, cbs) {
@@ -123,7 +123,7 @@ Ext.define('RM.controller.BillDetailC', {
             else {
                 
                 var billForm = this.getBillForm();
-
+                this.getBillNumberFld().setHidden(true);
                 var data = this.detailsData;
                 if (data.SupplierId) {
                     this.getLineItems().setSupplierId(data.SupplierId);
@@ -188,7 +188,7 @@ Ext.define('RM.controller.BillDetailC', {
             amounts.setCls('rm-flatfield-disabled');
         }
         if (this.isCreate) {
-            // New invoice behaviour
+            // New bill behaviour
             if (taxPrefs.IsTaxTracking) {
                 amounts.setHidden(false);
                 amounts.setValue(taxPrefs.SalesFigures);
@@ -199,7 +199,7 @@ Ext.define('RM.controller.BillDetailC', {
             }
         }
         else {
-            // Existing invoice behaviour
+            // Existing bill behaviour
             var showAmounts = taxPrefs.IsTaxTracking || amounts.getValue() !== RM.Consts.TaxStatus.NON_TAXED;
             amounts.setHidden(!showAmounts);
         }
@@ -208,18 +208,18 @@ Ext.define('RM.controller.BillDetailC', {
     loadFormData: function () {
         RM.AppMgr.getServerRecById('Bills', this.detailsData.BillId,
 			function (data) {
-			    //To reset readonly property when invoice status is changed back to draft, fix for bug#25428               
+			    this.getBillNumberFld().setHidden(false);
+			    //To reset readonly property when bill status is changed back to draft, fix for bug#25428               
 			    if (data.Status === RM.Consts.BillStatus.DRAFT) {
 			        this.getDateFld().setReadOnly(false);
-			        this.getTermsFld().setReadOnly(false);
 			        this.getRefNrFld().setReadOnly(false);
 			    }
 
 			    if (data.Status === RM.Consts.BillStatus.APPROVED && data.BalanceDue < data.Amount) {
-			        this.getBillStatus().setHtml(RM.InvoicesMgr.getPartiallyPaidInvoiceStatusText());
+			        this.getBillStatus().setHtml(RM.BillsMgr.getPartiallyPaidBillStatusText());
 			    }
 			    else {
-			        this.getBillStatus().setHtml(RM.InvoicesMgr.getBillStatusText(data.Status));
+			        this.getBillStatus().setHtml(RM.BillsMgr.getBillStatusText(data.Status));
 			    }
 
 			    var billForm = this.getBillForm();
@@ -228,7 +228,11 @@ Ext.define('RM.controller.BillDetailC', {
 			    if (data.DueDate != null) {
 			        data.DueDate = RM.util.Dates.decodeAsLocal(data.DueDate);
 			    }
-			    data.Date = RM.util.Dates.decodeAsLocal(data.Date);
+
+			    if (data.Date != null) {
+			        data.Date = RM.util.Dates.decodeAsLocal(data.Date);
+			    }
+			    
 			    data.Discount = (data.DiscountPerc && data.DiscountPerc != 0) ? data.DiscountPerc + '%' : 'None';
 			    data.Discount = (data.DiscountAmount && data.DiscountAmount != 0) ? RM.AppMgr.formatCurrency(data.DiscountAmount, 2) : data.Discount;
 			    this.noteText = data.Notes; //Enables preserving of new lines when going from textfield to textarea
@@ -244,9 +248,9 @@ Ext.define('RM.controller.BillDetailC', {
 
 			    var lineItemsPanel = this.getLineItems();
 			    lineItemsPanel.addLineItems(data.LineItems);
-			    lineItemsPanel.setCustomerId(data.CustomerId);
+			    lineItemsPanel.setSupplierId(data.SupplierId);
 			    lineItemsPanel.setTaxStatus(data.AmountTaxStatus);
-			    lineItemsPanel.setInvoiceDate(data.Date);
+			    lineItemsPanel.setBillDate(data.Date);
 			    this.lineItemsDirty = false;
 
 			    this.displayBalanceDue();
@@ -347,7 +351,7 @@ Ext.define('RM.controller.BillDetailC', {
 
     onBillDateChanged: function (dateField, newValue, oldValue) {
         if (!this.dataLoaded) return;
-        //  Recalculate the invoice tax amounts, since tax rates are date dependent
+        //  Recalculate the bill tax amounts, since tax rates are date dependent
         this.calculateBreakdown();
         this.getLineItems().setBillDate(newValue);
     },
@@ -446,7 +450,7 @@ Ext.define('RM.controller.BillDetailC', {
             };
         });
 
-        RM.AppMgr.saveServerRec('InvoiceCalc', true, vals,
+        RM.AppMgr.saveServerRec('BillCalc', true, vals,
 			function response(respRecs) {
 			    var respRec = respRecs[0];
 
@@ -468,13 +472,13 @@ Ext.define('RM.controller.BillDetailC', {
 			        // find the result for the line
 			        var resultLine = null;
 			        Ext.Array.some(respRec.Items, function (item) {
-			            if (item.InvoiceLineItemId === currentLine.InvoiceLineItemId) {
+			            if (item.BillLineItemId === currentLine.BillLineItemId) {
 			                resultLine = item;
 			                return true;
 			            }
 			        });
 
-			        // If the item isn't in the response, it must be removed (project/customer filtering is potentially applied server-side)
+			        // If the item isn't in the response, it must be removed (project/supplier filtering is potentially applied server-side)
 			        if (!resultLine) {
 			            lineItems[i] = null;
 			        }
@@ -508,15 +512,15 @@ Ext.define('RM.controller.BillDetailC', {
     },
 
     onBalanceBreakdown: function () {
-        RM.InvoicesMgr.showBalanceBreakdown(this.detailsData);
+        RM.BillsMgr.showBalanceBreakdown(this.detailsData);
     },
 
     onBillActions: function () {
         if (this.isCreate) {
-            RM.AppMgr.showOkMsgBox('Invoice Actions are only available after saving new invoices.');
+            RM.AppMgr.showOkMsgBox('Bill Actions are only available after saving new bills.');
         }
         else {
-            RM.InvoicesMgr.showActions(this.detailsData);
+            RM.BillsMgr.showActions(this.detailsData);
         }
     },
 
@@ -552,14 +556,14 @@ Ext.define('RM.controller.BillDetailC', {
             RM.AppMgr.showOkCancelMsgBox('You must save your changes to continue, save now?',
                 function (btn) {
                     if (btn == 'ok') {
-                        this.save(this.onInvoiceActions);
+                        this.save(this.onBillActions);
                     }
                 },
                 this
             );
         }
         else {
-            this.onInvoiceActions();
+            this.onBillActions();
         }
     },
 
@@ -571,7 +575,7 @@ Ext.define('RM.controller.BillDetailC', {
             isValid = false;
         }
 
-        this.getLineItems().validateForm(); //still return isValid = true even if no line items, as the 'No items have been added to this invoice.' will be shown in save()
+        this.getLineItems().validateForm(); //still return isValid = true even if no line items, as the 'No items have been added to this bill.' will be shown in save()
 
         if (!isValid) {
             RM.AppMgr.showInvalidFormMsg();
@@ -612,19 +616,49 @@ Ext.define('RM.controller.BillDetailC', {
 
                     // Remove the temporary Id for any new items, since the server is way too trusting
                     if (item.IsNew) {
-                        delete item.InvoiceLineItemId;
+                        delete item.BillLineItemId;
                     }
 
                     // Set the line numbers to handle new or deleted items
                     lineNumber += 1;
                 });
 
-                this.detailsCb.call(this.detailsCbs, 'save', vals);                
+                this.detailsCb.call(this.detailsCbs, 'save', vals);
+                this.saveBill(afterSaveCallback, vals);
             }
             else {
-                RM.AppMgr.showErrorMsgBox('No items have been added to this invoice.');
+                RM.AppMgr.showErrorMsgBox('No items have been added to this bill.');
             }
         }
+    },
+
+    saveBill: function (afterSaveCallback, vals)
+    {
+        RM.AppMgr.saveServerRec('Bills', this.isCreate, vals,
+                    function (recs) {
+                        RM.AppMgr.itemUpdated('bill');
+
+                        if (afterSaveCallback) {
+                            if (this.isCreate) {
+                                this.detailsData.BillId = recs[0].BillId;
+                                this.detailsData.TemplateId = recs[0].TemplateId;
+                            }
+                            this.detailsData.SupplierId = vals.SupplierId;
+                            this.detailsData.AccountsReceivableCategoryId = recs[0].AccountsReceivableCategoryId;
+                            // Clear the loaded flag to force a reload of invoice information when the view is shown again                            
+                            this.dataLoaded = false;
+                            this.isCreate = false;
+                            afterSaveCallback.apply(this);
+                        }
+                        else {
+                            this.goBack();
+                        }
+                    },
+                    this,
+                    function (recs, eventMsg) {
+                        RM.AppMgr.showOkMsgBox(eventMsg);
+                    }
+        );
     },
 
     // Check all the lineItems for modifications to tax code or tax amount
@@ -654,7 +688,7 @@ Ext.define('RM.controller.BillDetailC', {
                             }
                             this.detailsData.SupplierId = vals.SupplierId;
                             this.detailsData.AccountsReceivableCategoryId = recs[0].AccountsReceivableCategoryId;
-                            // Clear the loaded flag to force a reload of invoice information when the view is shown again                            
+                            // Clear the loaded flag to force a reload of bill information when the view is shown again                            
                             this.dataLoaded = false;
                             this.isCreate = false;
                             afterSaveCallback.apply(this);
