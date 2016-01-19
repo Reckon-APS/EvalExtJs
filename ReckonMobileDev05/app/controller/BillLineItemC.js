@@ -244,7 +244,9 @@ Ext.define('RM.controller.BillLineItemC', {
     				    this.showItemFields();
     				    this.itemChanged(data[0]);
     				},
-    				this
+    				this,
+                    null,
+                    RM.Consts.ChargeableItemPurchaseSoldType.PURCHASEDONLY
     			);
             }
             else if (tf.getName() == 'AccountName') {
@@ -418,13 +420,13 @@ Ext.define('RM.controller.BillLineItemC', {
         // Reset item fields
         this.detailsData.ItemName = newItem.Name;
         this.detailsData.AccountName = newItem.Name;
-        this.detailsData.DefaultTaxGroupId = newItem.SaleTaxCodeId;
+        this.detailsData.DefaultTaxGroupId = newItem.PurchaseTaxCodeId;
         this.detailsData.UnitPriceExTax = newItem.UnitPriceExTax;
         this.setTaxModified(false);
 
         this.ignoreEvents = true;
 
-        var taxCode = newItem.SaleTaxCodeId ? newItem.SaleTaxCodeId : newItem.DefaultTaxGroupId;
+        var taxCode = newItem.PurchaseTaxCodeId ? newItem.PurchaseTaxCodeId : newItem.DefaultTaxGroupId;
         var description = newItem.SalesDescription ? newItem.SalesDescription : newItem.Description;
 
         this.getItemForm().setValues({

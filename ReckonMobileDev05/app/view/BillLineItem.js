@@ -130,7 +130,7 @@ Ext.define('RM.view.BillLineItem', {
                     usePicker: true,
                     name: 'TaxGroupId',
                     itemId: 'TaxGroupId',
-                    store: 'GSTCodes',
+                    store: 'PurchaseTaxCodes',
                     displayField: 'GSTCode',
                     valueField: 'GSTCodeId',
                     autoSelect: false,
