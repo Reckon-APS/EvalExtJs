@@ -436,8 +436,13 @@ Ext.define('RM.controller.BillLineItemC', {
             AccountName: newItem.Name,
             TaxGroupId: this.isTaxTracking() && taxCode ? taxCode : null,
             Description: description,
-            UnitPrice: this.isTaxInclusive() ? '' : newItem.UnitPriceExTax
+            UnitPrice: this.isTaxInclusive() ? '' : newItem.UnitPriceExTax,
+            BillDate: formVals.BillDate()
         });
+
+        if (newItem.PurchasePrice) {
+            this.setNewUnitPriceExTax(newItem.PurchasePrice);
+        }
 
         this.ignoreEvents = false;
 
