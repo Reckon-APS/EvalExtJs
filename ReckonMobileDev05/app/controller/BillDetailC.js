@@ -250,7 +250,7 @@ Ext.define('RM.controller.BillDetailC', {
 			    lineItemsPanel.addLineItems(data.LineItems);
 			    lineItemsPanel.setSupplierId(data.SupplierId);
 			    lineItemsPanel.setTaxStatus(data.AmountTaxStatus);
-			    lineItemsPanel.setBillDate(data.Date);
+			    lineItemsPanel.setBillDate(data.BillDate);
 			    this.lineItemsDirty = false;
 
 			    this.displayBalanceDue();
@@ -604,7 +604,7 @@ Ext.define('RM.controller.BillDetailC', {
         vals.PaymentDetails = this.paymentDetailsText;
 
         // Some date fernagling, the default json serialization of dates will format the date in UTC which will alter the time from 00:00:00
-        vals.Date = RM.util.Dates.encodeAsUTC(vals.Date);
+        vals.BillDate = RM.util.Dates.encodeAsUTC(vals.BillDate);
         vals.DueDate = vals.DueDate ? RM.util.Dates.encodeAsUTC(vals.DueDate) : null;
 
         if (this.validateForm(vals)) {
