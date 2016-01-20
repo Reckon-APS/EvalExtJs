@@ -57,7 +57,7 @@ Ext.define('RM.view.BillDetail', {
                 rmmandatory: true
             }, {
                 xtype: 'extdatepickerfield',
-                name: 'Date',
+                name: 'BillDate',
                 dateFormat: 'jS M Y',        //'D, d F Y',
                 placeHolder: 'select',
                 label: 'Date',

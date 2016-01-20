@@ -80,7 +80,7 @@ Ext.define('RM.controller.BillLineItemC', {
         this.isEditable = editable;
         this.supplierId = supplierId;
         this.taxStatusCode = options.taxStatus;
-        this.billDate = options.billDate;
+        this.billDate = detailsData.BillDate;
         this.detailsCb = cb;
         this.detailsCbs = cbs;
 
@@ -436,8 +436,7 @@ Ext.define('RM.controller.BillLineItemC', {
             AccountName: newItem.Name,
             TaxGroupId: this.isTaxTracking() && taxCode ? taxCode : null,
             Description: description,
-            UnitPrice: this.isTaxInclusive() ? '' : newItem.UnitPriceExTax,
-            BillDate: formVals.BillDate()
+            UnitPrice: this.isTaxInclusive() ? '' : newItem.UnitPriceExTax            
         });
 
         if (newItem.PurchasePrice) {

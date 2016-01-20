@@ -14,7 +14,7 @@ Ext.define('RM.controller.BillDetailC', {
             notesFld: 'billdetail textfield[name=Notes]',
             supplierFld: 'billdetail textfield[name=SupplierName]',
             dueDateFld: 'billdetail extdatepickerfield[name=DueDate]',
-            dateFld: 'billdetail extdatepickerfield[name=Date]',
+            dateFld: 'billdetail extdatepickerfield[name=BillDate]',
             refNrFld: 'billdetail textfield[name=Ref]',
             amountsFld: 'billdetail extselectfield[name=AmountTaxStatus]',
             billStatus: 'billdetail #billStatus'            
@@ -85,7 +85,7 @@ Ext.define('RM.controller.BillDetailC', {
             this.detailsData = Ext.applyIf(this.detailsData, {
                 Status: RM.BillsMgr.getInitialBillStatus(),
                 AmountTaxStatus: RM.CashbookMgr.getTaxPreferences().SalesFigures,
-                Date: today,
+                BillDate: today,
                 Discount: 'None',
                 Amount: 0,
                 DiscountTotal: 0,
@@ -141,12 +141,12 @@ Ext.define('RM.controller.BillDetailC', {
                 this.getBillStatus().setHtml(RM.BillsMgr.getBillStatusText(data.Status));
 
                 // Check that the default date in the picker isn't before the lock off date
-                var curDateValue = dateField.getValue();
-                var lockOffDate = RM.CashbookMgr.getLockOffDate();
-                if (curDateValue.getTime() <= lockOffDate.getTime()) {
-                    lockOffDate.setDate(lockOffDate.getDate() + 1);
-                    dateField.updateValue(lockOffDate);
-                }
+                //var curDateValue = dateField.getValue();
+                //var lockOffDate = RM.CashbookMgr.getLockOffDate();
+                //if (curDateValue.getTime() <= lockOffDate.getTime()) {
+                //    lockOffDate.setDate(lockOffDate.getDate() + 1);
+                //    dateField.updateValue(lockOffDate);
+                //}
 
                 this.dataLoaded = true;
             }
@@ -229,8 +229,8 @@ Ext.define('RM.controller.BillDetailC', {
 			        data.DueDate = RM.util.Dates.decodeAsLocal(data.DueDate);
 			    }
 
-			    if (data.Date != null) {
-			        data.Date = RM.util.Dates.decodeAsLocal(data.Date);
+			    if (data.BillDate != null) {
+			        data.BillDate = RM.util.Dates.decodeAsLocal(data.BillDate);
 			    }
 			    
 			    data.Discount = (data.DiscountPerc && data.DiscountPerc != 0) ? data.DiscountPerc + '%' : 'None';
@@ -394,7 +394,7 @@ Ext.define('RM.controller.BillDetailC', {
         var lineItems = this.getLineItems().getViewData();
         var vals = {
             SupplierId: formVals.SupplierId,
-            BillDate: RM.util.Dates.encodeAsUTC(formVals.Date),
+            BillDate: RM.util.Dates.encodeAsUTC(formVals.BillDate),
             AmountTaxStatus: formVals.AmountTaxStatus,
             PreviousAmountTaxStatus: this.previousAmountTaxStatus,
             LineItems: []

@@ -57,9 +57,9 @@ Ext.define('RM.core.BillsMgr', {
         billDetailC.showView(isCreate, data, cb, cbs, callbackViewName);
     },
 
-    showBillLineItem: function (editable, supplierId, isCreate, detailsData, cb, cbs) {
+    showBillLineItem: function (editable, supplierId, options, detailsData, cb, cbs) {
         var billLineItem = RM.AppMgr.getAppControllerInstance('RM.controller.BillLineItemC');
-        billLineItem.showView(editable, supplierId, isCreate, detailsData, cb, cbs);
+        billLineItem.showView(editable, supplierId, options, detailsData, cb, cbs);
     },
 
     showActions: function (billId) {
