@@ -15,7 +15,7 @@ Ext.define('RM.controller.BillDetailC', {
             supplierFld: 'billdetail textfield[name=SupplierName]',
             dueDateFld: 'billdetail extdatepickerfield[name=DueDate]',
             dateFld: 'billdetail extdatepickerfield[name=BillDate]',
-            refNrFld: 'billdetail textfield[name=Ref]',
+            refNrFld: 'billdetail textfield[name=Reference]',
             amountsFld: 'billdetail extselectfield[name=AmountTaxStatus]',
             billStatus: 'billdetail #billStatus'            
         },

@@ -86,7 +86,7 @@ Ext.define('RM.view.BillDetail', {
                 labelWidth: '8em'
             }, {
                 xtype: 'exttextfield',
-                name: 'Ref',
+                name: 'Reference',
                 labelWidth: 160,
                 label: 'Reference code',
                 placeHolder: 'enter',
