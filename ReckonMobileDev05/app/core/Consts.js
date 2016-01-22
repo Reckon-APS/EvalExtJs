@@ -21,7 +21,8 @@ Ext.define('RM.core.Consts',{
     TimeSheetStatus: { UNKNOWN: 0, NON_BILLABLE: 1, UNBILLED: 2, INVOICED: 3, BILLED: 4 },
     ExpenseStatus: { UNKNOWN: 0, DRAFT: 1, APPROVED: 2, PAID: 3 },
     ExpenseLineItemStatus: { UNKNOWN: 0, UNBILLABLE: 1, BILLABLE: 2, INVOICED: 3, BILLED: 4 }, 
-    DocTemplates: {INVOICE: 1, ESTIMATE: 2, CREDIT_NOTE: 3, EXPENSE: 6},
+    DocTemplates: { INVOICE: 1, ESTIMATE: 2, CREDIT_NOTE: 3, EXPENSE: 6, BILL: 4 },
+    DebtorCreditorAllocationType: { UNKNOWN: 0, INVOICE: 1,    BILL: 2,  BILLCREDIT: 3,  CREDITNOTE: 4, JOURNALENTRYPAYABLE: 5, JOURNALENTRYRECEIVABLE: 6, PAYMENT: 7, RECEIPT: 8 },
     NoAccessMsg: 'No access rights',
     EmptyGuid: '00000000-0000-0000-0000-000000000000'
 });

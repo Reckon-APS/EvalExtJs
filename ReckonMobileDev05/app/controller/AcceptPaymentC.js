@@ -33,14 +33,21 @@ Ext.define('RM.controller.AcceptPaymentC', {
         }
     },
 
-    showView: function (invoiceData) {
+    showView: function (data) {
         //console.log(Ext.encode(invoiceData));        
-        
-        this.customerName = invoiceData.CustomerName;
-        this.invoiceId = invoiceData.InvoiceId;
-        this.fullAmount = invoiceData.BalanceDue;
-        this.accountsReceivableCategoryId = invoiceData.AccountsReceivableCategoryId;
-        this.customerId = invoiceData.CustomerId;
+
+        if (data.InvoiceId) {
+            this.allocationType = RM.Consts.DebtorCreditorAllocationType.INVOICE;
+        }
+        if (data.BillId) {
+            this.allocationType = RM.Consts.DebtorCreditorAllocationType.BILL
+        }
+
+        this.customerSupplierName = data.CustomerName || data.SupplierName;
+        this.refId = data.InvoiceId || data.BillId;
+        this.fullAmount = data.BalanceDue;
+        this.accountsCategoryId = data.AccountsReceivableCategoryId || data.AccountsPayableAccountingCategoryID;
+        this.customerSupplierId = data.CustomerId || data.SupplierId;
         
         var view = this.getAcceptPayment();
         if (!view) {
@@ -145,10 +152,11 @@ Ext.define('RM.controller.AcceptPaymentC', {
     onPay: function(){
         var vals = this.getAcceptPaymentForm().getValues();
                 
-        vals.InvoiceId = this.invoiceId;
-        vals.AccountsReceivableCategoryId = this.accountsReceivableCategoryId;
-        vals.CustomerSupplierId = this.customerId;
-        vals.CustomerName = this.customerName;
+        vals.RefId = this.refId;
+        vals.AccountsReceivableCategoryId = this.accountsCategoryId;
+        vals.CustomerSupplierId = this.customerSupplierId;
+        vals.CustomerSupplierName = this.customerSupplierName;
+        vals.AllocationType = this.allocationType;        
         
         // Some date fernagling, the default json serialization of dates will format the date in UTC which will alter the time from 00:00:00
         vals.TransactionDate = RM.util.Dates.encodeAsUTC(vals.TransactionDate);
@@ -157,7 +165,7 @@ Ext.define('RM.controller.AcceptPaymentC', {
             RM.AppMgr.saveServerRec('AcceptPayment', true, vals,
     		    function () {                    
     		        this.showMsg();
-    		        RM.AppMgr.itemUpdated('invoice');
+    		        RM.AppMgr.itemUpdated(this.allocationType === RM.Consts.DebtorCreditorAllocationType.INVOICE ? 'invoice' : 'bill');
     		    },
     		    this,
                 function(recs, eventMsg){
