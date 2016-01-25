@@ -153,7 +153,7 @@ Ext.define('RM.controller.AcceptPaymentC', {
         var vals = this.getAcceptPaymentForm().getValues();
                 
         vals.RefId = this.refId;
-        vals.AccountsReceivableCategoryId = this.accountsCategoryId;
+        vals.AccountsCategoryId = this.accountsCategoryId;
         vals.CustomerSupplierId = this.customerSupplierId;
         vals.CustomerSupplierName = this.customerSupplierName;
         vals.AllocationType = this.allocationType;        
