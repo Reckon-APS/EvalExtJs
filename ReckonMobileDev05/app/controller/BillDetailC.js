@@ -62,9 +62,9 @@ Ext.define('RM.controller.BillDetailC', {
 
     isEditable: function () {
         return RM.BillsMgr.isBillStatusEditable(this.detailsData.Status) &&
-        RM.PermissionsMgr.canAddEdit('Bills');// &&
-        //(!Ext.isDefined(this.detailsData.SaveSupport) || this.detailsData.SaveSupport) &&
-        //(this.detailsData.Amount === this.detailsData.Balance);
+        RM.PermissionsMgr.canAddEdit('Bills') &&
+        (!Ext.isDefined(this.detailsData.SaveSupport) || this.detailsData.SaveSupport) &&
+        !(this.detailsData.Paid > 0);
     },
 
     showView: function (isCreate, data, cb, cbs) {

@@ -40,13 +40,13 @@ Ext.define('RM.controller.AcceptPaymentC', {
             this.allocationType = RM.Consts.DebtorCreditorAllocationType.INVOICE;
         }
         if (data.BillId) {
-            this.allocationType = RM.Consts.DebtorCreditorAllocationType.BILL
+            this.allocationType = RM.Consts.DebtorCreditorAllocationType.BILL;
         }
 
         this.customerSupplierName = data.CustomerName || data.SupplierName;
         this.refId = data.InvoiceId || data.BillId;
         this.fullAmount = data.BalanceDue;
-        this.accountsCategoryId = data.AccountsReceivableCategoryId || data.AccountsPayableAccountingCategoryID;
+        this.accountsCategoryId = data.AccountsReceivableCategoryId || data.AccountsPayableCategoryId;
         this.customerSupplierId = data.CustomerId || data.SupplierId;
         
         var view = this.getAcceptPayment();
