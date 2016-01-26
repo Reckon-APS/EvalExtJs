@@ -309,6 +309,7 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="app\controller\BillActionsC.js" />
+    <Content Include="app\controller\BillBalanceBreakdownC.js" />
     <Content Include="app\controller\BillDetailC.js">
       <SubType>Content</SubType>
     </Content>
@@ -774,6 +775,7 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="app\view\BillActions.js" />
+    <Content Include="app\view\BillBalanceBreakdown.js" />
     <Content Include="app\view\BillDetail.js">
       <SubType>Content</SubType>
     </Content>

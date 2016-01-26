@@ -209,9 +209,10 @@ Ext.define('RM.controller.BillDetailC', {
         RM.AppMgr.getServerRecById('Bills', this.detailsData.BillId,
 			function (data) {
 			    this.getBillNumberFld().setHidden(false);
-			    //To reset readonly property when bill status is changed back to draft, fix for bug#25428               
+			    //To reset readonly property when bill status is changed back to draft             
 			    if (data.Status === RM.Consts.BillStatus.DRAFT) {
 			        this.getDateFld().setReadOnly(false);
+			        this.getDueDateFld().setReadOnly(false);
 			        this.getRefNrFld().setReadOnly(false);
 			    }
 

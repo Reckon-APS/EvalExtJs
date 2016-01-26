@@ -9,7 +9,7 @@ Ext.define('RM.core.BillsMgr', {
     },
 
     getInitialBillStatus: function () {
-        if (RM.CashbookMgr.getSalesPreferences().ApprovalProcessEnabled) {
+        if (RM.CashbookMgr.getBillPreferences().ApprovalProcessEnabled) {
             return RM.Consts.BillStatus.DRAFT;
         }
         else {
