@@ -224,8 +224,8 @@ Ext.define('RM.controller.BillLineItemC', {
             }
             else if (tf.getName() == 'ProjectName') {
                 RM.Selectors.showProjects(
-                    this.supplierId,
                     null,
+                    this.supplierId,
     				function (data) {
     				    var currentValue = this.getProjectId().getValue();
     				    if (currentValue !== data.ProjectId) {
