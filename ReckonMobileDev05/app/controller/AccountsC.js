@@ -28,10 +28,11 @@ Ext.define('RM.controller.AccountsC', {
 
     },
     
-    showView: function (selectDetails, cb, cbs) {           
+    showView: function (selectDetails, cb, cbs, showAtTopPropertyName) {
         this.selectDetails = selectDetails;
         this.selectCb = cb;
-        this.selectCbs = cbs;        
+        this.selectCbs = cbs;
+        this.showAtTopPropertyName = showAtTopPropertyName;
         var view = { xtype: 'accounts', selectDetails: selectDetails}; //create a new view each time as we want selectDetails to be effective
         RM.ViewMgr.showPanel(view); 
         if(this.nameFilter) delete this.nameFilter;
@@ -63,9 +64,19 @@ Ext.define('RM.controller.AccountsC', {
     loadList: function () {
         var store = this.getAccountsList().getStore();
         store.clearFilter();
+
         if (this.nameFilter){
             store.filter('Name', this.nameFilter);
         }
+
+        var showAtTop = this.showAtTopPropertyName;
+        var grouper = new Ext.util.Grouper({
+            groupFn: function (record) {
+                var header = record.get('AccountType');
+                return showAtTop && header === showAtTop ? ' ' + header : header;
+            }
+        });
+        store.setGrouper(grouper);
     },
 
     setLoadTimer: function () {

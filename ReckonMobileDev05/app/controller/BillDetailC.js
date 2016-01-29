@@ -140,14 +140,6 @@ Ext.define('RM.controller.BillDetailC', {
                 this.getLineItems().setTaxStatus(data.AmountTaxStatus);
                 this.getBillStatus().setHtml(RM.BillsMgr.getBillStatusText(data.Status));
 
-                // Check that the default date in the picker isn't before the lock off date
-                //var curDateValue = dateField.getValue();
-                //var lockOffDate = RM.CashbookMgr.getLockOffDate();
-                //if (curDateValue.getTime() <= lockOffDate.getTime()) {
-                //    lockOffDate.setDate(lockOffDate.getDate() + 1);
-                //    dateField.updateValue(lockOffDate);
-                //}
-
                 this.dataLoaded = true;
             }
         }

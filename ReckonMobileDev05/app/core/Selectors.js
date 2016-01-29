@@ -35,10 +35,10 @@ Ext.define('RM.core.Selectors', {
 	    itemsC.showView(showItemTax, projectId, selectDetails, cb, cbs, itemType, itemPurchasedSoldType);
 	},
     
-    showAccounts: function(selectDetails, cb, cbs){
+	showAccounts: function (selectDetails, cb, cbs, showAtTopPropertyName) {
         RM.ViewMgr.showLoadingMask(); //to prevent double tap on accounts field
         var accountsC = RM.AppMgr.getAppControllerInstance('RM.controller.AccountsC');
-		accountsC.showView(selectDetails, cb, cbs);
+		accountsC.showView(selectDetails, cb, cbs, showAtTopPropertyName);
         setTimeout(function () { RM.ViewMgr.hideLoadingMask(); }, 500);
     },
 

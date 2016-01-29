@@ -2,7 +2,7 @@ Ext.define('RM.core.BillsMgr', {
     alternateClassName: 'RM.BillsMgr',
     singleton: true,
 
-    requires: ['RM.view.BillDetail', 'RM.view.History', 'RM.component.ChooseInvoiceItem', 'RM.component.ChooseInvoiceDiscount', 'RM.view.CreateItem', 'RM.view.InvoiceTimeSelectDetail'],
+    requires: ['RM.view.BillDetail', 'RM.view.History', 'RM.component.ChooseInvoiceDiscount', 'RM.view.CreateItem'],
 
     init: function (application) {
 
@@ -48,7 +48,7 @@ Ext.define('RM.core.BillsMgr', {
     },
 
     isBillStatusEmailable: function (status) {
-        //return (status == RM.Consts.InvoiceStatus.APPROVED) || (status == RM.Consts.InvoiceStatus.PARTIALLY_PAID) || (status == RM.Consts.InvoiceStatus.PAID);
+        //return (status == RM.Consts.BillStatus.APPROVED) || (status == RM.Consts.BillStatus.PARTIALLY_PAID) || (status == RM.Consts.BillStatus.PAID);
         return true;
     },
 

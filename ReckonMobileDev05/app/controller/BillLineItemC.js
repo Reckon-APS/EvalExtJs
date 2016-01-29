@@ -256,7 +256,8 @@ Ext.define('RM.controller.BillLineItemC', {
     				    this.showAccountFields();
     				    this.itemChanged(data[0]);
     				},
-    				this
+    				this,
+                    'Expense'
     			);
             }
         }
