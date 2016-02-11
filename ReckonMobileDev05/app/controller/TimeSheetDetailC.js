@@ -229,11 +229,12 @@ Ext.define('RM.controller.TimeSheetDetailC', {
         if (tf.getName() == 'CustomerName') {
             RM.Selectors.showCustomers(
                 this.getProjectId().getValue(),
-				function (data) {
-				    this.getTimeSheetForm().setValues({ CustomerId: data.ContactId, CustomerName: data.Description });				    
+				function (data) {				    
+				    this.getTimeSheetForm().setValues({ CustomerId: data.ContactId, CustomerName: data.Description });
 				},
 				this,
-                'project'
+                'project',
+				 this.projectHasCustomers
 			);
         }
         else if (tf.getName() == 'ProjectName') {
@@ -242,6 +243,7 @@ Ext.define('RM.controller.TimeSheetDetailC', {
                 null,
 				function (data) {
 				    this.getTimeSheetForm().setValues({ ProjectId: data.ProjectId, ProjectName: data.ProjectPath });
+				    this.projectHasCustomers = data.HasContacts;
 				},
 				this
 			);

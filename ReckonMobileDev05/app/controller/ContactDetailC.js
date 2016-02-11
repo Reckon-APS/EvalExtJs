@@ -24,7 +24,7 @@ Ext.define('RM.controller.ContactDetailC', {
             notesFld: 'contactdetail field[name=Notes]',
             postalAddress: 'contactdetail #postalAddress',
             businessAddress: 'contactdetail #businessAddress',
-            sameAddress: 'contactdetail field[name=SameAddress]',
+            businessAddressDifferent: 'contactdetail field[name=IsBusinessAddressDifferent]',
             postalAddressCountry: 'contactdetail #postalAddress field[name=PostalAddress.Country]',
             businessAddressCountry: 'contactdetail #businessAddress field[name=BusinessAddress.Country]',
             termsFld: 'contactdetail textfield[name=Terms]',
@@ -56,8 +56,8 @@ Ext.define('RM.controller.ContactDetailC', {
             notesFld: {
                 tap: 'showNotes'
             },
-            sameAddress: {
-                change: 'sameAddressChanged'
+            businessAddressDifferent: {
+                change: 'handleDifferentAddressToggle'
             },
             'contactdetail #postalAddress field': {
                 change: 'onPostalAddressChanged'
@@ -123,6 +123,8 @@ Ext.define('RM.controller.ContactDetailC', {
                 this.initialFormValues = contactForm.getValues();                              
                 this.dataLoaded = true;
             }
+
+            this.handleDifferentAddressToggle(this.getBusinessAddressDifferent());
         }        
     },
 
@@ -575,9 +577,10 @@ Ext.define('RM.controller.ContactDetailC', {
         this.getContactDetail().showDetailsFields();
     },
 
-    sameAddressChanged: function (field, sameAddress) {
+    handleDifferentAddressToggle: function(field){
         var enableFields = true;
-        if (sameAddress == 'Yes') {
+        var isBusinessAddressDifferent = field.getValue();
+        if (!isBusinessAddressDifferent) {
             // Copy all the postal address fields into the business ones
             this.copyPostalToBusiness();
             enableFields = false;
@@ -592,7 +595,7 @@ Ext.define('RM.controller.ContactDetailC', {
     },
 
     onPostalAddressChanged: function () {
-        if (this.getSameAddress().getValue()) {
+        if (this.getBusinessAddressDifferent().getValue()) {
             this.copyPostalToBusiness();
         }
     },

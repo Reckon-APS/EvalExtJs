@@ -7,9 +7,9 @@ Ext.define('RM.component.BankDetails', {
             xtype: 'component',
             html: '<h3 class="rm-m-1 rm-hearderbg">Financial institution details</h3>'
         },*/ {
-            xtype: 'bankdetailsnz'            
+            xtype: 'bankdetailsnz'
         }, {
-            xtype: 'bankdetailsau'            
+            xtype: 'bankdetailsau'
         }]
     },
 

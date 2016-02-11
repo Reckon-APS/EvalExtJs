@@ -3,6 +3,14 @@ Ext.define('RM.component.BankDetailsNZ', {
     xtype: 'bankdetailsnz',
     config: {
         items: [{
+            xtype: 'exttextfield',
+            name: 'AccountName',
+            label: 'Bank account name',
+            labelWidth: '9em',
+            placeHolder: 'enter',
+            cls: 'rm-flatfield',
+            clearIcon: false
+        }, {
             xtype: 'container',
             layout: 'hbox',
             border: '1 0 1 0',

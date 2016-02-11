@@ -55,53 +55,23 @@ Ext.define('RM.view.ContactDetail', {
 					    rmmandatory: true,
 					    placeHolder: 'choose'
 					}, {
-						name: 'Description',
-						label: 'Display name',
-                        maxLength: 100,
-                        labelWidth: '8em',
-                        rmmandatory: true
+					    xtype: 'extselectfield',
+					    name: 'BusinessOrIndividual',
+					    itemId: 'businessOrIndividual',
+					    label: 'Business/Individual',
+					    labelWidth: '13em',
+					    options: [
+                            { text: 'Business', value: 'Business' },
+                            { text: 'Individual', value: 'Individual' }
+					    ],
+					    rmmandatory: true,
+					    usePicker: true,
+					    autoSelect: false,
+					    ui: 'plain',
+					    placeHolder: 'choose',
+					    border: '1 0 1 0',
+					    style: 'border-color: #DBDBDB; border-style: solid;'
 					}, {
-                        xtype: 'extselectfield',
-                        cls: 'rm-flatfield', 
-                        usePicker: true,
-                        autoSelect: false,  
-                        itemId: 'terms',
-                        store: 'Terms',
-                        displayField: 'TermName',
-						valueField: 'TermID',
-                        clearIcon: true,
-                        label: 'Payment terms',
-                        name: 'Terms',
-                        placeHolder: 'choose',
-                        labelWidth: '9em'                                
-                    }, {
-                        xtype: 'rmamountfield',
-    					name: 'CreditLimit',                        
-    					label: 'Credit limit',
-    					placeHolder: 'enter',                                            
-                        decimalPlaces: 2,
-                        prefix: '$'
-                    }, {
-                        xtype: 'bankdetails',
-                        cls: 'rm-noborder'
-                    }, {
-						xtype: 'extselectfield',
-                        name: 'BusinessOrIndividual',
-                        itemId: 'businessOrIndividual',
-						label: 'Business/Individual',
-                        labelWidth: '13em',
-                        options: [
-                            {text: 'Business',  value: 'Business'},
-                            {text: 'Individual', value: 'Individual'}                            
-                        ],
-                        rmmandatory: true,
-						usePicker: true,						
-                        autoSelect: false,                                        
-						ui:'plain',
-                        placeHolder: 'choose',
-                        border: '1 0 1 0',
-                        style: 'border-color: #DBDBDB; border-style: solid;'
-                    }, {
                         xtype: 'container',
                         itemId: 'detailsFields',
                         defaults:{xtype: 'exttextfield', labelWidth: 180, cls: 'rm-flatfield', placeHolder: 'enter', clearIcon: false},
@@ -111,7 +81,7 @@ Ext.define('RM.view.ContactDetail', {
                             xtype: 'component',
                             itemId: 'detailHeader',    
                             html: '<h3 class="rm-m-1 rm-hearderbg">Details</h3>'
-    					},{
+                        }, {
     						name: 'FirstName',
     						label: 'First name',
                             maxLength: 100,
@@ -134,11 +104,17 @@ Ext.define('RM.view.ContactDetail', {
                             hidden: true                        
     					},{
     						name: 'BranchName',                                       
-    						label: 'Branch name',
+    						label: 'Branch',
                             maxLength: 100,
                             labelWidth: '7em',
                             hidden: true, 
                             border: '1 0 1 0'
+    					}, {
+    					    name: 'Description',
+    					    label: 'Display name',
+    					    maxLength: 100,
+    					    labelWidth: '8em',
+    					    rmmandatory: true
     					}, {
     					    xtype: 'rmnumberfield',
     						name: 'ABN',                                       
@@ -177,7 +153,38 @@ Ext.define('RM.view.ContactDetail', {
                                 border: '0 0 0 0 '                            
                             }]
     						
-    					},{
+    					}, {
+    					    xtype: 'container',
+    					    itemId: 'mobileContainer',
+    					    layout: 'hbox',
+    					    items: [{
+    					        html: 'Mobile',
+    					        flex: 1.5,
+    					        cls: 'x-form-label',
+    					        style: 'font-size: 80%; padding-top: 0.9em; padding-left: 0.7em;'
+    					    }, {
+    					        xtype: 'rmphonefield',
+    					        cls: 'rm-flatfield',
+    					        name: 'MobileCode',
+    					        placeHolder: 'mobile code',
+    					        maxLength: 20,
+    					        flex: 2.2,
+    					        clearIcon: false,
+    					        border: '0 1 0 1 ',
+    					        style: 'border-color: #DBDBDB; border-style: solid;'
+    					    },
+                            {
+                                xtype: 'rmphonefield',
+                                cls: 'rm-flatfield',
+                                placeHolder: 'enter',
+                                maxLength: 20,
+                                name: 'MobileNumber',
+                                flex: 3.5,
+                                clearIcon: false,
+                                border: '0 0 0 0 '
+                            }]
+
+    					}, {
                             xtype: 'container',
                             itemId: 'faxContainer',                                        
                             layout: 'hbox',
@@ -227,9 +234,31 @@ Ext.define('RM.view.ContactDetail', {
                             labelWidth: '4em',
         					cls: 'rm-flatfield',                       
                             readOnly: true
-    				    },
-                        
-                        {
+    					}, {
+    					    xtype: 'extselectfield',
+    					    cls: 'rm-flatfield',
+    					    usePicker: true,
+    					    autoSelect: false,
+    					    itemId: 'terms',
+    					    store: 'Terms',
+    					    displayField: 'TermName',
+    					    valueField: 'TermID',
+    					    clearIcon: true,
+    					    label: 'Payment terms',
+    					    name: 'Terms',
+    					    placeHolder: 'choose',
+    					    labelWidth: '9em'
+    					}, {
+    					    xtype: 'rmamountfield',
+    					    name: 'CreditLimit',
+    					    label: 'Credit limit',
+    					    placeHolder: 'enter',
+    					    decimalPlaces: 2,
+    					    prefix: '$'
+    					}, {
+    					    xtype: 'bankdetails',
+    					    cls: 'rm-noborder'
+    					}, {
                             xtype: 'container',
                             itemId: 'postalAddress',                             
                             defaults:{xtype: 'exttextfield', labelWidth: 180, cls: 'rm-flatfield', placeHolder: 'enter', clearIcon: false},
@@ -292,13 +321,14 @@ Ext.define('RM.view.ContactDetail', {
                             items: [{                            
                                 xtype: 'component',                                        
                                 itemId: 'addressHeader',                         
-                                html: '<h3 class="rm-m-1 rm-hearderbg">Business address</h3>'
+                                html: '<h3 class="rm-m-1 rm-hearderbg">Physical address</h3>'
                                 },{
                                     xtype: 'rmtogglefield',
                                     onText: 'Yes',
                                     offText: 'No',
-                                    label: 'Same as postal',
-                                    name: 'SameAddress',
+                                    label: 'Differs from Postal address?',
+                                    labelWidth: '14em',
+                                    name: 'IsBusinessAddressDifferent',
                                     placeHolder: '',
                                     toggleState: false
                                 },

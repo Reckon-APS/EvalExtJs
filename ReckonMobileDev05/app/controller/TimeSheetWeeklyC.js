@@ -160,7 +160,8 @@ Ext.define('RM.controller.TimeSheetWeeklyC', {
 				    this.getTimeSheetForm().setValues({ CustomerId: data.ContactId, CustomerName: data.Description });
 				},
 				this,
-                'project'
+                'project',
+                this.projectHasCustomers
 			);
         }
         else if (tf.getName() == 'ProjectName') {
@@ -169,6 +170,7 @@ Ext.define('RM.controller.TimeSheetWeeklyC', {
                 null,
 				function (data) {
 				    this.getTimeSheetForm().setValues({ ProjectId: data.ProjectId, ProjectName: data.ProjectPath });
+				    this.projectHasCustomers = data.HasContacts;
 				},
 				this
 			);
