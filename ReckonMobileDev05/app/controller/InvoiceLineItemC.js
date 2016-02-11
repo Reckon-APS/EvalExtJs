@@ -254,7 +254,8 @@ Ext.define('RM.controller.InvoiceLineItemC', {
                         this.showAccountFields();
                         this.itemChanged(data[0]);
     				},
-    				this
+    				this,
+                    'Income'
     			);                
             }
         }           
