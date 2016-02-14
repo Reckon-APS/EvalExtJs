@@ -1,6 +1,5 @@
 Ext.define('RM.controller.TimeSheetDetailC', {
-    extend: 'Ext.app.Controller',
-    requires: ['Ext.Toast'],
+    extend: 'Ext.app.Controller',    
     config: {
         refs: {
             timeSheetDetail: 'timesheetdetail',
@@ -10,6 +9,7 @@ Ext.define('RM.controller.TimeSheetDetailC', {
             customerId: 'timesheetdetail hiddenfield[name=CustomerId]',
             customerName: 'timesheetdetail textfield[name=CustomerName]',
             projectId: 'timesheetdetail hiddenfield[name=ProjectId]',
+            projectName: 'timesheetdetail textfield[name=ProjectName]',
             billable: 'timesheetdetail checkboxfield',
             description: 'timesheetdetail #description',
             billableCheckbox: 'timesheetdetail rmtogglefield[name=Billable]',
@@ -229,11 +229,12 @@ Ext.define('RM.controller.TimeSheetDetailC', {
         if (tf.getName() == 'CustomerName') {
             RM.Selectors.showCustomers(
                 this.getProjectId().getValue(),
-				function (data) {
-				    this.getTimeSheetForm().setValues({ CustomerId: data.ContactId, CustomerName: data.Description });				    
+				function (data) {				    
+				    this.getTimeSheetForm().setValues({ CustomerId: data.ContactId, CustomerName: data.Description });
 				},
 				this,
-                'project'
+                'project',
+				 this.projectHasCustomers
 			);
         }
         else if (tf.getName() == 'ProjectName') {
@@ -242,6 +243,7 @@ Ext.define('RM.controller.TimeSheetDetailC', {
                 null,
 				function (data) {
 				    this.getTimeSheetForm().setValues({ ProjectId: data.ProjectId, ProjectName: data.ProjectPath });
+				    this.projectHasCustomers = data.HasContacts;
 				},
 				this
 			);
@@ -328,17 +330,17 @@ Ext.define('RM.controller.TimeSheetDetailC', {
                 
         if (this.validateForm(vals)) {
             if (!this.isCreate) {
-                this.loadTimeData(function(respRecs) {
+                this.loadTimeData(function (respRecs) {
                     if (!respRecs[0].Duration || this.isCombinationSameAsOriginal(vals)) {
                         this.saveTimeSheet(vals);
                     } else {
-                        Ext.toast('Timesheet with the same combination already exists.', 3000);
+                        RM.AppMgr.showToast('Timesheet with the same combination already exists.', 3000);
                     }
                 }, this);
-            } 
+            }
             else {
                 this.saveTimeSheet(vals);
-            }
+            }                        
         }
     },
 

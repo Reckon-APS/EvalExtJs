@@ -14,9 +14,9 @@ Ext.define('RM.core.Selectors', {
 		cashBooksC.showView(cb, cbs);	
 	},		
 	
-	showCustomers: function(projectId, cb, cbs, filterBy){
+	showCustomers: function (projectId, cb, cbs, filterBy, projectHasCustomers) {
 		var customersC = RM.AppMgr.getAppControllerInstance('RM.controller.CustomersC');
-		customersC.showView(projectId, cb, cbs, filterBy);
+		customersC.showView(projectId, cb, cbs, filterBy, projectHasCustomers);
 	},	
 	
 	showProjects: function(customerId, supplierId, cb, cbs){

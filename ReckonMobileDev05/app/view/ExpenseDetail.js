@@ -72,7 +72,7 @@ Ext.define('RM.view.ExpenseDetail', {
 							    label: 'Date',
 							    rmmandatory: true,
 							    dateFormat: 'jS M Y',
-							    cls: 'Date-icon rm-flatfield',
+							    cls: 'rm-flatfield',
 							    ui: 'plain',
 							    placeHolder: 'select'
 							}, {
@@ -81,6 +81,7 @@ Ext.define('RM.view.ExpenseDetail', {
 								label: 'Project',
 								cls: 'rm-flatfield',								
 								placeHolder: 'select (optional)',
+								permissionFor: {action:'Select',name:'Projects'},
 								rmreadonly: true
 							}, {
 							    xtype: 'exttextfield',

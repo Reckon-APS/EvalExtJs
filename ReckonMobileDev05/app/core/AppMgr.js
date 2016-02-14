@@ -4,7 +4,7 @@ Ext.define('RM.core.AppMgr', {
     requires: ['RM.view.TestScreen', 'RM.core.PermissionsMgr', 'RM.core.EventMgr', 'RM.core.ViewMgr', 
     'RM.core.Selectors', 'RM.core.HomeSettingsMgr', 'RM.core.CashbookMgr', 'RM.core.ContactsMgr', 
     'RM.core.TimeSheetsMgr', 'RM.core.ExpensesMgr', 'RM.core.InvoicesMgr', 'RM.util.MathHelpers',
-    'RM.core.SessionManager', 'RM.core.PayMgr', 'RM.core.BillsMgr'],
+    'RM.core.SessionManager', 'RM.core.PayMgr', 'RM.core.BillsMgr', 'Ext.Toast'],
 
     init: function (application) {
         this.application = application;        
@@ -757,6 +757,9 @@ Ext.define('RM.core.AppMgr', {
         this.showRMMsgPopup(msgText, icon, [{ text: yesText, itemId: 'yes', cls: 'x-button-green' }, { text: noText, itemId: 'no' }, { text: cancelText, itemId: 'cancel', cls: 'x-button-silver' }], cb, cbs);
     },
 
+    showToast: function(text, millisec){
+        Ext.toast(text, millisec);
+    },
     
     isSimulator: function(){
         return !Ext.isDefined(device.model);

@@ -71,6 +71,10 @@ Ext.define('RM.core.PermissionsMgr', {
         return this.canDo(permissionName, 'Select');
     },
 
+    canSelectProject: function (permissionName) {
+        return this.canDo(permissionName, 'SelectProject');
+    },
+
     canBillEntry: function(permissionName){
         return this.canDo(permissionName, 'BillEntry');
     },

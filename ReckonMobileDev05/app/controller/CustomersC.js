@@ -39,10 +39,10 @@ Ext.define('RM.controller.CustomersC', {
         this.getApplication().addListener('itemupdated', 'onItemUpdated', this);
     },
     
-	showView: function(projectId, cb, cbs, filterBy){
+    showView: function (projectId, cb, cbs, filterBy, projectHasCustomers) {
         this.projectIdFilter = projectId;
         this.filterBy = filterBy;
-
+        this.projectHasCustomers = projectHasCustomers;
 		this.selectCb = cb;
 		this.selectCbs = cbs;
 		var view = this.getCustomers();
@@ -75,7 +75,13 @@ Ext.define('RM.controller.CustomersC', {
             function (val) {
                 var data = val[0];
                 if (data.ContactId) {
-                    this.selectCb.call(this.selectCbs, data);
+                    if (this.projectHasCustomers) {
+                        //if project has customers then we have to clear customer field as newly added customer is not assigned to the project yet 
+                        this.selectCb.call(this.selectCbs, { ContactId: '', Description: '' });
+                    }
+                    else {
+                        this.selectCb.call(this.selectCbs, data);
+                    }                    
                     RM.ViewMgr.back({ type: 'slide', direction: 'left' });
                 }
             },

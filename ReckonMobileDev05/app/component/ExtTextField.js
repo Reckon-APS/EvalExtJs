@@ -23,11 +23,18 @@ Ext.define('RM.component.ExtTextField', {
 
         //show or hide clear icon on readonly fields for the selector - project, customer and supplier
         if (this.config.rmreadonly) {
+            //hide keypad when the field is rmreadonly and tapped - iOS specific
+            this.on('focus', function () {
+                RM.ViewMgr.hideKeyPad();
+            }, this);
+
             this.on('change', function (field, newValue) {
                 if (!newValue) {
                     field.setReadOnly(true);
                 }
                 else {
+                    //block UI to avoid autofocus on the next field in iOS
+                    if (Ext.os.is.ios) RM.ViewMgr.blockUIFor(500);
                     var readOnly = (this.config.rmlocked && this.config.rmlocked === true) ? true : false;
                     field.setReadOnly(readOnly);
                 }

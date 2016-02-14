@@ -9,6 +9,7 @@ Ext.define('RM.controller.TimeSheetWeeklyC', {
             customerId: 'timesheetweekly hiddenfield[name=CustomerId]',
             customerName: 'timesheetweekly textfield[name=CustomerName]',
             projectId: 'timesheetweekly hiddenfield[name=ProjectId]',
+            projectName: 'timesheetweekly textfield[name=ProjectName]',
             billableCheckbox: 'timesheetweekly rmtogglefield[name=Billable]',
             itemName: 'timesheetweekly #itemName',            
             loadBtn: 'timesheetweekly #loadbtn',
@@ -75,7 +76,7 @@ Ext.define('RM.controller.TimeSheetWeeklyC', {
     },
     
     onShow: function () {
-        RM.ViewMgr.regFormBackHandler(this.back, this);       
+        RM.ViewMgr.regFormBackHandler(this.back, this);
     },
 
     onHide: function () {
@@ -158,7 +159,9 @@ Ext.define('RM.controller.TimeSheetWeeklyC', {
 				function (data) {
 				    this.getTimeSheetForm().setValues({ CustomerId: data.ContactId, CustomerName: data.Description });
 				},
-				this
+				this,
+                'project',
+                this.projectHasCustomers
 			);
         }
         else if (tf.getName() == 'ProjectName') {
@@ -167,6 +170,7 @@ Ext.define('RM.controller.TimeSheetWeeklyC', {
                 null,
 				function (data) {
 				    this.getTimeSheetForm().setValues({ ProjectId: data.ProjectId, ProjectName: data.ProjectPath });
+				    this.projectHasCustomers = data.HasContacts;
 				},
 				this
 			);

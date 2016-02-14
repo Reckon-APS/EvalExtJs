@@ -59,6 +59,7 @@ Ext.define('RM.view.TimeSheetDetail', {
 					    xtype: 'extdatepickerfield',
 					    name: 'Date',
 					    label: 'Date',
+					    rmmandatory: true,
 					    dateFormat: 'jS M Y',
 					    cls: 'rm-flatfield',
 					    ui: 'plain',
@@ -72,7 +73,8 @@ Ext.define('RM.view.TimeSheetDetail', {
 						label: 'Project',
 						cls: 'rm-flatfield',						
 						readOnly: true,
-                        placeHolder: 'select (optional)'
+						placeHolder: 'select (optional)',
+						permissionFor: { action: 'Select', name: 'Projects' }
 					}, {
 					    xtype: 'exttextfield',
 					    name: 'CustomerName',

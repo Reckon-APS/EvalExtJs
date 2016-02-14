@@ -270,6 +270,10 @@ Ext.define('RM.controller.InvoiceDetailC', {
                 
                 this.applyViewEditableRules(); //needs to be called before adding line items below so that line items can have delete x hidden if necessary
                 
+                if (data.Terms) {
+                    this.getDueDateFld().setReadOnly(true);
+                }
+
                 var lineItemsPanel = this.getLineItems();
 			    lineItemsPanel.addLineItems(data.LineItems);                
                 lineItemsPanel.setCustomerId(data.CustomerId);
@@ -329,6 +333,7 @@ Ext.define('RM.controller.InvoiceDetailC', {
                     null,
     				function (data) {
     				    //tf.setValue(data.Name);
+    				    this.detailsData.CustomerEmail = data.Email;    //to load email in invoice action - email invoice screen
     				    this.getInvoiceForm().setValues({ CustomerId: data.ContactId, CustomerName: data.Description });
     				    this.loadCustomerSpecificTermsList(data.ContactId);    				    
                         this.getLineItems().setCustomerId(data.ContactId);
