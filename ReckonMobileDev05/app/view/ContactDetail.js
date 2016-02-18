@@ -90,9 +90,9 @@ Ext.define('RM.view.ContactDetail', {
                             hidden: true
     					},{
     						name: 'Surname',                                       
-    						label: 'Surname',
+    						label: 'Last name',
                             maxLength: 100,
-                            labelWidth: '5.5em',
+                            labelWidth: '6em',
                             rmmandatory: true,
                             hidden: true
     					},{
@@ -135,7 +135,7 @@ Ext.define('RM.view.ContactDetail', {
                                 xtype: 'rmphonefield',                             
                                 cls: 'rm-flatfield',                             
                                 name: 'PhoneAreaCode',						    
-                                placeHolder: 'area code', 
+                                placeHolder: 'std code', 
                                 maxLength: 20,
                                 flex: 2.2,
                                 clearIcon: false,
@@ -166,7 +166,7 @@ Ext.define('RM.view.ContactDetail', {
     					        xtype: 'rmphonefield',
     					        cls: 'rm-flatfield',
     					        name: 'MobileCode',
-    					        placeHolder: 'mobile code',
+    					        placeHolder: 'std code',
     					        maxLength: 20,
     					        flex: 2.2,
     					        clearIcon: false,
@@ -197,7 +197,7 @@ Ext.define('RM.view.ContactDetail', {
                                 xtype: 'rmphonefield',                             
                                 cls: 'rm-flatfield',                             
                                 name: 'FaxAreaCode',						    
-                                placeHolder: 'area code',
+                                placeHolder: 'std code',
                                 maxLength: 20,
                                 flex: 2.2,
                                 clearIcon: false,
@@ -235,29 +235,74 @@ Ext.define('RM.view.ContactDetail', {
         					cls: 'rm-flatfield',                       
                             readOnly: true
     					}, {
-    					    xtype: 'extselectfield',
-    					    cls: 'rm-flatfield',
-    					    usePicker: true,
-    					    autoSelect: false,
-    					    itemId: 'terms',
-    					    store: 'Terms',
-    					    displayField: 'TermName',
-    					    valueField: 'TermID',
-    					    clearIcon: true,
-    					    label: 'Payment terms',
-    					    name: 'Terms',
-    					    placeHolder: 'choose',
-    					    labelWidth: '9em'
+    					    xtype: 'container',
+                            itemId: 'termsAndCreditLimitPanel',
+                            items: [{
+                                xtype: 'component',
+                                html: '<h3 class="rm-m-1 rm-hearderbg">Payment terms and Credit limit</h3>',
+                                cls: 'rm-container-arrow-true',
+                                listeners: {
+                                    tap: {
+                                        element: 'element',
+                                        fn: function () {                                            
+                                            var header = Ext.ComponentQuery.query('#termsAndCreditLimitPanel')[0].down('component');
+                                            var container = Ext.ComponentQuery.query('#termsAndCreditLimitPanel > container')[0];
+                                            container.setHidden(!container.getHidden());
+                                            header.setCls('rm-container-arrow-' + container.getHidden());
+                                        }                                        
+                                    }                                   
+                                }                                
+                            }, {
+                                xtype: 'container',
+                                hidden:true,
+                                items: [{
+                                    xtype: 'extselectfield',
+                                    cls: 'rm-flatfield',
+                                    usePicker: true,
+                                    autoSelect: false,
+                                    itemId: 'terms',
+                                    store: 'Terms',
+                                    displayField: 'TermName',
+                                    valueField: 'TermID',
+                                    clearIcon: true,
+                                    label: 'Payment terms',
+                                    name: 'Terms',
+                                    placeHolder: 'choose',
+                                    labelWidth: '9em'
+                                }, {
+                                    xtype: 'rmamountfield',
+                                    name: 'CreditLimit',
+                                    label: 'Credit limit',
+                                    placeHolder: 'enter',
+                                    decimalPlaces: 2,
+                                    prefix: '$'
+                                }
+                                ]
+                            }
+    					    ]
     					}, {
-    					    xtype: 'rmamountfield',
-    					    name: 'CreditLimit',
-    					    label: 'Credit limit',
-    					    placeHolder: 'enter',
-    					    decimalPlaces: 2,
-    					    prefix: '$'
-    					}, {
-    					    xtype: 'bankdetails',
-    					    cls: 'rm-noborder'
+    					    xtype: 'container',
+    					    itemId: 'bankDetailPanel',
+    					    items: [{
+    					                xtype: 'component',    					        
+    					                html: '<h3 class="rm-m-1 rm-hearderbg">Supplier bank details</h3>',
+    					                cls: 'rm-container-arrow-true',
+    					                listeners: {
+    					                    tap: {
+    					                        element: 'element',
+    					                        fn: function () {
+    					                            var header = Ext.ComponentQuery.query('#bankDetailPanel')[0].down('component');
+    					                            var container = Ext.ComponentQuery.query('#bankDetailPanel > container')[0];
+    					                            container.setHidden(!container.getHidden());
+    					                            header.setCls('rm-container-arrow-' + container.getHidden());
+    					                        }
+    					                    }
+    					                }
+    					            }, {
+    					                xtype: 'bankdetails',
+    					                hidden: true
+    					    }
+    					    ]
     					}, {
                             xtype: 'container',
                             itemId: 'postalAddress',                             
@@ -266,18 +311,34 @@ Ext.define('RM.view.ContactDetail', {
                                     xtype: 'component',                                        
                                     itemId: 'addressHeader',
                                     layout: 'vbox',
-                                    html: '<h3 class="rm-m-1 rm-hearderbg">Postal address</h3>'
-                                	
-                                },{
-                                	 xtype: 'extselectfield',
-                                     name: 'PostalAddress.Address',
-                                     itemId: 'postalAddressSelectField',
-                                     label: 'Address type',
-                                	 options: [
-                                        {text: 'National',  value: 1},
-                                    	{text: 'International', value: 2}                                    	
+                                    html: '<h3 class="rm-m-1 rm-hearderbg">Postal address</h3>',
+                                    cls: 'rm-container-arrow-true',
+                                	listeners: {
+    					                    tap: {
+    					                        element: 'element',
+    					                        fn: function () {
+    					                            var header = Ext.ComponentQuery.query('#postalAddress')[0].down('#addressHeader');
+    					                            var container = Ext.ComponentQuery.query('#postalAddress > container')[0];
+    					                            container.setHidden(!container.getHidden());
+    					                            header.setCls('rm-container-arrow-' + container.getHidden());
+    					                        }
+    					                    }
+    					                }
+                            },{
+                                xtype: 'container',
+                                hidden: true,
+                                itemId: 'postalContainer',
+                                defaults: { xtype: 'exttextfield', labelWidth: 180, cls: 'rm-flatfield', placeHolder: 'enter', clearIcon: false },
+                                items: [{
+                                    xtype: 'extselectfield',
+                                    name: 'PostalAddress.Address',
+                                    itemId: 'postalAddressSelectField',
+                                    label: 'Address type',
+                                    options: [
+                                       {text: 'National',  value: 1},
+                                       {text: 'International', value: 2}                                    	
                                     ]
-                            	},{
+                                },{
                                     name: 'PostalAddress.Address1',                                        
                                     label: 'Line 1',
                                     maxLength: 80,
@@ -287,42 +348,59 @@ Ext.define('RM.view.ContactDetail', {
                                     label: 'Line 2',
                                     maxLength: 80
                                 },{
-            						name: 'PostalAddress.Suburb',   
-            						label: 'Suburb',
+                                    name: 'PostalAddress.Suburb',   
+                                    label: 'Suburb',
                                     maxLength: 80,
                                     labelWidth: '7.5em'
-            					},{
-            						name: 'PostalAddress.Town',   
-            						label: 'Town/City',
+                                },{
+                                    name: 'PostalAddress.Town',   
+                                    label: 'Town/City',
                                     maxLength: 80,
                                     labelWidth: '7.5em'
-            					},{
-            						name: 'PostalAddress.State',  
-            						label: 'State',
+                                },{
+                                    name: 'PostalAddress.State',  
+                                    label: 'State',
                                     maxLength: 80,
                                     labelWidth: '4em'
-            					},{
-            						name: 'PostalAddress.PostCode',
-            						label: 'Postcode',
+                                },{
+                                    name: 'PostalAddress.PostCode',
+                                    label: 'Postcode',
                                     maxLength: 30,
                                     labelWidth: '5em'
-            					},{
-            						name: 'PostalAddress.Country', 
-            						label: 'Country',
+                                },{
+                                    name: 'PostalAddress.Country', 
+                                    label: 'Country',
                                     maxLength: 30,
                                     border: '1 0 1 0',
                                     labelWidth: '5.5em'                                    
-            					}]    						
+                                }]
+                            }]
     					},
                         {
                             xtype: 'container',
-                            itemId: 'businessAddress',   
-                            defaults:{xtype: 'exttextfield', labelWidth: 180, cls: 'rm-flatfield', placeHolder: 'enter', clearIcon: false},
+                            itemId: 'businessAddress',                        
                             items: [{                            
                                 xtype: 'component',                                        
                                 itemId: 'addressHeader',                         
-                                html: '<h3 class="rm-m-1 rm-hearderbg">Physical address</h3>'
-                                },{
+                                html: '<h3 class="rm-m-1 rm-hearderbg">Physical address</h3>',
+                                cls: 'rm-container-arrow-true',
+                                listeners: {
+                                    tap: {
+                                        element: 'element',
+                                        fn: function () {
+                                            var header = Ext.ComponentQuery.query('#businessAddress')[0].down('#addressHeader');                                            
+                                            var container = Ext.ComponentQuery.query('#businessAddress > container')[0];
+                                            container.setHidden(!container.getHidden());
+                                            header.setCls('rm-container-arrow-' + container.getHidden());
+                                        }
+                                    }
+                                }
+                            }, {
+                                xtype: 'container',                                
+                                hidden: true,
+                                itemId: 'businessContainer',
+                                defaults: { xtype: 'exttextfield', labelWidth: 180, cls: 'rm-flatfield', placeHolder: 'enter', clearIcon: false },
+                                items: [{
                                     xtype: 'rmtogglefield',
                                     onText: 'Yes',
                                     offText: 'No',
@@ -333,52 +411,54 @@ Ext.define('RM.view.ContactDetail', {
                                     toggleState: false
                                 },
                             	{
-                                	 xtype: 'extselectfield',
-                                     name: 'BusinessAddress.Address',
-                                     itemId: 'businessAddressSelectField',
-                                     label: 'Address type',
-                                	 options: [
-                                        {text: 'National',  value: 1},
-                                    	{text: 'International', value: 2}                                    	
-                                    ]
+                            	    xtype: 'extselectfield',
+                            	    name: 'BusinessAddress.Address',
+                            	    itemId: 'businessAddressSelectField',
+                            	    label: 'Address type',
+                            	    options: [
+                                       { text: 'National', value: 1 },
+                                       { text: 'International', value: 2 }
+                            	    ]
                             	},
                                 {
-                                    name: 'BusinessAddress.Address1',                                        
+                                    name: 'BusinessAddress.Address1',
                                     label: 'Line 1',
                                     maxLength: 80,
                                     labelWidth: '4.5em'
-                                },{
-                                    name: 'BusinessAddress.Address2', 
+                                }, {
+                                    name: 'BusinessAddress.Address2',
                                     label: 'Line 2',
                                     maxLength: 80
-                                },{
-            						name: 'BusinessAddress.Suburb',   
-            						label: 'Suburb',
+                                }, {
+                                    name: 'BusinessAddress.Suburb',
+                                    label: 'Suburb',
                                     maxLength: 80,
                                     labelWidth: '7.5em'
-            					},{
-            						name: 'BusinessAddress.Town',   
-            						label: 'Town/City',
+                                }, {
+                                    name: 'BusinessAddress.Town',
+                                    label: 'Town/City',
                                     maxLength: 80,
                                     labelWidth: '7.5em'
-            					},{
-            						name: 'BusinessAddress.State',  
-            						label: 'State',
+                                }, {
+                                    name: 'BusinessAddress.State',
+                                    label: 'State',
                                     maxLength: 80,
                                     labelWidth: '4em'
-            					},{
-            						name: 'BusinessAddress.PostCode',
-            						label: 'Postcode',
+                                }, {
+                                    name: 'BusinessAddress.PostCode',
+                                    label: 'Postcode',
                                     maxLength: 30,
                                     labelWidth: '5em'
-            					},{
-            						name: 'BusinessAddress.Country', 
-            						label: 'Country',
+                                }, {
+                                    name: 'BusinessAddress.Country',
+                                    label: 'Country',
                                     maxLength: 30,
                                     border: '1 0 1 0',
                                     labelWidth: '5em',
                                     cls: ['rm-flatfield', 'rm-flatfield-last']
-            					}]
+                                }
+                                ]
+                            }]
                         }]
                     }]
             }]
@@ -387,4 +467,5 @@ Ext.define('RM.view.ContactDetail', {
     showDetailsFields: function() {       
         this.down('#detailsFields').setHidden(false);        
     }
+
 });

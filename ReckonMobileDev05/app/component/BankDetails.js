@@ -3,29 +3,35 @@ Ext.define('RM.component.BankDetails', {
     requires: ['RM.component.BankDetailsNZ', 'RM.component.BankDetailsAU'],
     xtype: 'bankdetails',
     config: {
-        items: [/*{
-            xtype: 'component',
-            html: '<h3 class="rm-m-1 rm-hearderbg">Financial institution details</h3>'
-        },*/ {
-            xtype: 'bankdetailsnz'
-        }, {
-            xtype: 'bankdetailsau'
-        }]
+        items: []
     },
 
     initialize: function () {
         this.callParent(arguments);
-        this.on('painted', this.loadCountrySpecificBankDetails, this);
+        this.loadCountrySpecificBankDetails();
     },
 
     loadCountrySpecificBankDetails: function () {
+        this.removeAll(true, true);
         var countryCode = RM.CashbookMgr.getCountrySettings().CountryCode;
 
         if (countryCode === "AU") {
-            this.remove(this.down('bankdetailsnz'));      
+            this.add({
+                xtype: 'bankdetailsau'
+            });                  
         }
-        if (countryCode === "NZ") {           
-            this.remove(this.down('bankdetailsau'));
+
+        if (countryCode === "NZ") {
+            this.add({
+                xtype: 'bankdetailsnz'
+            });
         }
+    },
+
+    resetValues: function () {
+        //at any time this panel is gonna show just one child panel so select 0th and reset all its children fields
+        this.getItems().items[0].getItems().items.forEach(function (item) {
+            item.reset();
+        });
     }
 });

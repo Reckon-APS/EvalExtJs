@@ -157,13 +157,6 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="app\component\BillsList.js" />
-    <Content Include="app\component\BankDetails.js" />
-    <Content Include="app\component\BankDetailsAU.js">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="app\component\BankDetailsNZ.js">
-      <SubType>Content</SubType>
-    </Content>
     <Content Include="app\component\CalcKeypad.js">
       <SubType>Content</SubType>
     </Content>
@@ -1171,6 +1164,8 @@
     <Content Include="resources\images\icons\rm-addnote.svg">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="resources\images\icons\rm-arrow-down.svg" />
+    <Content Include="resources\images\icons\rm-arrow-up.svg" />
     <Content Include="resources\images\icons\rm-attach.svg">
       <SubType>Content</SubType>
     </Content>
@@ -1272,7 +1267,9 @@
     <Content Include="resources\images\icons\rm-popupcross.svg">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="resources\images\icons\rm-receive.svg" />
+    <Content Include="resources\images\icons\rm-receive.svg">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="resources\images\icons\rm-reckon-icon.svg">
       <SubType>Content</SubType>
     </Content>

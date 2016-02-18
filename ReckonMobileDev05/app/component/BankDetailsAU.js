@@ -13,11 +13,13 @@ Ext.define('RM.component.BankDetailsAU', {
         }, {
             xtype: 'rmnumberfield',
             name: 'BankBranch',
+            placeHolder: 'enter',
             label: 'BSB',
             maxLength: 6
         }, {
             xtype: 'rmnumberfield',
             name: 'BankAccountNumber',
+            placeHolder: 'enter',
             label: 'Account number',
             labelWidth: '10em',
             cls: 'rm-flatfield'

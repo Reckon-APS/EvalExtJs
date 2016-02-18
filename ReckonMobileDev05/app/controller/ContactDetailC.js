@@ -22,8 +22,8 @@ Ext.define('RM.controller.ContactDetailC', {
             email: 'contactdetail field[name=Email]',
             web: 'contactdetail field[name=Web]',
             notesFld: 'contactdetail field[name=Notes]',
-            postalAddress: 'contactdetail #postalAddress',
-            businessAddress: 'contactdetail #businessAddress',
+            postalAddress: 'contactdetail #postalAddress #postalContainer',
+            businessAddress: 'contactdetail #businessAddress #businessContainer',
             businessAddressDifferent: 'contactdetail field[name=IsBusinessAddressDifferent]',
             postalAddressCountry: 'contactdetail #postalAddress field[name=PostalAddress.Country]',
             businessAddressCountry: 'contactdetail #businessAddress field[name=BusinessAddress.Country]',
@@ -60,10 +60,19 @@ Ext.define('RM.controller.ContactDetailC', {
                 change: 'handleDifferentAddressToggle'
             },
             'contactdetail #postalAddress field': {
-                change: 'onPostalAddressChanged'
+                keyup: 'onPostalAddressChanged'
             },
             termsFld: {
                 itemloaded: 'showHideClearIconOnTermsField'
+            },
+            firstName: {
+                keyup: 'onNameKeyUp'
+            },
+            surname: {
+                keyup: 'onNameKeyUp'
+            },
+            businessName: {
+                keyup: 'onNameKeyUp'
             }
         }
 
@@ -209,9 +218,8 @@ Ext.define('RM.controller.ContactDetailC', {
     hideFields: function (boolValue) {
         var contactDetail = this.getContactDetail();
         contactDetail.down('field[name=Description]').setHidden(boolValue);
-        contactDetail.down('field[name=Terms]').setHidden(boolValue);
-        contactDetail.down('field[name=CreditLimit]').setHidden(boolValue);
-        contactDetail.down('bankdetails').setHidden(boolValue);
+        contactDetail.down('#termsAndCreditLimitPanel').setHidden(boolValue);        
+        contactDetail.down('#bankDetailPanel').setHidden(boolValue);
         contactDetail.down('field[name=BusinessOrIndividual]').setHidden(boolValue);        
     },
 
@@ -545,12 +553,16 @@ Ext.define('RM.controller.ContactDetailC', {
         }
         
         //hide and reset paymentterms and creditlimit fields when supplier is selected 
-        this.getTermsFld().setHidden(!this.detailsData.IsCustomer);
-        this.getCreditLimitFld().setHidden(!this.detailsData.IsCustomer);
-        this.getContactDetail().down('bankdetails').setHidden(!this.detailsData.IsSupplier);
+        //this.getTermsFld().setHidden(!this.detailsData.IsCustomer);
+        //this.getCreditLimitFld().setHidden(!this.detailsData.IsCustomer);
+        this.getContactDetail().down('#termsAndCreditLimitPanel').setHidden(!this.detailsData.IsCustomer);
+        this.getContactDetail().down('#bankDetailPanel').setHidden(!this.detailsData.IsSupplier);
         if (!this.detailsData.IsCustomer) {
             this.getTermsFld().setValue(null);
             this.getCreditLimitFld().setValue('');
+        }
+        if (!this.detailsData.IsSupplier) {
+            this.getContactDetail().down('bankdetails').resetValues();
         }
     },
 
@@ -584,18 +596,21 @@ Ext.define('RM.controller.ContactDetailC', {
             // Copy all the postal address fields into the business ones
             this.copyPostalToBusiness();
             enableFields = false;
-        }
+        }        
 
         this.getBusinessAddress().getItems().items.forEach(function (item) {
-            if (item.getName && item.getName().indexOf('BusinessAddress.') === 0) {
+            if (item.getName() && item.getName().indexOf('BusinessAddress.') === 0) {
                 item.setReadOnly(!enableFields);
+                if (isBusinessAddressDifferent) {
+                    item.setValue('');
+                } 
                 item.setPlaceHolder(enableFields ? 'enter' : '');
             }
         });
     },
 
     onPostalAddressChanged: function () {
-        if (this.getBusinessAddressDifferent().getValue()) {
+        if (!this.getBusinessAddressDifferent().getValue()) {
             this.copyPostalToBusiness();
         }
     },
@@ -685,6 +700,16 @@ Ext.define('RM.controller.ContactDetailC', {
             }
         }
 
+    },
+
+    onNameKeyUp: function (field) {
+        var fieldName = field.getName();
+        if (fieldName === 'FirstName' || fieldName === 'Surname') {
+            this.getDescriptionFld().setValue(this.getFirstName().getValue() + ' ' +this.getSurname().getValue());
+        }
+        else {
+            this.getDescriptionFld().setValue(this.getBusinessName().getValue());
+        }
     }
 
 });
