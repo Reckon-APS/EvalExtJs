@@ -220,7 +220,9 @@ Ext.define('RM.controller.ContactDetailC', {
         contactDetail.down('field[name=Description]').setHidden(boolValue);
         contactDetail.down('#termsAndCreditLimitPanel').setHidden(boolValue);        
         contactDetail.down('#bankDetailPanel').setHidden(boolValue);
-        contactDetail.down('field[name=BusinessOrIndividual]').setHidden(boolValue);        
+        contactDetail.down('field[name=BusinessOrIndividual]').setHidden(boolValue);
+
+        this.getSaveBtn().setHidden(boolValue);
     },
 
     hideAllPostalAddressFields: function (boolValue) {

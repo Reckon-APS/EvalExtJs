@@ -31,7 +31,7 @@ Ext.define('RM.component.BankDetails', {
     resetValues: function () {
         //at any time this panel is gonna show just one child panel so select 0th and reset all its children fields
         this.getItems().items[0].getItems().items.forEach(function (item) {
-            item.reset();
+            if (item.reset) { item.reset(); }
         });
     }
 });
