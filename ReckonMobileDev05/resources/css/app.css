@@ -5703,10 +5703,14 @@ body.x-desktop {
 .x-picker-bar {
   border-top: 1px solid #D9D9D9;
   border-bottom: 1px solid #D9D9D9;
-  height: 2.5em;
+  height: 2.6em;
   background: #00BD9D;
   box-shadow: none;
   opacity: 0.2; }
+
+.x-picker-slot .x-dataview-item {
+  height: 2.52em;
+  line-height: 2.52em; }
 
 .x-picker .x-scroll-container {
   border: 0;

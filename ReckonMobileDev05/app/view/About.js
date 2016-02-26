@@ -37,7 +37,7 @@ Ext.define('RM.view.About', {
 						padding: '5 20 5 20'
 					},{
 						xtype: 'component',
-						html: 'Copyright Reckon Limited 2014',
+						html: 'Copyright Reckon Limited 2016',
 						cls: 'rm-about-product-copyright',
 						padding: '5 20 5 20'
 					},{
