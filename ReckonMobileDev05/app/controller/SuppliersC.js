@@ -25,7 +25,10 @@ Ext.define('RM.controller.SuppliersC', {
 			},				
 			'suppliers list': {
 				select: 'onItemSelect'			
-			},				
+			},
+			'suppliers #createSupplier': {
+			    tap: 'onCreateSupplier'
+			},
             'suppliers #refresh': {
                 tap: function (textField) {
                     this.loadList();
@@ -78,6 +81,23 @@ Ext.define('RM.controller.SuppliersC', {
             this.loadTimer = null;
         }
         this.loadTimer = Ext.defer(this.loadList, 1000, this);
-    }
+    },
+
+    onCreateSupplier: function () {
+        RM.InvoicesMgr.showContactDetail(
+            true,
+            null,
+            function (val) {
+                var data = val[0];
+                if (data.ContactId) {
+                    this.selectCb.call(this.selectCbs, data);
+                    RM.ViewMgr.back({ type: 'slide', direction: 'left' });
+                }
+            },
+            this,
+            'Suppliers'
+       );
+
+    },
 
 });

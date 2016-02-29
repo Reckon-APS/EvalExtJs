@@ -466,6 +466,11 @@ Ext.define('RM.controller.ContactDetailC', {
     			    if (this.callbackViewName && this.callbackViewName == 'Customers') {
     			        this.detailsCb.call(this.detailsCbs, val);
     			    }
+    			    if (this.callbackViewName && this.callbackViewName == 'Suppliers') {
+    			        val[0].SupplierId = val[0].ContactId;
+    			        val[0].Name = val[0].Description;
+    			        this.detailsCb.call(this.detailsCbs, val);    			        
+    			    }
     			    RM.AppMgr.itemUpdated('contact');
     			    RM.ViewMgr.back();
     			},

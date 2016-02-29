@@ -24,7 +24,12 @@ Ext.define('RM.view.Suppliers', {
 				xtype: 'sortsearchbar',				
 				docked: 'top',
 				sortfields: [{text:'Name', value:'name'}]
-			},{
+            }, {
+                xtype: 'button',
+                text: 'Add a new supplier',
+                itemId: 'createSupplier',
+                cls: 'rm-createitembtn'
+            }, {
 				xtype: 'rmlist',
 				store: 'Suppliers',
                 emptyText: 'No suppliers found.',
