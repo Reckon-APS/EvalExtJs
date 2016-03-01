@@ -279,7 +279,8 @@ Ext.define('RM.view.ContactDetail', {
 					                label: 'Credit limit',
 					                placeHolder: 'enter',
 					                decimalPlaces: 2,
-					                prefix: '$'
+					                prefix: '$',
+					                labelWidth: '9em'
 					            }
 					            ]
 					        }
@@ -418,7 +419,7 @@ Ext.define('RM.view.ContactDetail', {
                                     xtype: 'rmtogglefield',
                                     onText: 'Yes',
                                     offText: 'No',
-                                    label: 'Differs from Postal address?',
+                                    label: 'Physical address differs?',
                                     labelWidth: '14em',
                                     name: 'IsBusinessAddressDifferent',
                                     placeHolder: '',

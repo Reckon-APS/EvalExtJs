@@ -244,15 +244,15 @@ $font-family: 'Open Sans', sans-serif !default;
 .x-picker-bar {
     border-top: 1px solid #D9D9D9;
     border-bottom: 1px solid #D9D9D9;
-    height: 2.6em;
+    height: 2.5em;
     background: #00BD9D;
 	box-shadow: none;
     opacity: 0.2;
   }
 
 .x-picker-slot .x-dataview-item {
-    height: 2.62em;
-    line-height: 2.62em;
+    height: 2.501em;
+    line-height: 2.501em;
 }
 
 .x-picker .x-scroll-container {    
@@ -2539,4 +2539,9 @@ $font-family: 'Open Sans', sans-serif !default;
 
 .rm-container-arrow-false{
     @include rm-container-arrow("../images/icons/rm-arrow-up.svg", #ebebeb);
+}
+
+.x-item-disabled.x-field-checkbox .x-input-checkbox:checked + .x-field-mask::after {
+    color: #00BD9D;
+    opacity: 0.6;
 }

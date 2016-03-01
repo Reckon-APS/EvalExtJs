@@ -122,6 +122,7 @@ Ext.define('RM.controller.ContactDetailC', {
             }
             else {
                 var data = {};
+                var selection = {};
                 contactForm.setValues(data);
                 this.hideFields(true);
                 this.getCustomerOrSupplier().setValue(null);
@@ -131,8 +132,16 @@ Ext.define('RM.controller.ContactDetailC', {
                 this.detailsData.IsSupplier = null;
                 this.initialFormValues = contactForm.getValues();                              
                 this.dataLoaded = true;
+                if (this.callbackViewName && this.callbackViewName === 'Customers') {
+                    this.getCustomerOrSupplier().setDisabledOptions(['Customer']);
+                    selection.Customer = true;                    
+                }
+                if (this.callbackViewName && this.callbackViewName === 'Suppliers') {
+                    this.getCustomerOrSupplier().setDisabledOptions(['Supplier']);
+                    selection.Supplier = true;
+                }
+                this.getCustomerOrSupplier().setSelectedOptions(selection);                
             }
-
             this.handleDifferentAddressToggle(this.getBusinessAddressDifferent());
         }        
     },

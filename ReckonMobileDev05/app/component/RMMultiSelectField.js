@@ -57,7 +57,8 @@ Ext.define('RM.component.RMMultiSelectField', {
                         xtype: 'checkboxfield',
                         name : item.value,
                         label: item.text,
-                        cls: 'rm-flatfield rm-alignl rm-multiselectfield'                        
+                        cls: 'rm-flatfield rm-alignl rm-multiselectfield',
+                        disabled: !this.disabledOptions ? false : this.isDisabledItem(item.value)
                     }
                 );
             }, this);
@@ -100,6 +101,14 @@ Ext.define('RM.component.RMMultiSelectField', {
     setSelectedOptions: function (selectedOpts) {
         this.selectedOptions = selectedOpts;
         this.setValue(this.createFieldTextFromSelection());
+    },
+
+    setDisabledOptions: function (disabledOptionsArray) {
+        this.disabledOptions = disabledOptionsArray;
+    },
+
+    isDisabledItem: function(value){
+        return Ext.Array.contains(this.disabledOptions,value);
     },
 
     createFieldTextFromSelection: function () {
