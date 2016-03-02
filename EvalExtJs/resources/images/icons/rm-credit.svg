@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 17.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1 Tiny//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-tiny.dtd">
+<svg version="1.1" baseProfile="tiny" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+	 x="0px" y="0px" width="99.643px" height="66.665px" viewBox="0 0 99.643 66.665" xml:space="preserve">
+<g>
+	<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="49.8213" y1="1" x2="49.8213" y2="65.665">
+		<stop  offset="0" style="stop-color:#52BBD9"/>
+		<stop  offset="1" style="stop-color:#00A0CA"/>
+	</linearGradient>
+	<path fill="url(#SVGID_1_)" d="M98.643,62.83c0,1.56-1.275,2.835-2.834,2.835H3.834C2.275,65.665,1,64.39,1,62.83V3.835
+		C1,2.275,2.275,1,3.834,1h91.975c1.559,0,2.834,1.275,2.834,2.835V62.83z"/>
+	<path fill="none" stroke="#0F688D" stroke-width="2" stroke-miterlimit="10" d="M98.643,62.83c0,1.56-1.275,2.835-2.834,2.835
+		H3.834C2.275,65.665,1,64.39,1,62.83V3.835C1,2.275,2.275,1,3.834,1h91.975c1.559,0,2.834,1.275,2.834,2.835V62.83z"/>
+</g>
+<path fill="none" stroke="#76C1EA" stroke-miterlimit="10" d="M90.313,29.263c0,3.118-2.551,5.669-5.67,5.669H35.797
+	c-3.117,0-5.669-2.551-5.669-5.669v-6.688c0-3.118,2.552-5.669,5.669-5.669h48.846c3.119,0,5.67,2.551,5.67,5.669V29.263z"/>
+<path fill="#FFFFFF" d="M24.406,26.08c0,0.779-0.639,1.417-1.418,1.417h-8.463c-0.779,0-1.418-0.638-1.418-1.417v-6.931
+	c0-0.779,0.639-1.417,1.418-1.417h8.463c0.779,0,1.418,0.638,1.418,1.417V26.08z"/>
+<path fill="#B4B4B5" d="M22.548,24.474c0,0.779-0.638,1.417-1.417,1.417h-4.748c-0.779,0-1.417-0.638-1.417-1.417v-3.718
+	c0-0.779,0.638-1.417,1.417-1.417h4.748c0.779,0,1.417,0.638,1.417,1.417V24.474z"/>
+<rect x="38.039" y="21.461" fill="none" width="49.629" height="8.916"/>
+<text transform="matrix(1 0 0 1 38.039 29.981)" fill="#FFFFFF" font-family="'HelveticaNeue-Bold'" font-size="12">CREDIT</text>
+<rect x="13.384" y="51.365" fill="none" width="75.833" height="6.483"/>
+<text transform="matrix(1 0 0 1 13.3838 55.6255)" fill="#FFFFFF" font-family="'HelveticaNeue-Roman'" font-size="6">9812  5415  5616  5453</text>
+<rect x="13.558" y="40.658" fill="none" width="75.833" height="6.481"/>
+<text transform="matrix(1 0 0 1 13.5576 44.918)" fill="#FFFFFF" font-family="'HelveticaNeue-Roman'" font-size="6">John Smith</text>
+</svg>
